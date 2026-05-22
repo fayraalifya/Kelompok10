@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aeris WebGIS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root {
+            --red:       #970000;
+            --red-dark:  #7a0000;
+            --red-light: #fff0f0;
+            --red-border:#f5d0d0;
+            --surface:   #ffffff;
+            --bg:        #f3f4f6;
+            --border:    #e5e7eb;
+            --text:      #111827;
+            --text-2:    #6b7280;
+            --text-3:    #9ca3af;
+            --green:     #16a34a;
+            --blue:      #1d4ed8;
+            --panel-w:   360px;
+            --topbar-h:  60px;
+            --radius:    14px;
+            --radius-sm: 9px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100%; height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow: hidden;
+            background: var(--bg);
+        }
+
+        /* ───────────── TOPBAR ───────────── */
+        .topbar {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: var(--topbar-h);
+            background: var(--red);
+            display: flex; align-items: center; gap: 14px;
+            padding: 0 18px; z-index: 9999;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.18);
+        }
+
+        .logo-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .topbar-logo { width: 38px; height: 38px; object-fit: contain; }
+        .logo-text h2 { color: #fff; font-size: 15px; font-weight: 800; letter-spacing: -0.3px; }
+        .logo-text p  { color: rgba(255,255,255,0.72); font-size: 11px; font-weight: 400; }
+
+        .topbar-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+
+        /* Search */
+        .search-wrap {
+            flex: 0 1 380px; height: 38px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex; align-items: center;
+            padding: 0 13px; gap: 8px;
+            transition: background 0.2s, border-color 0.2s;
+            position: relative;
+        }
+        .search-wrap:focus-within {
+            background: rgba(255,255,255,0.25);
+            border-color: rgba(255,255,255,0.45);
+        }
+        .search-wrap i { color: rgba(255,255,255,0.7); font-size: 13px; flex-shrink: 0; }
+        .search-wrap input {
+            flex: 1; border: none; outline: none; background: transparent;
+            color: white; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+        }
+        .search-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+
+        .search-results {
+            position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+            background: var(--surface); border-radius: var(--radius-sm);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            max-height: 380px; overflow-y: auto; display: none; z-index: 10000;
+            border: 1px solid var(--border);
+        }
+        .search-results.active { display: block; }
+        .search-result-item {
+            padding: 10px 14px; border-bottom: 1px solid #f5f5f5;
+            cursor: pointer; transition: background 0.15s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .search-result-item:hover { background: #fafafa; }
+        .search-result-item:last-child { border-bottom: none; }
+        .sri-icon {
+            width: 30px; height: 30px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; flex-shrink: 0;
+        }
+        .sri-icon.puskesmas  { background: #dcfce7; color: #16a34a; }
+        .sri-icon.kecamatan  { background: #fef3c7; color: #d97706; }
+        .sri-title   { font-size: 13px; font-weight: 600; color: var(--text); }
+        .sri-sub     { font-size: 11px; color: var(--text-3); }
+        .sri-badge   { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: auto; }
+        .sri-badge.puskesmas  { background: #dcfce7; color: #15803d; }
+        .sri-badge.kecamatan  { background: #fef3c7; color: #b45309; }
+        .search-no-results { padding: 18px; text-align: center; color: var(--text-3); font-size: 13px; }
+
+        /* Topbar right actions */
+        .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+        .tb-btn {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.2);
+            color: white; border-radius: 9px; padding: 0 13px; height: 36px;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: background 0.2s, border-color 0.2s; white-space: nowrap;
+        }
+        .tb-btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.35); }
+        .tb-btn i { font-size: 13px; }
+
+        /* Nearby popup button in topbar */
+        .tb-nearby-btn {
+            display: flex; align-items: center; gap: 6px;
+            background: rgba(22,163,74,0.85); border: 1px solid rgba(22,163,74,0.5);
+            color: white; border-radius: 9px; padding: 0 13px; height: 36px;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: background 0.2s; white-space: nowrap;
+        }
+        .tb-nearby-btn:hover { background: rgba(22,163,74,1); }
+        .tb-nearby-btn i { font-size: 13px; }
+
+        /* ───────────── LAYOUT ───────────── */
+        .main-layout {
+            display: flex; width: 100%;
+            height: calc(100vh - var(--topbar-h));
+            margin-top: var(--topbar-h);
+        }
+
+        /* ───────────── SIDEBAR ───────────── */
+        .sidebar-panel {
+            position: fixed; top: var(--topbar-h); left: -390px;
+            width: 360px; height: calc(100vh - var(--topbar-h));
+            background: var(--surface);
+            box-shadow: 4px 0 24px rgba(0,0,0,0.10);
+            z-index: 9998; transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
+            overflow-y: auto; border-right: 1px solid var(--border);
+        }
+        .sidebar-panel.active { left: 0; }
+        .sidebar-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 20px; border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; background: var(--surface); z-index: 2;
+        }
+        .sidebar-header h3 {
+            font-size: 14px; font-weight: 700; color: var(--text);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .sidebar-header h3 i { color: var(--red); }
+        .sidebar-close {
+            background: none; border: none; font-size: 17px;
+            color: var(--text-2); cursor: pointer; transition: color 0.2s, transform 0.2s;
+            width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+        }
+        .sidebar-close:hover { color: var(--red); background: var(--red-light); transform: rotate(90deg); }
+
+        .sidebar-content { padding: 16px; }
+        .sec-label {
+            font-size: 10px; font-weight: 700; color: var(--text-3);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin: 0 0 10px; padding: 0 2px;
+        }
+        .layer-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px; margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.2s;
+        }
+        .layer-card:hover { border-color: var(--red); background: var(--red-light); transform: translateX(3px); }
+        .layer-card.active { background: var(--red-light); border-color: var(--red); }
+        .layer-info { display: flex; align-items: center; gap: 11px; flex: 1; }
+        .layer-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .li-red    { background: #fee2e2; color: #b91c1c; }
+        .li-blue   { background: #dbeafe; color: #1d4ed8; }
+        .li-cyan   { background: #cffafe; color: #0e7490; }
+        .li-gray   { background: #f3f4f6; color: #6b7280; }
+        .li-green  { background: #dcfce7; color: #15803d; }
+        .li-orange { background: #ffedd5; color: #c2410c; }
+        .li-purple { background: #f3e8ff; color: #7c3aed; }
+        .layer-text h4 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+        .layer-text p  { font-size: 11px; color: var(--text-3); }
+        .toggle-checkbox { width: 18px; height: 18px; cursor: pointer; accent-color: var(--red); flex-shrink: 0; }
+        .sec-divider { height: 1px; background: var(--border); margin: 18px 0 14px; }
+
+        .sidebar-panel::-webkit-scrollbar { width: 4px; }
+        .sidebar-panel::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        .sidebar-panel::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+        /* Sidebar FAB */
+        .sidebar-fab {
+            position: fixed; top: calc(var(--topbar-h) + 14px); left: 16px;
+            width: 42px; height: 42px; background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px; color: var(--red); cursor: pointer; z-index: 9997;
+            transition: all 0.25s; flex-shrink: 0;
+        }
+        .sidebar-fab:hover { background: var(--red); color: white; box-shadow: 0 4px 16px rgba(151,0,0,0.3); }
+        .sidebar-fab.active { left: 376px; }
+
+        /* ───────────── MAP ───────────── */
+        #map { flex: 1; height: 100%; position: relative; }
+        .leaflet-bottom.leaflet-right { bottom: 22px !important; right: 18px !important; }
+
+        /* Scale control styling */
+        .leaflet-control-scale-line {
+            border: 2px solid rgba(0,0,0,0.5) !important;
+            border-top: none !important;
+            background: rgba(255,255,255,0.9) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            border-radius: 0 0 5px 5px !important;
+            padding: 2px 6px !important;
+        }
+        .leaflet-control-scale { margin-bottom: 8px !important; }
+
+        /* Year badge */
+        .year-badge {
+            position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: var(--red); color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 20px; font-weight: 800; letter-spacing: -0.5px;
+            padding: 7px 20px; border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(151,0,0,0.35); display: none;
+            pointer-events: none;
+        }
+        .year-badge.visible { display: block; }
+        .year-notice {
+            position: absolute; top: 66px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: #f97316; color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 9px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.18); display: none; pointer-events: none;
+        }
+        .year-notice.visible { display: block; }
+
+        /* ───────────── LEGEND OVERLAY ───────────── */
+        .map-legend {
+            position: absolute; bottom: 100px; left: 18px; z-index: 999;
+            background: rgba(255,255,255,0.97); border-radius: var(--radius-sm);
+            padding: 12px 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            min-width: 190px; display: none; border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+        .map-legend.visible { display: block; }
+        .legend-title {
+            font-size: 11px; font-weight: 700; color: var(--text);
+            margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+        }
+        .legend-item { display: flex; align-items: center; gap: 9px; margin-bottom: 6px; }
+        .legend-item:last-child { margin-bottom: 0; }
+        .legend-swatch {
+            width: 24px; height: 13px; border-radius: 4px;
+            flex-shrink: 0; border: 1px solid rgba(0,0,0,0.08);
+        }
+        .legend-label { font-size: 11px; color: var(--text-2); }
+
+        /* ───────────── TIMELINE ───────────── */
+        .map-timeline {
+            position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: rgba(255,255,255,0.97); border-radius: 18px;
+            padding: 14px 22px; display: none; align-items: center; gap: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15); min-width: 500px;
+            border: 1px solid var(--border); backdrop-filter: blur(10px);
+        }
+        .map-timeline.visible { display: flex; }
+        .tl-play {
+            width: 38px; height: 38px; background: var(--red); border: none;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 13px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+            box-shadow: 0 2px 10px rgba(151,0,0,0.3);
+        }
+        .tl-play:hover { background: var(--red-dark); transform: scale(1.06); }
+        .tl-play.playing { background: #374151; }
+        .tl-slider-wrap { flex: 1; position: relative; padding-bottom: 22px; }
+        .tl-track { width: 100%; height: 4px; background: #e5e7eb; border-radius: 10px; position: relative; overflow: hidden; }
+        .tl-progress { height: 100%; background: var(--red); border-radius: 10px; transition: width 0.4s ease; }
+        .tl-points { position: absolute; top: -8px; left: 0; right: 0; display: flex; justify-content: space-between; }
+        .tl-pt { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .tl-dot { width: 18px; height: 18px; border-radius: 50%; background: white; border: 2px solid #d1d5db; transition: all 0.25s; z-index: 2; }
+        .tl-year { position: absolute; top: 22px; font-size: 11px; font-weight: 500; color: var(--text-3); white-space: nowrap; transition: all 0.25s; }
+        .tl-pt.passed .tl-dot  { background: var(--red); border-color: var(--red); }
+        .tl-pt.passed .tl-year { color: var(--red); }
+        .tl-pt.active .tl-dot  { background: var(--red); border-color: var(--red); box-shadow: 0 0 0 4px rgba(151,0,0,0.18); transform: scale(1.28); }
+        .tl-pt.active .tl-year { color: var(--red); font-weight: 700; }
+        .tl-year-sel {
+            border: 1.5px solid var(--border); border-radius: 9px; padding: 5px 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700;
+            color: var(--text); background: white; cursor: pointer; outline: none;
+            transition: border-color 0.2s; flex-shrink: 0;
+        }
+        .tl-year-sel:focus { border-color: var(--red); }
+
+        /* ───────────── RIGHT PANEL ───────────── */
+        .right-panel {
+            width: var(--panel-w); flex-shrink: 0; height: 100%;
+            background: var(--bg); border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; overflow: hidden; z-index: 100;
+            transition: width 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s;
+        }
+        .right-panel.hidden { width: 0; opacity: 0; pointer-events: none; }
+
+        /* Right panel toggle button (floating on map edge) */
+        .rp-toggle {
+            position: absolute; top: calc(var(--topbar-h) + 14px); right: 16px;
+            width: 36px; height: 36px; background: white;
+            border: 1px solid var(--border); border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.10);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; color: var(--text-2); cursor: pointer; z-index: 900;
+            transition: all 0.2s; position: fixed;
+        }
+        /* We'll position it dynamically via JS */
+
+        .rp-inner { flex: 1; overflow-y: auto; padding: 12px 10px 16px; }
+        .rp-inner::-webkit-scrollbar { width: 4px; }
+        .rp-inner::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+
+        /* Panel card */
+        .rp-card {
+            background: var(--surface); border-radius: var(--radius-sm);
+            border: 1px solid var(--border); margin-bottom: 10px; overflow: hidden;
+        }
+        .rp-card-head {
+            display: flex; align-items: center; gap: 8px;
+            padding: 12px 14px 10px; border-bottom: 1px solid #f3f4f6;
+            font-size: 12px; font-weight: 700; color: var(--text);
+        }
+        .rp-card-head i { font-size: 14px; color: var(--red); }
+        .rp-card-head span { flex: 1; }
+
+        /* Year selector chip — revamped */
+        .year-chip-row {
+            display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+            padding: 10px 14px 12px; border-bottom: 1px solid #f3f4f6;
+        }
+        .year-chip {
+            padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700;
+            border: 1.5px solid var(--border); background: white; color: var(--text-2);
+            cursor: pointer; transition: all 0.18s;
+        }
+        .year-chip:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+        .year-chip.active {
+            background: var(--red); color: white; border-color: var(--red);
+            box-shadow: 0 2px 8px rgba(151,0,0,0.25);
+        }
+
+        /* Kecamatan dropdown */
+        .rp-kec-sel {
+            width: 100%; border: 1.5px solid var(--border); border-radius: 9px;
+            padding: 9px 12px; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 12px; color: var(--text); background: white;
+            cursor: pointer; outline: none; transition: border-color 0.2s;
+            margin: 10px 14px; width: calc(100% - 28px);
+        }
+        .rp-kec-sel:focus { border-color: var(--red); }
+
+        /* Kecamatan empty */
+        .rp-kec-empty {
+            padding: 24px 16px; text-align: center; color: var(--text-3);
+        }
+        .rp-kec-empty i { font-size: 32px; color: #e5e7eb; margin-bottom: 10px; display: block; }
+        .rp-kec-empty p { font-size: 12px; line-height: 1.6; }
+
+        /* Kecamatan photo */
+        .rp-kec-photo {
+            width: 100%; height: 110px; object-fit: cover;
+            background: linear-gradient(135deg, #f3f4f6 60%, #e5e7eb 100%);
+            display: block; font-size: 11px; color: var(--text-3); text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .rp-kec-photo-placeholder {
+            width: 100%; height: 90px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 5px; border-bottom: 1px solid #f0f0f0;
+        }
+        .rp-kec-photo-placeholder i { font-size: 26px; color: #d1d5db; }
+        .rp-kec-photo-placeholder span { font-size: 10px; color: var(--text-3); }
+
+        /* Kecamatan info */
+        .rp-kec-info { padding: 12px 14px; display: none; }
+        .rp-kec-info.visible { display: block; }
+        .rp-kec-name {
+            font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        }
+        .kec-badge {
+            font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing: 0.4px;
+        }
+        .kec-badge.sangat-tinggi { background: #fee2e2; color: #b91c1c; }
+        .kec-badge.tinggi        { background: #ffedd5; color: #c2410c; }
+        .kec-badge.rendah        { background: #fef9c3; color: #a16207; }
+        .kec-badge.sangat-rendah { background: #f3e8ff; color: #7c3aed; }
+        .kec-badge.tidak-ada     { background: #f3f4f6; color: #6b7280; }
+
+        .kec-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 0; }
+        .kec-stat {
+            background: #fafafa; border-radius: 8px; padding: 9px 11px;
+            border: 1px solid #f0f0f0;
+        }
+        .kec-stat label { font-size: 10px; color: var(--text-3); display: block; margin-bottom: 2px; font-weight: 500; }
+        .kec-stat .val { font-size: 13px; font-weight: 700; color: var(--text); }
+        .kec-stat .val.accent { color: var(--red); }
+
+        /* Stats grid */
+        .rp-stats-grid { padding: 12px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .rp-stat-box { background: #fafafa; border-radius: 9px; padding: 11px 13px; border: 1px solid #f0f0f0; }
+        .rp-stat-box label { font-size: 10px; color: var(--text-3); display: block; margin-bottom: 3px; font-weight: 500; }
+        .rp-stat-box .sv { font-size: 19px; font-weight: 800; color: var(--text); line-height: 1; }
+        .rp-stat-box .sv.accent { color: var(--red); }
+        .rp-stat-box .sc { font-size: 10px; margin-top: 3px; font-weight: 600; }
+        .rp-stat-box .sc.up { color: #16a34a; }
+        .rp-stat-box .sc.down { color: #dc2626; }
+        .rp-stat-box .sub { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+        /* Chart */
+        .rp-chart-head {
+            padding: 12px 14px 9px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .rp-chart-title { font-size: 12px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+        .rp-chart-title i { color: var(--red); font-size: 13px; }
+        .rp-chart-sub { font-size: 10px; color: var(--text-3); font-weight: 500; }
+        .rp-chart-body { padding: 10px 13px 13px; }
+
+        /* Panel toggle button on map */
+        #rpToggleBtn {
+            position: fixed;
+            top: calc(var(--topbar-h) + 14px);
+            right: 16px;
+            width: 36px; height: 36px;
+            background: white; border: 1px solid var(--border);
+            border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; color: var(--text-2); cursor: pointer; z-index: 9990;
+            transition: all 0.2s;
+        }
+        #rpToggleBtn:hover { background: var(--red-light); color: var(--red); border-color: var(--red-border); }
+
+        /* ───────────── NEARBY MODAL ───────────── */
+        .nearby-modal {
+            position: fixed; inset: 0; z-index: 19000;
+            display: none; align-items: flex-start; justify-content: flex-end;
+            padding: calc(var(--topbar-h) + 12px) 12px 0 0;
+        }
+        .nearby-modal.open { display: flex; }
+        .nearby-modal-inner {
+            background: var(--surface); border-radius: var(--radius);
+            box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+            border: 1px solid var(--border);
+            width: 320px; max-height: 480px;
+            display: flex; flex-direction: column; overflow: hidden;
+            animation: slideDown 0.22s ease;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .nm-head {
+            display: flex; align-items: center; gap: 9px;
+            padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+        }
+        .nm-head-title { font-size: 13px; font-weight: 700; color: var(--text); flex: 1; display: flex; align-items: center; gap: 7px; }
+        .nm-head-title i { color: var(--green); }
+        .nm-close {
+            width: 28px; height: 28px; background: none; border: none;
+            border-radius: 8px; cursor: pointer; color: var(--text-2);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+        }
+        .nm-close:hover { background: #f3f4f6; }
+        .nm-locate-row {
+            padding: 11px 16px; border-bottom: 1px solid #f3f4f6;
+            display: flex; align-items: center; gap: 9px;
+        }
+        .nm-locate-btn {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+            background: var(--blue); color: white; border: none;
+            border-radius: 9px; padding: 8px 14px;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .nm-locate-btn:hover { background: #1e40af; }
+        .nm-locate-btn.locating { background: var(--text-3); cursor: not-allowed; }
+        .nm-body { flex: 1; overflow-y: auto; padding: 10px 12px 12px; }
+        .nm-empty { font-size: 12px; color: var(--text-3); text-align: center; padding: 16px 0; line-height: 1.6; }
+
+        .nm-item {
+            display: flex; align-items: center; gap: 9px; padding: 9px 10px;
+            border-radius: 10px; background: #f9fafb; border: 1px solid var(--border);
+            cursor: pointer; transition: all 0.18s; margin-bottom: 7px;
+        }
+        .nm-item:hover { background: #fff7ed; border-color: #fed7aa; }
+        .nm-item.top { background: #fff7ed; border-color: #fb923c; }
+        .nm-item:last-child { margin-bottom: 0; }
+        .nm-rank {
+            width: 22px; height: 22px; border-radius: 50%; background: #e5e7eb;
+            color: var(--text-2); font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .nm-item.top .nm-rank { background: #f97316; color: white; }
+        .nm-info { flex: 1; min-width: 0; }
+        .nm-name { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .nm-dist { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+        .nm-item.top .nm-dist { color: #f97316; font-weight: 600; }
+        .nm-go {
+            width: 26px; height: 26px; border-radius: 7px; background: #e5e7eb;
+            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            color: var(--text-2); font-size: 12px; transition: all 0.18s; flex-shrink: 0;
+        }
+        .nm-go:hover { background: #f97316; color: white; }
+        .nm-item.top .nm-go { background: #f97316; color: white; }
+
+        /* ───────────── KECAMATAN LABELS ───────────── */
+        .kec-label {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 9px; font-weight: 800; color: #111827;
+            text-shadow: -1px -1px 0 rgba(255,255,255,0.9), 1px 1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9);
+            white-space: nowrap; pointer-events: none;
+            letter-spacing: 0.3px; text-transform: uppercase;
+        }
+
+        /* ───────────── PUSKESMAS MARKERS ───────────── */
+        .puskes-pin {
+            background: var(--green); width: 30px; height: 30px;
+            border-radius: 50%; border: 2.5px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 15px;
+        }
+        .puskes-pin.nearest {
+            background: #f97316; border: 3px solid white;
+            box-shadow: 0 0 0 4px rgba(249,115,22,0.3), 0 3px 10px rgba(0,0,0,0.3);
+            width: 36px; height: 36px; font-size: 17px;
+            animation: pulse-near 2s infinite;
+        }
+        @keyframes pulse-near {
+            0%,100% { box-shadow: 0 0 0 4px rgba(249,115,22,0.3), 0 3px 10px rgba(0,0,0,0.3); }
+            50%      { box-shadow: 0 0 0 10px rgba(249,115,22,0.08), 0 3px 10px rgba(0,0,0,0.3); }
+        }
+
+        /* ───────────── USER LOCATION ───────────── */
+        .user-dot {
+            width: 16px; height: 16px; background: var(--blue);
+            border-radius: 50%; border: 2.5px solid white;
+            box-shadow: 0 0 0 5px rgba(29,78,216,0.2), 0 2px 8px rgba(0,0,0,0.25);
+            animation: pulse-user 2.5s infinite;
+        }
+        @keyframes pulse-user {
+            0%,100% { box-shadow: 0 0 0 5px rgba(29,78,216,0.2), 0 2px 8px rgba(0,0,0,0.25); }
+            50%      { box-shadow: 0 0 0 12px rgba(29,78,216,0.06), 0 2px 8px rgba(0,0,0,0.25); }
+        }
+
+        /* ───────────── TOAST ───────────── */
+        .toast {
+            position: fixed; bottom: 90px; left: 50%;
+            transform: translateX(-50%) translateY(12px);
+            background: #1f2937; color: white; padding: 9px 18px;
+            border-radius: 10px; font-size: 12px; font-weight: 500;
+            z-index: 99999; opacity: 0; transition: all 0.25s;
+            pointer-events: none; white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ───────────── POPUP KECAMATAN (foto) ───────────── */
+        .kec-popup-img {
+            width: 100%; height: 120px; object-fit: cover;
+            display: block; border-radius: 6px 6px 0 0;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        }
+        .kec-popup-img-ph {
+            width: 100%; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 4px;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        }
+        .kec-popup-img-ph i { font-size: 22px; color: #d1d5db; }
+        .kec-popup-img-ph span { font-size: 10px; color: #9ca3af; }
+
+        /* Boundary layer (visible borders) */
+        /* Leaflet will handle via geoJSON */
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+    <div class="logo-wrap">
+        <img src="../assets/logo/GEODBD.png" alt="Logo" class="topbar-logo">
+        <div class="logo-text">
+            <h2>Aeris</h2>
+            <p>Kota Surabaya</p>
+        </div>
+    </div>
+
+    <div class="topbar-divider"></div>
+
+    <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Cari kecamatan atau puskesmas...">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <div class="topbar-actions">
+        <!-- Puskesmas Terdekat (moved here) -->
+        <button class="tb-nearby-btn" id="nearbyToggleBtn">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            Puskesmas Terdekat
+        </button>
+
+        <!-- Toggle right panel -->
+        <button class="tb-btn" id="rpToggleBtn" title="Sembunyikan/Tampilkan Panel">
+            <i class="fa-solid fa-sidebar" id="rpToggleIcon"></i>
+            Panel
+        </button>
+
+        <!-- Dashboard link -->
+        <a href="../index.html" style="text-decoration:none;">
+            <button class="tb-btn">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </button>
+        </a>
+    </div>
+</header>
+
+<!-- SIDEBAR FAB -->
+<button class="sidebar-fab" id="sidebarFab">
+    <i class="fa-solid fa-layer-group"></i>
+</button>
+
+<!-- SIDEBAR PANEL -->
+<aside class="sidebar-panel" id="sidebarPanel">
+    <div class="sidebar-header">
+        <h3><i class="fa-solid fa-layer-group"></i> Daftar Peta</h3>
+        <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sidebar-content">
+        <div class="sec-label">Peta Tematik</div>
+
+        <div class="layer-card" data-layer="risiko-dbd">
+            <div class="layer-info">
+                <div class="layer-icon li-red"><i class="fa-solid fa-virus"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Risiko DBD</h4>
+                    <p>Insiden Rate per kecamatan (2020–2024)</p>
+                </div>
+            </div>
+            <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
+        </div>
+
+        <div class="layer-card" data-layer="rawan-banjir">
+            <div class="layer-info">
+                <div class="layer-icon li-cyan"><i class="fa-solid fa-droplet"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Rawan Genangan</h4>
+                    <p>Area rawan genangan</p>
+                </div>
+            </div>
+            <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
+        </div>
+
+        <div class="layer-card" data-layer="curah-hujan">
+            <div class="layer-info">
+                <div class="layer-icon li-blue"><i class="fa-solid fa-cloud-rain"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Curah Hujan</h4>
+                    <p>Distribusi curah hujan (2020–2025)</p>
+                </div>
+            </div>
+            <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
+        </div>
+
+        <div class="layer-card" data-layer="kepadatan">
+            <div class="layer-info">
+                <div class="layer-icon li-purple"><i class="fa-solid fa-users"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Kepadatan Penduduk</h4>
+                    <p>Densitas penduduk per km² (2020–2024)</p>
+                </div>
+            </div>
+            <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
+        </div>
+
+        <div class="layer-card" data-layer="puskesmas">
+            <div class="layer-info">
+                <div class="layer-icon li-green"><i class="fa-solid fa-hospital"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Puskesmas</h4>
+                    <p>Lokasi 63 Puskesmas di Surabaya</p>
+                </div>
+            </div>
+            <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
+        </div>
+
+        <div class="sec-divider"></div>
+        <div class="sec-label">Lapisan Dasar</div>
+
+        <div class="layer-card active" data-layer="base-osm">
+            <div class="layer-info">
+                <div class="layer-icon li-orange"><i class="fa-solid fa-map"></i></div>
+                <div class="layer-text">
+                    <h4>Peta Dasar</h4>
+                    <p>OpenStreetMap</p>
+                </div>
+            </div>
+            <input type="radio" name="basemap" class="toggle-checkbox" data-layer-type="base" checked>
+        </div>
+
+        <div class="layer-card" data-layer="satelit">
+            <div class="layer-info">
+                <div class="layer-icon li-gray"><i class="fa-solid fa-satellite"></i></div>
+                <div class="layer-text">
+                    <h4>Satelit</h4>
+                    <p>Citra Satelit</p>
+                </div>
+            </div>
+            <input type="radio" name="basemap" class="toggle-checkbox" data-layer-type="base">
+        </div>
+
+        <div class="layer-card" data-layer="hybrid">
+            <div class="layer-info">
+                <div class="layer-icon li-blue"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="layer-text">
+                    <h4>Hybrid</h4>
+                    <p>Gabungan Peta &amp; Satelit</p>
+                </div>
+            </div>
+            <input type="radio" name="basemap" class="toggle-checkbox" data-layer-type="base">
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+    <!-- MAP -->
+    <div id="map">
+        <div class="year-badge" id="yearBadge">2024</div>
+        <div class="year-notice" id="yearNotice">Data hanya tersedia 2020–2024</div>
+        <div class="map-legend" id="mapLegend">
+            <div class="legend-title" id="legendTitle"><i class="fa-solid fa-circle-info"></i> Legenda</div>
+            <div id="legendItems"></div>
+        </div>
+        <div class="map-timeline" id="mapTimeline">
+            <button class="tl-play" id="tlPlay"><i class="fa-solid fa-play"></i></button>
+            <div class="tl-slider-wrap">
+                <div class="tl-track"><div class="tl-progress" id="tlProgress"></div></div>
+                <div class="tl-points" id="tlPoints"></div>
+            </div>
+            <select class="tl-year-sel" id="tlYearSel"></select>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel" id="rightPanel">
+        <div class="rp-inner" id="rpInner">
+
+            <!-- Informasi Kecamatan -->
+            <div class="rp-card">
+                <div class="rp-card-head">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Informasi Kecamatan</span>
+                </div>
+                <!-- Year chip selector -->
+                <div class="year-chip-row" id="yearChipRow">
+                    <span style="font-size:10px;color:var(--text-3);font-weight:600;margin-right:2px;">Tahun:</span>
+                </div>
+                <select class="rp-kec-sel" id="rpKecSelect">
+                    <option value="">Pilih Kecamatan...</option>
+                </select>
+                <div class="rp-kec-empty" id="rpKecEmpty">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <p>Pilih kecamatan pada peta<br>atau dropdown di atas</p>
+                </div>
+                <div class="rp-kec-info" id="rpKecInfo">
+                    <!-- Photo placeholder — replace src with actual path when available -->
+                    <div class="rp-kec-photo-placeholder" id="rpKecPhotoPh">
+                        <i class="fa-solid fa-image"></i>
+                        <span>Foto Kecamatan</span>
+                    </div>
+                    <div style="padding:12px 14px 14px;">
+                        <div class="rp-kec-name" id="rpKecName">
+                            Kecamatan
+                            <span class="kec-badge" id="rpKecBadge">—</span>
+                        </div>
+                        <div class="kec-stats">
+                            <div class="kec-stat">
+                                <label>IR DBD / 100.000</label>
+                                <div class="val accent" id="rpKecRisiko">—</div>
+                            </div>
+                            <div class="kec-stat">
+                                <label>Kasus DBD</label>
+                                <div class="val" id="rpKecKasus">—</div>
+                            </div>
+                            <div class="kec-stat">
+                                <label>Luas Wilayah</label>
+                                <div class="val" id="rpKecLuas">—</div>
+                            </div>
+                            <div class="kec-stat">
+                                <label>Jumlah Penduduk</label>
+                                <div class="val" id="rpKecPenduduk">—</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik Kota -->
+            <div class="rp-card">
+                <div class="rp-card-head">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <span>Statistik Kota Surabaya</span>
+                    <span style="margin-left:auto;font-size:10px;color:var(--text-3);" id="rpStatYearLabel">Tahun 2024</span>
+                </div>
+                <div class="rp-stats-grid">
+                    <div class="rp-stat-box">
+                        <label>Total Kasus DBD</label>
+                        <div class="sv accent" id="rpStatKasus">—</div>
+                        <div class="sc" id="rpStatKasusChange"></div>
+                    </div>
+                    <div class="rp-stat-box">
+                        <label>Risiko Tinggi</label>
+                        <div class="sv accent" id="rpStatRisikoTinggi">—</div>
+                        <div class="sub">dari 31 kecamatan</div>
+                    </div>
+                    <div class="rp-stat-box">
+                        <label>Total Penduduk</label>
+                        <div class="sv" id="rpStatPenduduk">—</div>
+                        <div class="sub">jiwa</div>
+                    </div>
+                    <div class="rp-stat-box">
+                        <label>Luas Wilayah</label>
+                        <div class="sv" id="rpStatLuas">—</div>
+                        <div class="sub">km²</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafik DBD -->
+            <div class="rp-card">
+                <div class="rp-chart-head">
+                    <div class="rp-chart-title"><i class="fa-solid fa-chart-line"></i> Grafik Kasus DBD</div>
+                    <div class="rp-chart-sub">5 Tahun Terakhir</div>
+                </div>
+                <div class="rp-chart-body"><canvas id="dbdChart" height="120"></canvas></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- NEARBY MODAL (top-right dropdown) -->
+<div class="nearby-modal" id="nearbyModal">
+    <div class="nearby-modal-inner">
+        <div class="nm-head">
+            <div class="nm-head-title"><i class="fa-solid fa-hospital"></i> Puskesmas Terdekat</div>
+            <button class="nm-close" id="nearbyClose"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="nm-locate-row">
+            <button class="nm-locate-btn" id="nmLocateBtn">
+                <i class="fa-solid fa-location-crosshairs"></i>
+                <span id="nmLocateTxt">Temukan Lokasi Saya</span>
+            </button>
+        </div>
+        <div class="nm-body">
+            <div class="nm-empty" id="nmNearbyList">
+                Tekan tombol di atas untuk mencari<br>puskesmas terdekat dari posisi Anda.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+
+// ─── PUSKESMAS DATA ───────────────────────────────────────────────────
+const puskesmasData = [
+    { nama:"Puskesmas Tanjungsari",        alamat:"Jl. Raya Tanjungsari No 116",               kepala:"dr. Yunita Andriani",              telp:"(031) 749-7858",     lat:-7.259593103553289,  lng:112.68936350293139 },
+    { nama:"Puskesmas Simomulyo",           alamat:"Jl. Gumuk Bogo No 1",                       kepala:"dr. Eko Apriyanto",                telp:"(031) 531-2201",     lat:-7.262256781805298,  lng:112.71177585317017 },
+    { nama:"Puskesmas Manukan Kulon",       alamat:"Jl. Manukan Dalam No. 12",                  kepala:"dr. Lolita Riamawati M.Kes",       telp:"(031) 740-5982",     lat:-7.262743352532427,  lng:112.66890620674666 },
+    { nama:"Puskesmas Balongsari",          alamat:"Jl. Balongsari Tama No. 2",                 kepala:"dr. Dewi Ayuning Asih",            telp:"(031) 741-7104",     lat:-7.259084607439175,  lng:112.67830857791108 },
+    { nama:"Puskesmas Asemrowo",            alamat:"Jl. Asem Raya No. 8",                       kepala:"dr. Dwiastuti Setyorini",          telp:"(031) 545-6122",     lat:-7.251682119272992,  lng:112.71427264907557 },
+    { nama:"Puskesmas Sememi",              alamat:"Jl. Raya Kendung",                          kepala:"dr. Ratih Sekar Ayu, M.Kes",       telp:"(031) 741-3631",     lat:-7.248228045786106,  lng:112.6354801374311  },
+    { nama:"Puskesmas Benowo",              alamat:"Jl. Raya Benowo No. 48",                    kepala:"dr. Aloysius Tri Joehanto M.H",    telp:"(031) 740-5936",     lat:-7.234741357288718,  lng:112.61149917975999 },
+    { nama:"Puskesmas Jeruk",               alamat:"Jl. Raya Menganti Jeruk No. 277A",          kepala:"drg. Harjanti",                    telp:"(031) 752-1680",     lat:-7.30518431896234,   lng:112.63837677791109 },
+    { nama:"Puskesmas Lidah Kulon",         alamat:"Jl. Raya Menganti Lidah Kulon No. 1111A",   kepala:"dr. Winartuti Santoso M.Kes",      telp:"(031) 753-3544",     lat:-7.306278069275388,  lng:112.66137107606222 },
+    { nama:"Puskesmas Lontar",              alamat:"Jl. Raya Lontar No. 26",                    kepala:"dr. Maulidina Fitria Ning Tiyas",  telp:"(031) 752-2874",     lat:-7.284967834339034,  lng:112.66289386441777 },
+    { nama:"Puskesmas Peneleh",             alamat:"Jl. Makam Peneleh No. 35",                  kepala:"dr. Ayu Ekanita Hendrayani, M.Kes",telp:"(031) 534-3473",    lat:-7.252137404399636,  lng:112.74066292024    },
+    { nama:"Puskesmas Ketabang",            alamat:"Jl. Jaksa Agung Suprapto No.10",            kepala:"dr. Febria Sukmaini",              telp:"0831-4425-0099",     lat:-7.257818749677187,  lng:112.74682745092448 },
+    { nama:"Puskesmas Kedungdoro",          alamat:"Jl. Kaliasin Gg. Pompa No. 79-81",          kepala:"dr. Yessy Pebriaty Sukatendel",    telp:"(031) 534-5968",     lat:-7.263402680278279,  lng:112.73821390674672 },
+    { nama:"Puskesmas Dr. Soetomo",         alamat:"Jl. Grudo 5 No 2",                          kepala:"dr. Murtiningrum",                 telp:"(031) 995-48131",    lat:-7.277278088190705,  lng:112.73650044907556 },
+    { nama:"Puskesmas Tembok Dukuh",        alamat:"Jl. Kalibutuh No. 26",                      kepala:"drg. Tiyas Pranadani",             telp:"(031) 534-3410",     lat:-7.25437899128077,   lng:112.71918979325334 },
+    { nama:"Puskesmas Gundih",              alamat:"Jl. Margodadi No. 36-38",                   kepala:"drg. Siti Rozaemah, M.Kes",        telp:"(031) 547-6275",     lat:-7.247214654955935,  lng:112.72527775507336 },
+    { nama:"Puskesmas Tambakrejo",          alamat:"Jl. Ngaglik No. 87",                        kepala:"drg. Yekti Hapsari",               telp:"(031) 371-5539",     lat:-7.245633056573014,  lng:112.75592381314449 },
+    { nama:"Puskesmas Simolawang",          alamat:"Jl. Simolawang II Barat No. 45",            kepala:"dr. Ali Husni, M.Kes",             telp:"(031) 371-7433",     lat:-7.234548809880975,  lng:112.75114017791111 },
+    { nama:"Puskesmas Perak Timur",         alamat:"Jl. Perak Barat No. 29",                    kepala:"dr. Anggraini Dian Prameswari",    telp:"(031) 352-4247",     lat:-7.230582982011823,  lng:112.72860574907556 },
+    { nama:"Puskesmas Pegirian",            alamat:"Jl. Wonosari No.4-8",                       kepala:"dr. Retno Widayanti",              telp:"(031) 376-6179",     lat:-7.223250217055578,  lng:112.74959757976    },
+    { nama:"Puskesmas Sidotopo",            alamat:"Jl. Pegirian No. 239",                      kepala:"dr. Susan Dani Suryono, M.Kes",    telp:"(031) 376-7735",     lat:-7.230120420696853,  lng:112.74589010674667 },
+    { nama:"Puskesmas Wonokusumo",          alamat:"Jl. Wonokusumo Tengah No. 55",              kepala:"dr. Dania Rahmawati",              telp:"(031) 371-7597",     lat:-7.219480802604362,  lng:112.75256909325333 },
+    { nama:"Puskesmas Krembangan Selatan",  alamat:"Jl. Pesapen Selatan No. 70",                kepala:"dr. Raden Muhammad Ali Satria",    telp:"0812-4973-1443",     lat:-7.233002209133412,  lng:112.73124257975999 },
+    { nama:"Puskesmas Dupak",               alamat:"Jl. Dupak Bangunrejo Gg. Poliklinik No. 6", kepala:"dr. Heni May Yunanti",             telp:"(031) 353-1009",     lat:-7.239089868766292,  lng:112.7171221337333  },
+    { nama:"Puskesmas Kenjeran",            alamat:"Jl. Tambak Deres No. 2",                    kepala:"dr. Rosna Suswanti",               telp:"0895-1535-6046",     lat:-7.240902386027687,  lng:112.79512572024    },
+    { nama:"Puskesmas Tanah Kali Kedinding",alamat:"Jl. H. M. Noer 226",                        kepala:"dr. Era Kartikawati",              telp:"(031) 381-5347",     lat:-7.229946707656953,  lng:112.7744978779111  },
+    { nama:"Puskesmas Sidotopo Wetan",      alamat:"Jl. Randu No. 102",                         kepala:"dr. Evi Susanti, M.M",             telp:"(031) 376-7737",     lat:-7.226384825149911,  lng:112.76337578773114 },
+    { nama:"Puskesmas Rangkah",             alamat:"Jl. Rangkah VII/94",                        kepala:"dr. Tienne Soeleman Caecilia Monica",telp:"(031) 371-0064",  lat:-7.246057901742112,  lng:112.76721544907555 },
+    { nama:"Puskesmas Pacarkeling",         alamat:"Jl. Jolotundo Baru III/16",                 kepala:"dr. Bernadetta Martini",           telp:"0812-5981-9584",     lat:-7.256186023898944,  lng:112.76202026904343 },
+    { nama:"Puskesmas Gading",              alamat:"Jl. Kapas Lor Gg. I/1",                     kepala:"dr. Dwi Sapta Edy Purnama",        telp:"(031) 376-7736",     lat:-7.24225381360773,   lng:112.76403614907555 },
+    { nama:"Puskesmas Pucangsewu",          alamat:"Jl. Pucang Anom Timur No. 72",              kepala:"drg. Ummi Latifah",                telp:"(031) 501-8527",     lat:-7.286336477197697,  lng:112.75556449140447 },
+    { nama:"Puskesmas Mojo",                alamat:"Jl. Mojo Klanggru Wetan II No. 11",         kepala:"dr. Ratna Megasari, M.Kes",        telp:"(031) 593-2332",     lat:-7.2706069550528865, lng:112.77090373558222 },
+    { nama:"Puskesmas Kalirungkut",         alamat:"Jl. Rungkut Puskesmas No. 1",               kepala:"dr. Tatien Tjahjandari",           telp:"(031) 870-0668",     lat:-7.322004611070048,  lng:112.77078645092445 },
+    { nama:"Puskesmas Medokan Ayu",         alamat:"Jl. Medokan Asri Utara IV/31",              kepala:"dr. Dini Octavia Sitaresmi",       telp:"(031) 872-0080",     lat:-7.323990218569452,  lng:112.79476573373333 },
+    { nama:"Puskesmas Tenggilis",           alamat:"Jl. Rungkut Mejoyo Selatan IV No 1A",       kepala:"dr. Heni Agustina",                telp:"(031) 849-0234",     lat:-7.32208276306881,   lng:112.76216979325332 },
+    { nama:"Puskesmas Gunung Anyar",        alamat:"Jl. Gunung Anyar Timur No. 70",             kepala:"dr. Lucas Wisnuaji",               telp:"(031) 870-7475",     lat:-7.340516725086171,  lng:112.78394159325332 },
+    { nama:"Puskesmas Menur",               alamat:"Jl. Manyar Rejo I/35",                      kepala:"dr. Medyana Puspita",              telp:"(031) 594-8677",     lat:-7.296651307821263,  lng:112.76413681839112 },
+    { nama:"Puskesmas Klampis Ngasem",      alamat:"Jl. Arif Rahman Hakim No. 99B",             kepala:"drg. Esti Wuryaningtyas",          telp:"(031) 599-2389",     lat:-7.288958120542418,  lng:112.7785927374311  },
+    { nama:"Puskesmas Mulyorejo",           alamat:"Jl. Mulyorejo Utara Belakang No. 201",      kepala:"dr. Erna Mindarti",                telp:"(031) 381-6885",     lat:-7.260457722428183,  lng:112.78482320674668 },
+    { nama:"Puskesmas Sawahan",             alamat:"Jl. Arjuno No. 119",                        kepala:"drg. Farida Rahayu Sulistyowati",  telp:"(031) 534-2375",     lat:-7.26540775289743,   lng:112.72765863558223 },
+    { nama:"Puskesmas Putat Jaya",          alamat:"Jl. Kupang Gunung V Raya No. 16",           kepala:"dr. Anna Ujihandayani",            telp:"(031) 568-7837",     lat:-7.281217305573555,  lng:112.72225784722666 },
+    { nama:"Puskesmas Banyu Urip",          alamat:"Jl. Banyu Urip Kidul VI/8",                 kepala:"dr. Nina Apriyanti, M.Kes",        telp:"(031) 561-5292",     lat:-7.271432040488875,  lng:112.71998609325334 },
+    { nama:"Puskesmas Pakis",               alamat:"Jl. Makam Kembang Kuning No.6",             kepala:"dr. Wahyu Ika Yuni Kusuma, M.Kes", telp:"(031) 563-2985",     lat:-7.281774235320357,  lng:112.72803162464159 },
+    { nama:"Puskesmas Jagir",               alamat:"Jl. Bendul Merisi No. 1",                   kepala:"dr. Dessy Jumiaty Setia",          telp:"(031) 841-6926",     lat:-7.305466127806164,  lng:112.73768044907557 },
+    { nama:"Puskesmas Wonokromo",           alamat:"Jl. Karang Rejo VI/4",                      kepala:"drg. Dwiana Yuniarti",             telp:"(031) 828-1647",     lat:-7.303046835721098,  lng:112.73043042208884 },
+    { nama:"Puskesmas Ngagel Rejo",         alamat:"Jl. Ngagel Dadi III/17",                    kepala:"drg. Anita Susiami",               telp:"(031) 504-7055",     lat:-7.2928025063113315, lng:112.74879535092445 },
+    { nama:"Puskesmas Kedurus",             alamat:"Jl. Raya Mastrip No. 46",                   kepala:"dr. Ratnaika Wahdini",             telp:"(031) 766-3237",     lat:-7.319437744378026,  lng:112.70960658778463 },
+    { nama:"Puskesmas Dukuh Kupang",        alamat:"Jl. Dukuh Kupang Raya XXV/48",              kepala:"dr. Khusnul Khowatin",             telp:"(031) 567-7615",     lat:-7.283129160250555,  lng:112.71216196441777 },
+    { nama:"Puskesmas Wiyung",              alamat:"Jl. Menganti Wiyung Gg. Pasar No. 20",      kepala:"dr. Suluh Rahardjo",               telp:"(031) 753-2885",     lat:-7.314645082741734,  lng:112.69393206441777 },
+    { nama:"Puskesmas Gayungan",            alamat:"Jl. Gayungsari Barat 124",                  kepala:"drg. Harijanti Judaningsih",       telp:"(031) 829-0043",     lat:-7.337892701158012,  lng:112.71876310859555 },
+    { nama:"Puskesmas Jemursari",           alamat:"Jl. Jemursari Selatan IV/5",                kepala:"dr. Galih Satryo Utomo",           telp:"(031) 841-4743",     lat:-7.325864430550119,  lng:112.74010567975999 },
+    { nama:"Puskesmas Sidosermo",           alamat:"Jl. Sidosermo Gg. Damri No. 51",            kepala:"dr. Arista Agung Santoso",         telp:"(031) 841-5967",     lat:-7.307085178719862,  lng:112.75582805277331 },
+    { nama:"Puskesmas Kebonsari",           alamat:"Jl. Kebonsari Manunggal No. 30-32",         kepala:"dr. Endah Retnaningtyas",          telp:"(031) 829-4420",     lat:-7.328252843834857,  lng:112.71426672208887 },
+    { nama:"Puskesmas Bangkingan",          alamat:"Jl. Bangkingan Pesarean No 3-4",            kepala:"dr. Tri Indah Rachmawati",         telp:"(031) 766-5218",     lat:-7.324582894956311,  lng:112.65621462208887 },
+    { nama:"Puskesmas Made",                alamat:"Jl. Made No. 116",                          kepala:"dr. RR. Endang Dwihastutiningsih", telp:"(031) 744-0828",     lat:-7.277118815343012,  lng:112.63692956256887 },
+    { nama:"Puskesmas Moro Krembangan",     alamat:"Jl. Kalianak 151",                          kepala:"dr. Nurul Lailah M.Kes",           telp:"(031) 749-3259",     lat:-7.23019856425834,   lng:112.71056296441778 },
+    { nama:"Puskesmas Tambak Wedi",         alamat:"Jl. Tambak Wedi Baru No. 96",               kepala:"drg. Ilfin Martiana",              telp:"(031) 374-1187",     lat:-7.217098459865852,  lng:112.77243611586232 },
+    { nama:"Puskesmas Bulak Banteng",       alamat:"Jl. Dukuh Bulak Banteng",                   kepala:"dr. Tanti Melania",                telp:"(031) 376-5209",     lat:-7.217552676949104,  lng:112.76623506441773 },
+    { nama:"Puskesmas Keputih",             alamat:"Jl. Keputih Tegal No. 19",                  kepala:"dr. Tita Pusparini, M. Kes",       telp:"(031) 5820-1517",    lat:-7.293903706743262,  lng:112.80174939140443 },
+    { nama:"Puskesmas Kalijudan",           alamat:"Jl. Kalijudan No.123",                      kepala:"dr. Ageng Rusbaya",                telp:"0852-3546-2304",     lat:-7.257163763908457,  lng:112.77803153558222 },
+    { nama:"Puskesmas Balas Klumprik",      alamat:"Jl. Raya Balas Klumprik",                   kepala:"dr. Denti Lina Rouli Tumanggor",   telp:"(031) 766-5219",     lat:-7.331326598097141,  lng:112.68966537791113 },
+    { nama:"Puskesmas Siwalankerto",        alamat:"Jl. Siwalankerto No. 134",                  kepala:"dr. Sri Hawati",                   telp:"(031) 848-2487",     lat:-7.340245140276446,  lng:112.7364638017382  },
+    { nama:"Puskesmas Sawah Pulo",          alamat:"Jl. Sawah Pulo Lapangan No. 2",             kepala:"dr. Gerryd Dina Soepardi",         telp:"(031) 329-6128",     lat:-7.222786366374042,  lng:112.74464320859553 },
+];
+
+// ─── FOTO KECAMATAN (isi path foto jika tersedia) ─────────────────────
+// Format: "Nama Kecamatan": "path/ke/foto.jpg"
+// Jika tidak ada, placeholder akan ditampilkan
+const kecamatanFoto = {
+    // contoh:
+    // "Tambaksari": "../assets/foto/tambaksari.jpg",
+    // "Rungkut":    "../assets/foto/rungkut.jpg",
+};
+
+// ─── STATE & GLOBALS ─────────────────────────────────────────────────
+const LAYER_YEARS = {
+    'curah-hujan': [2020,2021,2022,2023,2024,2025],
+    'risiko-dbd':  [2020,2021,2022,2023,2024],
+    'kepadatan':   [2020,2021,2022,2023,2024]
+};
+let currentYear = 2024, currentActiveLayer = null;
+let curahHujanLayer=null, risikoDbdLayer=null, kepadatanLayer=null, puskesmasLayer=null, labelLayerGroup=null;
+let isCurahHujanActive=false, isRisikoDbdActive=false, isKepadatanActive=false, isPuskesmasActive=false;
+const geoJsonCache = {};
+let surabayaDataCache = null;
+let kecamatanList = [];
+let rpCurrentYear = 2024;
+let rpPanelVisible = true;
+let userLatLng = null, userLocationMarker=null, userLocationCircle=null;
+const puskesmasMarkerMap = new Map();
+
+// ─── TOAST ───────────────────────────────────────────────────────────
+function showToast(msg, dur=2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ─── MAP INIT ────────────────────────────────────────────────────────
+const map = L.map('map', { zoomControl: false }).setView([-7.290293, 112.727040], 12);
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+L.control.scale({ position: 'bottomleft', imperial: false, metric: true }).addTo(map);
+
+const osmLayer     = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+const satelitLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: '&copy; Esri' });
+const hybridLayer  = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { attribution: '&copy; Google' });
+
+// ─── RIGHT PANEL TOGGLE ───────────────────────────────────────────────
+const rightPanel  = document.getElementById('rightPanel');
+const rpToggleBtn = document.getElementById('rpToggleBtn');
+const rpToggleIcon= document.getElementById('rpToggleIcon');
+
+rpToggleBtn.addEventListener('click', () => {
+    rpPanelVisible = !rpPanelVisible;
+    rightPanel.classList.toggle('hidden', !rpPanelVisible);
+    rpToggleIcon.className = rpPanelVisible ? 'fa-solid fa-sidebar' : 'fa-solid fa-sidebar-flip';
+    setTimeout(() => map.invalidateSize(), 360);
+});
+
+// ─── NEARBY MODAL ─────────────────────────────────────────────────────
+const nearbyModal     = document.getElementById('nearbyModal');
+const nearbyToggleBtn = document.getElementById('nearbyToggleBtn');
+const nearbyClose     = document.getElementById('nearbyClose');
+
+nearbyToggleBtn.addEventListener('click', () => nearbyModal.classList.toggle('open'));
+nearbyClose.addEventListener('click', () => nearbyModal.classList.remove('open'));
+document.addEventListener('click', e => {
+    if (!nearbyModal.contains(e.target) && e.target !== nearbyToggleBtn && !nearbyToggleBtn.contains(e.target)) {
+        nearbyModal.classList.remove('open');
+    }
+});
+
+// ─── SIDEBAR ─────────────────────────────────────────────────────────
+const sidebarPanel = document.getElementById('sidebarPanel');
+const sidebarFab   = document.getElementById('sidebarFab');
+document.getElementById('sidebarClose').addEventListener('click', () => { sidebarPanel.classList.remove('active'); sidebarFab.classList.remove('active'); setTimeout(() => map.invalidateSize(), 380); });
+sidebarFab.addEventListener('click', () => { sidebarPanel.classList.toggle('active'); sidebarFab.classList.toggle('active'); setTimeout(() => map.invalidateSize(), 380); });
+
+// ─── YEAR CHIPS ───────────────────────────────────────────────────────
+function buildYearChips(years = [2020,2021,2022,2023,2024]) {
+    const row = document.getElementById('yearChipRow');
+    const labelEl = row.querySelector('span');
+    row.innerHTML = '';
+    row.appendChild(labelEl);
+    years.forEach(y => {
+        const chip = document.createElement('button');
+        chip.className = 'year-chip' + (y === rpCurrentYear ? ' active' : '');
+        chip.textContent = y;
+        chip.addEventListener('click', () => {
+            rpCurrentYear = y;
+            row.querySelectorAll('.year-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            updateRightPanelStats(y);
+            if (currentActiveLayer && LAYER_YEARS[currentActiveLayer]?.includes(y)) {
+                setYearIndex(LAYER_YEARS[currentActiveLayer].indexOf(y));
+            }
+            const kecSel = document.getElementById('rpKecSelect').value;
+            if (kecSel) showKecamatanInfo(kecSel, y);
+        });
+        row.appendChild(chip);
+    });
+}
+buildYearChips();
+
+// ─── CHART ───────────────────────────────────────────────────────────
+let dbdChart = null;
+function initChart() {
+    const ctx = document.getElementById('dbdChart').getContext('2d');
+    dbdChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['2020','2021','2022','2023','2024'],
+            datasets: [{
+                label: 'Kasus DBD',
+                data: [null,null,null,null,null],
+                borderColor: '#970000',
+                backgroundColor: 'rgba(151,0,0,0.07)',
+                pointBackgroundColor: '#970000',
+                pointBorderColor: 'white',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.38,
+                fill: true,
+                borderWidth: 2.5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ' ' + (c.raw ?? '—') + ' kasus' } } },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } } },
+                y: { grid: { color: '#f3f4f6' }, ticks: { font: { family: 'Plus Jakarta Sans', size: 11 } }, beginAtZero: true }
+            }
+        }
+    });
+}
+initChart();
+
+// ─── HELPERS ─────────────────────────────────────────────────────────
+function parseIR(val) {
+    if (val === null || val === undefined || val === '') return 0;
+    return parseFloat(String(val).replace(',', '.')) || 0;
+}
+function getPolygonCentroid(coords) {
+    let tA=0, cx=0, cy=0;
+    for (let ring of coords) {
+        let a=0, rcx=0, rcy=0;
+        for (let i=0; i<ring.length-1; i++) {
+            const [x1,y1]=ring[i],[x2,y2]=ring[i+1];
+            const cross=x1*y2-x2*y1; a+=cross; rcx+=(x1+x2)*cross; rcy+=(y1+y2)*cross;
+        }
+        a/=2;
+        if (a!==0){rcx/=(6*a);rcy/=(6*a);tA+=Math.abs(a);cx+=rcx*Math.abs(a);cy+=rcy*Math.abs(a);}
+    }
+    return tA!==0?[cy/tA,cx/tA]:null;
+}
+function getCentroid(feature) {
+    try {
+        const g=feature.geometry;
+        if (g.type==='Polygon') return getPolygonCentroid(g.coordinates);
+        if (g.type==='MultiPolygon') {
+            let best=null,bestA=0;
+            for (let p of g.coordinates){
+                let a=0;
+                for(let i=0;i<p[0].length-1;i++){const[x1,y1]=p[0][i],[x2,y2]=p[0][i+1];a+=x1*y2-x2*y1;}
+                a=Math.abs(a/2);
+                if(a>bestA){bestA=a;best=p;}
+            }
+            return best?getPolygonCentroid(best):null;
+        }
+    } catch(e){}
+    return null;
+}
+function haversineKm(lat1,lng1,lat2,lng2){
+    const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
+    const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// ─── STATS ───────────────────────────────────────────────────────────
+function computeStats(data, year) {
+    const yr = String(year).slice(2);
+    let kasus=0, risikoT=0, penduduk=0, luas=0;
+    data.features.forEach(f => {
+        const p=f.properties;
+        kasus    += parseInt(p['DBD_'+yr])||0;
+        penduduk += parseInt(p['JPddk_'+yr])||0;
+        luas     += parseFloat(p['Luas'])||0;
+        if (parseIR(p['IR_'+yr]) > 20) risikoT++;
+    });
+    return { kasus, risikoTinggi: risikoT, penduduk, luas };
+}
+
+function updateRightPanelStats(year) {
+    rpCurrentYear = year;
+    document.getElementById('rpStatYearLabel').textContent = 'Tahun ' + year;
+    if (!surabayaDataCache) {
+        ['rpStatKasus','rpStatRisikoTinggi','rpStatPenduduk','rpStatLuas'].forEach(id => document.getElementById(id).textContent='—');
+        document.getElementById('rpStatKasusChange').textContent='';
+        return;
+    }
+    const s = computeStats(surabayaDataCache, year);
+    document.getElementById('rpStatKasus').textContent = s.kasus.toLocaleString('id-ID');
+    document.getElementById('rpStatRisikoTinggi').textContent = s.risikoTinggi;
+    document.getElementById('rpStatPenduduk').textContent = (s.penduduk/1e6).toFixed(2)+' jt';
+    document.getElementById('rpStatLuas').textContent = s.luas.toFixed(1);
+    const chEl = document.getElementById('rpStatKasusChange');
+    if (year > 2020) {
+        const prev = computeStats(surabayaDataCache, year-1);
+        if (prev.kasus > 0) {
+            const pct = ((s.kasus-prev.kasus)/prev.kasus*100).toFixed(0);
+            const up = s.kasus >= prev.kasus;
+            chEl.className = 'sc '+(up?'up':'down');
+            chEl.textContent = (up?'▲ +':'▼ ')+pct+'% vs '+(year-1);
+        } else chEl.textContent='';
+    } else chEl.textContent='';
+    const chartData = {};
+    [2020,2021,2022,2023,2024].forEach(y => { chartData[y]=computeStats(surabayaDataCache,y).kasus; });
+    dbdChart.data.datasets[0].data = [2020,2021,2022,2023,2024].map(y=>chartData[y]??null);
+    dbdChart.update();
+}
+
+// ─── KECAMATAN INFO ───────────────────────────────────────────────────
+function populateKecamatanDropdown(data) {
+    const names = data.features.map(f=>f.properties.Kecamatan??f.properties.KECAMATAN??f.properties.NAME_3??'').filter(Boolean).sort();
+    kecamatanList = data.features.map(f=>({nama:f.properties.Kecamatan??f.properties.KECAMATAN??f.properties.NAME_3??'',feature:f})).filter(x=>x.nama);
+    const sel = document.getElementById('rpKecSelect');
+    const prev = sel.value;
+    sel.innerHTML='<option value="">Pilih Kecamatan...</option>'+names.map(n=>`<option value="${n}">${n}</option>`).join('');
+    if(prev) sel.value=prev;
+}
+
+function getRisiko(ir) {
+    if (ir>49.1) return {label:'Sangat Tinggi', cls:'sangat-tinggi'};
+    if (ir>20)   return {label:'Tinggi',        cls:'tinggi'};
+    if (ir>10)   return {label:'Rendah',        cls:'rendah'};
+    if (ir>0)    return {label:'Sangat Rendah', cls:'sangat-rendah'};
+    return {label:'Tidak Ada Kasus', cls:'tidak-ada'};
+}
+
+function showKecamatanInfo(kecNama, year) {
+    const item = kecamatanList.find(k=>k.nama===kecNama);
+    const emptyEl = document.getElementById('rpKecEmpty');
+    const infoEl  = document.getElementById('rpKecInfo');
+    if (!item) { infoEl.classList.remove('visible'); emptyEl.style.display=''; return; }
+    emptyEl.style.display='none';
+
+    const yr=String(year).slice(2), p=item.feature.properties;
+    const ir=parseIR(p['IR_'+yr]);
+    const risiko=getRisiko(ir);
+
+    // Photo
+    const photoPh = document.getElementById('rpKecPhotoPh');
+    const fotoPath = kecamatanFoto[kecNama];
+    if (fotoPath) {
+        photoPh.innerHTML=`<img src="${fotoPath}" style="width:100%;height:90px;object-fit:cover;" alt="Foto ${kecNama}" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\'></i><span>Foto tidak tersedia</span>'">`;
+    } else {
+        photoPh.innerHTML='<i class="fa-solid fa-image"></i><span>Foto belum tersedia</span>';
+    }
+
+    document.getElementById('rpKecName').childNodes[0].textContent = kecNama+' ';
+    const badge = document.getElementById('rpKecBadge');
+    badge.textContent = risiko.label;
+    badge.className = 'kec-badge '+risiko.cls;
+    document.getElementById('rpKecRisiko').textContent = ir.toFixed(2);
+    const dbd=p['DBD_'+yr]??'—', jpdd=p['JPddk_'+yr]??'—', luas=p['Luas']??'—';
+    document.getElementById('rpKecKasus').textContent   = dbd+(dbd!=='—'?' kasus':'');
+    document.getElementById('rpKecLuas').textContent    = parseFloat(luas).toFixed(2)+' km²';
+    document.getElementById('rpKecPenduduk').textContent= Number(jpdd).toLocaleString('id-ID')+' jiwa';
+    infoEl.classList.add('visible');
+}
+
+document.getElementById('rpKecSelect').addEventListener('change', e => {
+    const val = e.target.value;
+    if (!val) { document.getElementById('rpKecInfo').classList.remove('visible'); document.getElementById('rpKecEmpty').style.display=''; return; }
+    if (!surabayaDataCache) { showToast('⏳ Aktifkan peta DBD terlebih dahulu.'); return; }
+    showKecamatanInfo(val, rpCurrentYear);
+    const item = kecamatanList.find(k=>k.nama===val);
+    if (item) { const c=getCentroid(item.feature); if(c) map.setView(c,14); }
+});
+
+// ─── LABELS ───────────────────────────────────────────────────────────
+function addKecamatanLabels(data) {
+    if (labelLayerGroup) { map.removeLayer(labelLayerGroup); labelLayerGroup=null; }
+    labelLayerGroup = L.layerGroup();
+    data.features.forEach(f => {
+        const nama=f.properties.Kecamatan??f.properties.KECAMATAN??f.properties.NAME_3??'';
+        if (!nama) return;
+        const c=getCentroid(f); if (!c) return;
+        L.marker(c,{
+            icon:L.divIcon({className:'',html:`<div class="kec-label">${nama}</div>`,iconSize:[0,0],iconAnchor:[0,0]}),
+            interactive:false,zIndexOffset:500
+        }).addTo(labelLayerGroup);
+    });
+    labelLayerGroup.addTo(map);
+}
+function removeKecamatanLabels() { if(labelLayerGroup){map.removeLayer(labelLayerGroup);labelLayerGroup=null;} }
+
+// ─── LEGEND ───────────────────────────────────────────────────────────
+const mapLegend=document.getElementById('mapLegend');
+function showLegend(type) {
+    const title=document.getElementById('legendTitle'), items=document.getElementById('legendItems');
+    const templates = {
+        'curah-hujan': {
+            icon:'fa-cloud-rain',color:'#1d4ed8',label:'Curah Hujan (mm/tahun)',
+            items:[['#08306b','Sangat Basah (&gt;3000)'],['#2171b5','Basah (2501–3000)'],['#6baed6','Sedang (2001–2500)'],['#9ecae1','Kering (1501–2000)'],['#c6dbef','Sangat Kering (&lt;1500)']]
+        },
+        'risiko-dbd': {
+            icon:'fa-virus',color:'#970000',label:'Risiko DBD (IR)',
+            items:[['#cc0000','Sangat Tinggi (&gt;49,1)'],['#e05a2b','Tinggi (20,1–49)'],['#e8956d','Rendah (10,1–20)'],['#f2c5a0','Sangat Rendah (0,1–10)'],['#fff','Tidak Ada Kasus']]
+        },
+        'kepadatan': {
+            icon:'fa-users',color:'#7c3aed',label:'Kepadatan (jiwa/km²)',
+            items:[['#cc0000','Sangat Tinggi (&gt;40.001)'],['#e05a2b','Tinggi (20.001–40.000)'],['#e8956d','Sedang (15.000–20.000)'],['#f2c5a0','Rendah (&lt;15.000)']]
+        },
+        'puskesmas': {
+            icon:'fa-hospital',color:'#16a34a',label:'Puskesmas',
+            items:[['#16a34a','Puskesmas (63 lokasi)'],['#f97316','Terdekat dari lokasi Anda']]
+        }
+    };
+    const t=templates[type]; if(!t){mapLegend.classList.remove('visible');return;}
+    title.innerHTML=`<i class="fa-solid ${t.icon}" style="color:${t.color}"></i> ${t.label}`;
+    items.innerHTML=t.items.map(([bg,lbl])=>`<div class="legend-item"><div class="legend-swatch" style="background:${bg};${bg==='#fff'?'border:1px solid #bbb':''}"></div><span class="legend-label">${lbl}</span></div>`).join('');
+    mapLegend.classList.add('visible');
+}
+function hideLegend() { mapLegend.classList.remove('visible'); }
+
+// ─── CURAH HUJAN ──────────────────────────────────────────────────────
+const gridcodeMap={1:{label:'Sangat Kering (< 1500 mm)',mid:1200},2:{label:'Kering (1501–2000 mm)',mid:1750},3:{label:'Sedang (2001–2500 mm)',mid:2250},4:{label:'Basah (2501–3000 mm)',mid:2750},5:{label:'Sangat Basah (> 3000 mm)',mid:3500}};
+function getColorCH(gc){return{1:'#c6dbef',2:'#9ecae1',3:'#6baed6',4:'#2171b5',5:'#08306b'}[gc]??'#eee';}
+function styleCH(f){return{fillColor:getColorCH(f.properties.gridcode),weight:1,opacity:1,color:'#fff',dashArray:'3',fillOpacity:0.75};}
+function onEachCH(f,layer){
+    layer.on({mouseover(e){e.target.setStyle({weight:2.5,color:'#333',fillOpacity:0.9});e.target.bringToFront();},mouseout(e){if(curahHujanLayer)curahHujanLayer.resetStyle(e.target);}});
+    const gc=f.properties.gridcode??0;
+    layer.bindPopup(`<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;min-width:200px;"><div style="background:#1d4ed8;color:white;padding:9px 13px;margin:-13px -20px 11px;border-radius:7px 7px 0 0;"><i class="fa-solid fa-cloud-rain" style="margin-right:6px;"></i><b>Curah Hujan ${currentYear}</b></div><b style="color:#1d4ed8;">${gridcodeMap[gc]?.label??'—'}</b><br><span style="font-size:11px;color:#666;">Estimasi ± ${gridcodeMap[gc]?.mid??0} mm/tahun</span></div>`,{maxWidth:260});
+}
+function loadGeoJSON(year,cb){
+    if(geoJsonCache['ch_'+year]){cb(geoJsonCache['ch_'+year]);return;}
+    const paths=[`../data/geojson/CH_${year}.geojson`,`../data/geojson/CH_${year} .geojson`];
+    showToast(`⏳ Memuat curah hujan ${year}...`);
+    function tryFetch(i){if(i>=paths.length){showToast(`❌ Gagal memuat data ${year}`);return;}fetch(paths[i]).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(d=>{geoJsonCache['ch_'+year]=d;cb(d);}).catch(()=>tryFetch(i+1));}
+    tryFetch(0);
+}
+function renderCH(data,year){
+    if(curahHujanLayer){map.removeLayer(curahHujanLayer);curahHujanLayer=null;}
+    curahHujanLayer=L.geoJSON(data,{style:styleCH,onEachFeature:onEachCH}).addTo(map);
+    map.fitBounds(curahHujanLayer.getBounds(),{padding:[20,20]});
+    showToast(`✅ Curah Hujan ${year} dimuat`);
+}
+function loadCurahHujan(year){loadGeoJSON(year,d=>renderCH(d,year));}
+
+// ─── SURABAYA DATA ────────────────────────────────────────────────────
+function loadSurabayaData(cb){
+    if(surabayaDataCache){cb(surabayaDataCache);return;}
+    showToast('⏳ Memuat data kecamatan...');
+    fetch('../data/geojson/SurabayaData.geojson').then(r=>{if(!r.ok)throw new Error();return r.json();}).then(d=>{
+        surabayaDataCache=d;
+        populateKecamatanDropdown(d);
+        updateRightPanelStats(rpCurrentYear);
+        cb(d);
+    }).catch(()=>showToast('❌ Gagal memuat SurabayaData.geojson'));
+}
+
+// ─── RISIKO DBD ───────────────────────────────────────────────────────
+function getColorDBD(ir){if(ir>49.1)return'#cc0000';if(ir>20)return'#e05a2b';if(ir>10)return'#e8956d';if(ir>0)return'#f2c5a0';return'#ffffff';}
+function styleDBD(f){const ir=parseIR(f.properties['IR_'+String(currentYear).slice(2)]);return{fillColor:getColorDBD(ir),weight:1.2,opacity:1,color:'#ffffff',dashArray:'3',fillOpacity:0.78};}
+function buildKecPopup(nama, yr, p, showFoto=false) {
+    const ir=parseIR(p['IR_'+yr]),dbd=p['DBD_'+yr]??'—',jpdd=p['JPddk_'+yr]??'—';
+    const fotoPath=kecamatanFoto[nama];
+    const fotoHtml = showFoto
+        ? (fotoPath
+            ? `<img src="${fotoPath}" class="kec-popup-img" alt="${nama}" onerror="this.style.display='none'">`
+            : `<div class="kec-popup-img-ph"><i class="fa-solid fa-image"></i><span>Foto belum tersedia</span></div>`)
+        : '';
+    return `<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;min-width:220px;margin:-13px -20px -13px;">${fotoHtml}<div style="padding:12px 16px;"><div style="font-size:14px;font-weight:800;color:#111;margin-bottom:8px;">${nama}</div><table style="width:100%;border-collapse:collapse;"><tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;color:#9ca3af;font-size:12px;">Insiden Rate</td><td style="padding:4px 0;font-weight:700;text-align:right;color:#970000;">${ir.toFixed(2)}/100.000</td></tr><tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;color:#9ca3af;font-size:12px;">Kasus DBD</td><td style="padding:4px 0;font-weight:600;text-align:right;">${dbd} kasus</td></tr><tr><td style="padding:4px 0;color:#9ca3af;font-size:12px;">Penduduk</td><td style="padding:4px 0;font-weight:600;text-align:right;">${Number(jpdd).toLocaleString('id-ID')} jiwa</td></tr></table></div></div>`;
+}
+function onEachDBD(f, layer) {
+    layer.on({
+        mouseover(e){e.target.setStyle({weight:2.5,color:'#333',fillOpacity:0.92});e.target.bringToFront();},
+        mouseout(e){if(risikoDbdLayer)risikoDbdLayer.resetStyle(e.target);}
+    });
+    layer.on('click', function(){
+        const p=f.properties,yr=String(currentYear).slice(2);
+        const nama=p.Kecamatan??p.KECAMATAN??p.NAME_3??'Kecamatan';
+        document.getElementById('rpKecSelect').value=nama;
+        showKecamatanInfo(nama,rpCurrentYear);
+        layer.bindPopup(buildKecPopup(nama,yr,p,true),{maxWidth:300,className:'kec-popup'}).openPopup();
+    });
+}
+function renderRisikoDBD(data,year){
+    if(risikoDbdLayer){map.removeLayer(risikoDbdLayer);risikoDbdLayer=null;}
+    risikoDbdLayer=L.geoJSON(data,{style:styleDBD,onEachFeature:onEachDBD}).addTo(map);
+    addKecamatanLabels(data);
+    map.fitBounds(risikoDbdLayer.getBounds(),{padding:[20,20]});
+    showToast(`✅ Risiko DBD ${year} dimuat`);
+}
+function loadRisikoDBD(year){loadSurabayaData(d=>renderRisikoDBD(d,year));}
+function refreshRisikoDBD(year){
+    if(!risikoDbdLayer||!surabayaDataCache)return;
+    risikoDbdLayer.setStyle(f=>{const ir=parseIR(f.properties['IR_'+String(year).slice(2)]);return{fillColor:getColorDBD(ir),weight:1.2,opacity:1,color:'#ffffff',dashArray:'3',fillOpacity:0.78};});
+    updateRightPanelStats(year);
+}
+
+// ─── KEPADATAN ────────────────────────────────────────────────────────
+function getKepadatan(f,year){const yr=String(year).slice(2),k='Kpdtan_'+yr;if(f.properties[k]!==undefined&&f.properties[k]!=='')return parseFloat(String(f.properties[k]).replace(',','.'))||0;const jpdd=parseFloat(f.properties['JPddk_'+yr])||0,luas=parseFloat(f.properties['Luas'])||1;return jpdd/luas;}
+function getColorKpd(v){if(v>40000)return'#cc0000';if(v>20000)return'#e05a2b';if(v>15000)return'#e8956d';return'#f2c5a0';}
+function getKpdLabel(v){if(v>40000)return'Sangat Tinggi';if(v>20000)return'Tinggi';if(v>15000)return'Sedang';return'Rendah';}
+function styleKpd(f){const v=getKepadatan(f,currentYear);return{fillColor:getColorKpd(v),weight:1.2,opacity:1,color:'#ffffff',dashArray:'3',fillOpacity:0.78};}
+function onEachKpd(f,layer){
+    layer.on({
+        mouseover(e){e.target.setStyle({weight:2.5,color:'#333',fillOpacity:0.92});e.target.bringToFront();},
+        mouseout(e){if(kepadatanLayer)kepadatanLayer.resetStyle(e.target);}
+    });
+    layer.on('click',function(){
+        const p=f.properties,yr=String(currentYear).slice(2);
+        const nama=p.Kecamatan??p.KECAMATAN??p.NAME_3??'Kecamatan';
+        const v=getKepadatan(f,currentYear),jpdd=p['JPddk_'+yr]??'—';
+        document.getElementById('rpKecSelect').value=nama;
+        showKecamatanInfo(nama,rpCurrentYear);
+        layer.bindPopup(`<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;min-width:210px;"><div style="background:#7c3aed;color:white;padding:9px 13px;margin:-13px -20px 11px;border-radius:7px 7px 0 0;"><i class="fa-solid fa-users" style="margin-right:6px;"></i><b>${nama}</b></div><b style="color:#7c3aed;font-size:15px;">${Math.round(v).toLocaleString('id-ID')} jiwa/km²</b> <span style="font-size:11px;color:#666;">(${getKpdLabel(v)})</span><br><span style="font-size:12px;color:#666;">Penduduk: ${Number(jpdd).toLocaleString('id-ID')} jiwa</span></div>`,{maxWidth:280}).openPopup();
+    });
+}
+function renderKpd(data,year){
+    if(kepadatanLayer){map.removeLayer(kepadatanLayer);kepadatanLayer=null;}
+    kepadatanLayer=L.geoJSON(data,{style:styleKpd,onEachFeature:onEachKpd}).addTo(map);
+    addKecamatanLabels(data);
+    map.fitBounds(kepadatanLayer.getBounds(),{padding:[20,20]});
+    showToast(`✅ Kepadatan Penduduk ${year} dimuat`);
+}
+function loadKepadatan(year){loadSurabayaData(d=>renderKpd(d,year));}
+function refreshKepadatan(year){
+    if(!kepadatanLayer||!surabayaDataCache)return;
+    kepadatanLayer.setStyle(f=>{const v=getKepadatan(f,year);return{fillColor:getColorKpd(v),weight:1.2,opacity:1,color:'#ffffff',dashArray:'3',fillOpacity:0.78};});
+    updateRightPanelStats(year);
+}
+
+// ─── PUSKESMAS ────────────────────────────────────────────────────────
+function createPusIcon(nearest=false){
+    return L.divIcon({className:'',html:`<div class="puskes-pin${nearest?' nearest':''}"><i class="fa-solid fa-hospital"></i></div>`,iconSize:nearest?[36,36]:[30,30],iconAnchor:nearest?[18,18]:[15,15],popupAnchor:[0,-16]});
+}
+function pusPopup(p,dist=null){
+    const distRow=dist!==null?`<tr><td style="padding:4px 0;color:#9ca3af;font-size:11px;">Jarak</td><td style="padding:4px 0;font-weight:700;text-align:right;color:#f97316;">${dist<1?(dist*1000).toFixed(0)+' m':dist.toFixed(2)+' km'}</td></tr>`:'';
+    return `<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;min-width:210px;"><div style="background:#16a34a;color:white;padding:9px 13px;margin:-13px -20px 11px;border-radius:7px 7px 0 0;"><i class="fa-solid fa-hospital" style="margin-right:6px;"></i><b>${p.nama}</b></div><table style="width:100%;border-collapse:collapse;"><tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;color:#9ca3af;font-size:11px;">Kepala</td><td style="padding:4px 0;font-weight:600;text-align:right;font-size:12px;">${p.kepala}</td></tr><tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:4px 0;color:#9ca3af;font-size:11px;">Telepon</td><td style="padding:4px 0;font-weight:700;text-align:right;color:#16a34a;">${p.telp}</td></tr>${distRow}<tr><td colspan="2" style="padding:5px 0;color:#9ca3af;font-size:11px;"><i class="fa-solid fa-location-dot" style="margin-right:3px;"></i>${p.alamat}</td></tr></table></div>`;
+}
+function loadPuskesmas(){
+    if(puskesmasLayer){map.removeLayer(puskesmasLayer);puskesmasLayer=null;}
+    puskesmasMarkerMap.clear();
+    puskesmasLayer=L.layerGroup();
+    puskesmasData.forEach((p,idx)=>{
+        const m=L.marker([p.lat,p.lng],{icon:createPusIcon(false),title:p.nama});
+        m.bindPopup(pusPopup(p,null),{maxWidth:280});
+        puskesmasLayer.addLayer(m);
+        puskesmasMarkerMap.set(idx,m);
+    });
+    puskesmasLayer.addTo(map);
+    map.setView([-7.290293,112.727040],12);
+    showToast(`✅ ${puskesmasData.length} Puskesmas ditampilkan`);
+}
+function refreshPuskesmasIcons(nearestIdxs){
+    puskesmasMarkerMap.forEach((m,idx)=>{
+        m.setIcon(createPusIcon(nearestIdxs.includes(idx)));
+        if(userLatLng){const p=puskesmasData[idx],d=haversineKm(userLatLng.lat,userLatLng.lng,p.lat,p.lng);m.bindPopup(pusPopup(p,d),{maxWidth:280});}
+    });
+}
+
+// Nearby list in modal
+function buildNearbyList(sortedList){
+    const el=document.getElementById('nmNearbyList');
+    if(!sortedList.length){el.innerHTML='<div class="nm-empty">Data tidak tersedia.</div>';return;}
+    el.innerHTML=sortedList.slice(0,5).map((item,rank)=>`
+        <div class="nm-item${rank===0?' top':''}" data-idx="${item.idx}">
+            <div class="nm-rank">${rank+1}</div>
+            <div class="nm-info">
+                <div class="nm-name">${item.p.nama}</div>
+                <div class="nm-dist"><i class="fa-solid fa-route" style="margin-right:3px;"></i>${item.dist<1?(item.dist*1000).toFixed(0)+' m':item.dist.toFixed(2)+' km'} dari lokasi Anda</div>
+            </div>
+            <button class="nm-go" title="Lihat di peta"><i class="fa-solid fa-location-dot"></i></button>
+        </div>`).join('');
+    el.querySelectorAll('.nm-item').forEach(el2 => {
+        el2.addEventListener('click', () => {
+            const idx=parseInt(el2.dataset.idx),p=puskesmasData[idx];
+            map.setView([p.lat,p.lng],16);
+            const m=puskesmasMarkerMap.get(idx);
+            if(m) m.openPopup();
+            if(!isPuskesmasActive){ const cb=document.querySelector('[data-layer="puskesmas"] .toggle-checkbox'); if(cb){cb.checked=true;cb.dispatchEvent(new Event('change'));} }
+            nearbyModal.classList.remove('open');
+        });
+    });
+}
+
+function locateUser(){
+    if(!navigator.geolocation){showToast('❌ Browser tidak mendukung geolokasi');return;}
+    const btn=document.getElementById('nmLocateBtn'),txt=document.getElementById('nmLocateTxt');
+    btn.classList.add('locating'); txt.textContent='Mencari...';
+    document.getElementById('nmNearbyList').innerHTML='<div class="nm-empty"><i class="fa-solid fa-spinner fa-spin" style="margin-right:5px;"></i>Mendeteksi lokasi...</div>';
+    navigator.geolocation.getCurrentPosition(pos=>{
+        const lat=pos.coords.latitude,lng=pos.coords.longitude,acc=pos.coords.accuracy;
+        userLatLng={lat,lng};
+        btn.classList.remove('locating');txt.textContent='Perbarui';
+        if(userLocationMarker)map.removeLayer(userLocationMarker);
+        if(userLocationCircle)map.removeLayer(userLocationCircle);
+        userLocationCircle=L.circle([lat,lng],{radius:acc,color:'#1d4ed8',fillColor:'#1d4ed8',fillOpacity:0.07,weight:1,dashArray:'5'}).addTo(map);
+        userLocationMarker=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="user-dot"></div>',iconSize:[16,16],iconAnchor:[8,8]}),zIndexOffset:1000}).addTo(map);
+        userLocationMarker.bindPopup(`<div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;text-align:center;"><i class="fa-solid fa-location-dot" style="color:#1d4ed8;font-size:20px;"></i><br><b>Lokasi Anda</b><br><span style="color:#9ca3af;">${lat.toFixed(5)}, ${lng.toFixed(5)}<br>±${acc.toFixed(0)} m</span></div>`,{maxWidth:200}).openPopup();
+        map.setView([lat,lng],14);
+        const sorted=puskesmasData.map((p,idx)=>({p,idx,dist:haversineKm(lat,lng,p.lat,p.lng)})).sort((a,b)=>a.dist-b.dist);
+        refreshPuskesmasIcons(sorted.slice(0,3).map(x=>x.idx));
+        buildNearbyList(sorted);
+        showToast(`📍 Terdekat: ${sorted[0].p.nama}`);
+    },err=>{
+        btn.classList.remove('locating');txt.textContent='Temukan Lokasi Saya';
+        const msgs={1:'Izin lokasi ditolak.',2:'Lokasi tidak tersedia.',3:'Waktu habis.'};
+        document.getElementById('nmNearbyList').innerHTML=`<div class="nm-empty">❌ ${msgs[err.code]||'Gagal mendapatkan lokasi.'}</div>`;
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+}
+document.getElementById('nmLocateBtn').addEventListener('click', locateUser);
+
+// ─── TIMELINE ─────────────────────────────────────────────────────────
+const yearBadge    =document.getElementById('yearBadge');
+const yearNotice   =document.getElementById('yearNotice');
+const mapTimeline  =document.getElementById('mapTimeline');
+const tlPlay       =document.getElementById('tlPlay');
+const tlProgress   =document.getElementById('tlProgress');
+const tlPoints     =document.getElementById('tlPoints');
+const tlYearSel    =document.getElementById('tlYearSel');
+let tlYears=[2020,2021,2022,2023,2024,2025],tlIdx=4,isPlaying=false,playInterval=null;
+
+function genTlPoints(years=tlYears){
+    tlYears=years;tlPoints.innerHTML='';
+    years.forEach((y,i)=>{
+        const pt=document.createElement('div');pt.className='tl-pt';
+        pt.innerHTML=`<div class="tl-dot"></div><div class="tl-year">${y}</div>`;
+        pt.addEventListener('click',()=>{stopTl();setTlIdx(i);});
+        tlPoints.appendChild(pt);
+    });
+}
+function updateTl(){
+    document.querySelectorAll('.tl-pt').forEach((pt,i)=>{
+        pt.classList.remove('active','passed');
+        if(i<tlIdx)pt.classList.add('passed');
+        else if(i===tlIdx)pt.classList.add('active');
+    });
+    tlProgress.style.width=(tlIdx/(tlYears.length-1)*100)+'%';
+    tlYearSel.value=tlYears[tlIdx];
+    updateMapForYear(tlYears[tlIdx]);
+}
+function setTlIdx(i){if(i>=0&&i<tlYears.length){tlIdx=i;updateTl();}}
+function playTl(){isPlaying=true;tlPlay.innerHTML='<i class="fa-solid fa-pause"></i>';tlPlay.classList.add('playing');playInterval=setInterval(()=>{if(tlIdx<tlYears.length-1){tlIdx++;updateTl();}else stopTl();},1800);}
+function stopTl(){isPlaying=false;tlPlay.innerHTML='<i class="fa-solid fa-play"></i>';tlPlay.classList.remove('playing');if(playInterval){clearInterval(playInterval);playInterval=null;}}
+function setupTlForLayer(layerType){
+    const years=LAYER_YEARS[layerType]||[2020,2021,2022,2023,2024,2025];
+    tlYearSel.innerHTML=years.map(y=>`<option value="${y}" ${y===currentYear?'selected':''}>${y}</option>`).join('');
+    genTlPoints(years);
+    tlIdx=years.indexOf(currentYear);
+    if(tlIdx===-1){tlIdx=years.length-1;currentYear=years[tlIdx];}
+    updateTl();
+}
+function updateMapForYear(year){
+    currentYear=year;yearBadge.textContent=year;
+    updateRightPanelStats(year);
+    const kecSel=document.getElementById('rpKecSelect').value;
+    if(kecSel&&surabayaDataCache)showKecamatanInfo(kecSel,year);
+    if(isCurahHujanActive)loadCurahHujan(year);
+    if(isRisikoDbdActive){if(LAYER_YEARS['risiko-dbd'].includes(year)){if(surabayaDataCache)refreshRisikoDBD(year);else loadRisikoDBD(year);}else if(risikoDbdLayer)risikoDbdLayer.setStyle(()=>({fillOpacity:0,weight:0}));}
+    if(isKepadatanActive){if(LAYER_YEARS['kepadatan'].includes(year)){if(surabayaDataCache)refreshKepadatan(year);else loadKepadatan(year);}else if(kepadatanLayer)kepadatanLayer.setStyle(()=>({fillOpacity:0,weight:0}));}
+}
+tlPlay.addEventListener('click',()=>isPlaying?stopTl():playTl());
+tlYearSel.addEventListener('change',e=>{stopTl();setTlIdx(tlYears.indexOf(parseInt(e.target.value)));});
+document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(!mapTimeline.classList.contains('visible'))return;
+    if(e.key==='ArrowLeft'&&tlIdx>0){stopTl();setTlIdx(tlIdx-1);}
+    if(e.key==='ArrowRight'&&tlIdx<tlYears.length-1){stopTl();setTlIdx(tlIdx+1);}
+    if(e.key===' '){e.preventDefault();isPlaying?stopTl():playTl();}
+});
+
+// ─── SEARCH ───────────────────────────────────────────────────────────
+const searchInput=document.getElementById('searchInput');
+const searchResults=document.getElementById('searchResults');
+function buildSearchItems(){
+    const items=puskesmasData.map(p=>({type:'puskesmas',title:p.nama,subtitle:p.alamat,lat:p.lat,lng:p.lng}));
+    if(surabayaDataCache){
+        surabayaDataCache.features.forEach(f=>{
+            const nama=f.properties.Kecamatan??f.properties.KECAMATAN??f.properties.NAME_3??'';
+            if(!nama)return;
+            const c=getCentroid(f);if(!c)return;
+            items.push({type:'kecamatan',title:'Kec. '+nama,subtitle:'Kecamatan, Kota Surabaya',lat:c[0],lng:c[1],nama});
+        });
+    }
+    return items;
+}
+function hl(text,term){return text.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'),'<b>$1</b>');}
+function doSearch(q){
+    if(!q||q.trim().length<2){searchResults.classList.remove('active');return;}
+    const term=q.toLowerCase();
+    const res=buildSearchItems().filter(i=>i.title.toLowerCase().includes(term)||i.subtitle.toLowerCase().includes(term));
+    searchResults.innerHTML=res.length
+        ?res.slice(0,12).map(i=>`<div class="search-result-item" data-lat="${i.lat}" data-lng="${i.lng}" data-type="${i.type}" data-nama="${i.nama??''}"><div class="sri-icon ${i.type}"><i class="fa-solid ${i.type==='puskesmas'?'fa-hospital':'fa-map-location-dot'}"></i></div><div style="flex:1;min-width:0;"><div class="sri-title">${hl(i.title,q)}</div><div class="sri-sub">${hl(i.subtitle,q)}</div></div><span class="sri-badge ${i.type}">${i.type==='puskesmas'?'Puskesmas':'Kecamatan'}</span></div>`).join('')
+        :'<div class="search-no-results">Tidak ada hasil ditemukan</div>';
+    searchResults.classList.add('active');
+}
+searchInput.addEventListener('input',e=>doSearch(e.target.value));
+searchInput.addEventListener('keypress',e=>{if(e.key==='Enter')doSearch(searchInput.value);});
+document.addEventListener('click',e=>{
+    const item=e.target.closest('.search-result-item');
+    if(item){
+        const lat=parseFloat(item.dataset.lat),lng=parseFloat(item.dataset.lng),type=item.dataset.type,nama=item.dataset.nama;
+        map.setView([lat,lng],15);
+        if(type==='puskesmas'){
+            if(!isPuskesmasActive){const cb=document.querySelector('[data-layer="puskesmas"] .toggle-checkbox');if(cb){cb.checked=true;cb.dispatchEvent(new Event('change'));}}
+            setTimeout(()=>{if(puskesmasLayer){puskesmasLayer.eachLayer(layer=>{const ll=layer.getLatLng();if(Math.abs(ll.lat-lat)<0.0001&&Math.abs(ll.lng-lng)<0.0001)layer.openPopup();});}},500);
+        }else if(type==='kecamatan'&&nama){
+            document.getElementById('rpKecSelect').value=nama;
+            if(surabayaDataCache)showKecamatanInfo(nama,rpCurrentYear);
+        }
+        searchResults.classList.remove('active');
+        searchInput.value='';
+    }
+    if(!e.target.closest('.search-wrap'))searchResults.classList.remove('active');
+});
+
+// ─── LAYER TOGGLE ─────────────────────────────────────────────────────
+document.querySelectorAll('.layer-card').forEach(card=>{
+    const cb=card.querySelector('.toggle-checkbox');
+    const layerName=card.dataset.layer;
+    const layerType=cb?.dataset.layerType;
+    if(!cb)return;
+    if(layerType==='base'){
+        cb.addEventListener('change',()=>{
+            document.querySelectorAll('[data-layer-type="base"]').forEach(c=>c.closest('.layer-card').classList.remove('active'));
+            card.classList.add('active');
+            map.removeLayer(osmLayer);map.removeLayer(satelitLayer);map.removeLayer(hybridLayer);
+            if(layerName==='base-osm')osmLayer.addTo(map);
+            if(layerName==='satelit')satelitLayer.addTo(map);
+            if(layerName==='hybrid')hybridLayer.addTo(map);
+            showToast('🗺️ Basemap: '+card.querySelector('h4').textContent);
+        });
+    } else {
+        cb.addEventListener('change',()=>{
+            const checked=cb.checked;
+            if(checked){
+                document.querySelectorAll('[data-layer-type="thematic"]').forEach(c=>{if(c!==cb){c.checked=false;c.closest('.layer-card').classList.remove('active');}});
+                card.classList.add('active');
+                const layerYears=LAYER_YEARS[layerName];
+                let activeYear=currentYear;
+                if(layerYears&&!layerYears.includes(activeYear))activeYear=layerYears[layerYears.length-1];
+                isCurahHujanActive=false;isRisikoDbdActive=false;isKepadatanActive=false;isPuskesmasActive=false;
+                if(curahHujanLayer){map.removeLayer(curahHujanLayer);curahHujanLayer=null;}
+                if(risikoDbdLayer){map.removeLayer(risikoDbdLayer);risikoDbdLayer=null;}
+                if(kepadatanLayer){map.removeLayer(kepadatanLayer);kepadatanLayer=null;}
+                if(puskesmasLayer){map.removeLayer(puskesmasLayer);puskesmasLayer=null;}
+                removeKecamatanLabels();stopTl();
+                if(layerName==='curah-hujan'){isCurahHujanActive=true;currentActiveLayer='curah-hujan';setupTlForLayer('curah-hujan');loadCurahHujan(activeYear);yearBadge.textContent=activeYear;yearBadge.classList.add('visible');mapTimeline.classList.add('visible');showLegend('curah-hujan');yearNotice.classList.remove('visible');}
+                if(layerName==='risiko-dbd'){isRisikoDbdActive=true;currentActiveLayer='risiko-dbd';setupTlForLayer('risiko-dbd');loadRisikoDBD(activeYear);yearBadge.textContent=activeYear;yearBadge.classList.add('visible');mapTimeline.classList.add('visible');showLegend('risiko-dbd');}
+                if(layerName==='kepadatan'){isKepadatanActive=true;currentActiveLayer='kepadatan';setupTlForLayer('kepadatan');loadKepadatan(activeYear);yearBadge.textContent=activeYear;yearBadge.classList.add('visible');mapTimeline.classList.add('visible');showLegend('kepadatan');}
+                if(layerName==='puskesmas'){isPuskesmasActive=true;currentActiveLayer=null;loadPuskesmas();yearBadge.classList.remove('visible');yearNotice.classList.remove('visible');mapTimeline.classList.remove('visible');showLegend('puskesmas');}
+            } else {
+                card.classList.remove('active');
+                if(layerName==='curah-hujan'&&curahHujanLayer){map.removeLayer(curahHujanLayer);curahHujanLayer=null;}
+                if(layerName==='risiko-dbd'&&risikoDbdLayer){map.removeLayer(risikoDbdLayer);risikoDbdLayer=null;removeKecamatanLabels();}
+                if(layerName==='kepadatan'&&kepadatanLayer){map.removeLayer(kepadatanLayer);kepadatanLayer=null;removeKecamatanLabels();}
+                if(layerName==='puskesmas'&&puskesmasLayer){map.removeLayer(puskesmasLayer);puskesmasLayer=null;}
+                currentActiveLayer=null;mapTimeline.classList.remove('visible');yearBadge.classList.remove('visible');yearNotice.classList.remove('visible');hideLegend();stopTl();
+                showToast('👁️ Layer disembunyikan');
+            }
+        });
+    }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+setTimeout(()=>{
+    loadSurabayaData(()=>{
+        updateRightPanelStats(2024);
+        showToast('✅ Data kecamatan siap');
+    });
+},500);
+
+console.log('Aeris WebGIS v2 ✅');
+</script>
+</body>
+</html>

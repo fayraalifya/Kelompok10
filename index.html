@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<!-- ============================================ -->
+<!-- HEAD                                         -->
+<!-- ============================================ -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AERIS - WebGIS Surabaya</title>
+
+    <!-- FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<!-- ============================================ -->
+<!-- BODY                                         -->
+<!-- ============================================ -->
+<body>
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div class="scroll-progress"></div>
+
+    <!-- ============================================ -->
+    <!-- 1. LOADING SCREEN                           -->
+    <!-- ============================================ -->
+    <div class="loader-wrapper">
+        <div class="loader-content">
+
+            <!-- MAIN CONTENT -->
+            <div class="loader-main">
+
+                <!-- LOGO -->
+                <div class="logo-box">
+                    <img src="assets/logo/GEODBD.png" alt="Logo GEODBD" class="loader-logo">
+                </div>
+
+                <!-- MASCOT -->
+                <div class="mascot-box">
+                    <img src="assets/logo/Maskot2.png" alt="Maskot AERIS" class="loader-maskot">
+                </div>
+
+                <!-- TEXT -->
+                <div class="text-box">
+                    <h2 class="loader-title">AERIS</h2>
+                    <p class="loader-subtitle">Aedes aegypti Environmental Risk System</p>
+                </div>
+
+            </div>
+
+            <!-- LOADING BAR -->
+            <div class="loader-bar-container">
+                <div class="loader-bar">
+                    <div class="loader-progress"></div>
+                </div>
+                <p class="loader-status">Memuat Dashboard Spasial...</p>
+            </div>
+
+        </div>
+
+        <!-- BACKGROUND DECORATION -->
+        <div class="loader-bg-shape shape-1"></div>
+        <div class="loader-bg-shape shape-2"></div>
+        <div class="loader-bg-shape shape-3"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 2. GEO-BEE ASSISTANT                        -->
+    <!-- ============================================ -->
+    <div class="geo-assistant">
+
+        <!-- TOGGLE -->
+        <div class="assistant-toggle">
+            <img src="assets/logo/Maskot2.png" alt="GEO-Bee">
+        </div>
+
+        <!-- ASSISTANT BOX -->
+        <div class="assistant-box">
+            <h3>GEO-Bee Assistant 🐝</h3>
+
+            <!-- CONTENT -->
+            <div class="assistant-content">
+
+                <!-- INTRO CARD -->
+                <div class="assistant-intro">
+
+                    <div class="assistant-badge">
+                        🦟 GEO ASSISTANT
+                    </div>
+
+                    <h3>
+                        Kenali Risiko DBD Lebih Dekat
+                    </h3>
+
+                    <p>
+                        Pelajari penyebab, gejala, pola penyebaran,
+                        hingga langkah pencegahan Demam Berdarah Dengue (DBD)
+                        secara interaktif dan mudah dipahami.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Tombol Pelajari Lebih Lanjut -->
+            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="pages/geo-assistant.html" target="_blank" style="
+                    display: block;
+                    padding: 14px 20px;
+                    background: linear-gradient(135deg, #ff4d4d, #c62828);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 12px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    text-align: center;
+                    transition: 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+                ">
+                    📖 Pelajari Lebih Lengkap
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 3. NAVBAR                                   -->
+    <!-- ============================================ -->
+    <header class="navbar">
+
+        <!-- LOGO -->
+        <div class="logo-container">
+            <img src="assets/logo/GEODBD.png" alt="Logo GEODBD" class="logo-main">
+            <div class="title-group">
+                <h2>AERIS</h2>
+                <p>Aedes aegypti Environmental Risk System</p>
+            </div>
+        </div>
+
+        <!-- NAVIGATION -->
+        <ul class="nav-links">
+            <li>
+                <a href="#home" class="nav-item active">Beranda</a>
+            </li>
+            <li>
+                <a href="#insights" class="nav-item">Wawasan</a>
+            </li>
+            <li>
+                <a href="#study" class="nav-item">Area Studi</a>
+            </li>
+            <li>
+                <a href="#overview" class="nav-item">Penelitian</a>
+            </li>
+            <li>
+                <a href="#webgis" class="nav-item">WebGIS</a>
+            </li>
+            <li>
+                <a href="#team" class="nav-item">Tim</a>
+            </li>
+            <li>
+                <a href="#contact" class="nav-item">Kontak</a>
+            </li>
+        </ul>
+
+    </header>
+
+
+    <!-- ============================================ -->
+    <!-- 4. HERO SECTION                             -->
+    <!-- ============================================ -->
+    <section class="hero" id="home">
+
+        <div class="hero-left">
+            <div class="hero-content">
+
+                <!-- TITLE -->
+                <h1>
+                    Analisis Spasial Risiko DBD
+                    <span class="highlight">Berbasis Geodesi Lingkungan</span>
+                    di Kota Surabaya
+                </h1>
+
+                <!-- DESCRIPTION -->
+                <p>
+                    Mengintegrasikan variabilitas curah hujan dan potensi genangan
+                    untuk memetakan distribusi risiko Demam Berdarah Dengue menggunakan
+                    teknologi WebGIS interaktif.
+                </p>
+
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 5. WHY IT MATTERS SECTION                   -->
+    <!-- ============================================ -->
+    <section class="why-section" id="insights">
+
+        <!-- GLOW -->
+        <div class="why-glow"></div>
+
+        <!-- CONTAINER -->
+        <div class="why-container">
+
+            <!-- LEFT SIDE - CONTENT -->
+            <div class="why-content">
+
+                <!-- TAG -->
+                <span class="why-tag">
+                    <svg viewBox="0 0 24 24" fill="none" style="width: 14px; height: 14px;">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
+                    </svg>
+                    MENGAPA PENTING
+                </span>
+
+                <!-- TITLE -->
+                <h2>DBD Bukan Sekadar Penyakit Musiman</h2>
+
+                <!-- DESCRIPTION -->
+                <p>
+                    Penyebaran Demam Berdarah Dengue (DBD) tidak terjadi secara acak.
+                    Faktor lingkungan, kepadatan perkotaan, curah hujan, dan kondisi spasial
+                    membentuk pola risiko yang saling terhubung di berbagai wilayah Surabaya.
+                    <br><br>
+                    Dengan memahami hubungan antar faktor tersebut,
+                    analisis spasial dapat membantu mengidentifikasi area dengan potensi
+                    risiko penyebaran yang lebih tinggi secara lebih efektif.
+                </p>
+
+                <!-- NARRATIVE BOX -->
+                <div class="why-insight">
+                    <div class="insight-icon">💡</div>
+                    <p>
+                        Genangan air yang terbentuk setelah hujan berpotensi menjadi habitat
+                        berkembangnya nyamuk Aedes aegypti. Dengan pendekatan analisis spasial
+                        dan machine learning, AERIS dikembangkan untuk memahami pola risiko
+                        DBD secara lebih cepat, visual, dan interaktif.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- RIGHT SIDE - STATS GRID -->
+            <div class="why-stats-wrapper">
+
+                <!-- STAT CARD 1 - TOTAL KASUS -->
+                <div class="why-stat-card card-1" data-modal="cases">
+                    <div class="stat-icon">🦟</div>
+                    <h3>231+</h3>
+                    <span>Kasus DBD Tercatat</span>
+                    <div class="card-accent"></div>
+                    <div class="click-hint">
+                        <svg viewBox="0 0 24 24" fill="none" style="width: 14px; height: 14px;">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Klik untuk detail
+                    </div>
+                </div>
+
+                <!-- STAT CARD 2 - KASUS TERTINGGI -->
+                <div class="why-stat-card card-2" data-modal="highest">
+                    <div class="stat-icon">📈</div>
+                    <h3>10 Kasus</h3>
+                    <span>Kasus Tertinggi Kecamatan</span>
+                    <div class="card-accent"></div>
+                    <div class="click-hint">
+                        <svg viewBox="0 0 24 24" fill="none" style="width: 14px; height: 14px;">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Klik untuk detail
+                    </div>
+                </div>
+
+                <!-- STAT CARD 3 - TIMELINE DATA -->
+                <div class="why-stat-card card-4" data-modal="timeline">
+                    <div class="stat-icon">📊</div>
+                    <h3>2020-2024</h3>
+                    <span>Data Time-Series</span>
+                    <div class="card-accent"></div>
+                    <div class="click-hint">
+                        <svg viewBox="0 0 24 24" fill="none" style="width: 14px; height: 14px;">
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
+                            <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Klik untuk detail
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 6. STUDY AREA SECTION                       -->
+    <!-- ============================================ -->
+    <section class="study-section" id="study">
+
+        <!-- HEADER -->
+        <div class="study-header">
+            <div class="section-badge">
+                <span class="badge-icon">🗺️</span>
+                <span class="badge-text">AREA STUDI</span>
+            </div>
+            <h2 class="section-title">
+                Surabaya sebagai <span class="text-glow">Wilayah Penelitian</span>
+            </h2>
+            <p class="section-subtitle">
+                Penelitian dilakukan di Kota Surabaya dengan fokus analisis spasial
+                risiko DBD berbasis variabilitas curah hujan dan potensi genangan
+            </p>
+        </div>
+
+        <!-- STUDY GRID -->
+        <div class="study-grid">
+
+            <!-- KARTU PETA -->
+            <div class="sg-card sg-map">
+                <div id="mapSurabaya"></div>
+                <div class="sg-map-fade"></div>
+                <div class="sg-map-label">
+                    <span class="sg-map-city">Kota Surabaya</span>
+                    <span class="sg-map-sub">Area Penelitian DBD • 31 Wilayah • 350+ km²</span>
+                </div>
+            </div>
+
+            <!-- KOLOM KARTU KANAN -->
+            <div class="sg-right-col">
+
+                <!-- KARTU 1 - 31 WILAYAH -->
+                <div class="sg-card sg-mini stat-interactive" data-modal="districts">
+                    <div class="sg-mini-inner">
+                        <div class="sg-mini-icon">📍</div>
+                        <div class="sg-mini-number">31</div>
+                        <div class="sg-mini-label">Wilayah Dipantau</div>
+                        <div class="sg-mini-hint">Klik untuk melihat daftar</div>
+                    </div>
+                </div>
+
+                <!-- KARTU 2 - LUAS WILAYAH -->
+                <div class="sg-card sg-mini stat-interactive" data-modal="luas">
+                    <div class="sg-mini-inner">
+                        <div class="sg-mini-icon">🗺️</div>
+                        <div class="sg-mini-number">350+</div>
+                        <div class="sg-mini-label">Total km² Wilayah</div>
+                        <div class="sg-mini-hint">Klik untuk melihat luas per wilayah</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 7. RESEARCH OVERVIEW SECTION                -->
+    <!-- ============================================ -->
+    <section class="research-section" id="overview">
+
+        <div class="research-glow"></div>
+        <div class="research-glow-2"></div>
+
+        <!-- HEADER -->
+        <div class="ro-header">
+            <span class="ro-tag">✦ DASHBOARD KESEHATAN LINGKUNGAN CERDAS</span>
+            <h2>GEO-DBD <span class="ro-accent">Gambaran Penelitian</span></h2>
+            <p>
+                Pemodelan Spasial Variabilitas Curah Hujan dan Potensi Daerah Rawan Genangan 
+                terhadap Risiko Penyakit Demam Berdarah Berbasis Geodesi Lingkungan di Kota Surabaya
+            </p>
+        </div>
+
+        <!-- BENTO GRID -->
+        <div class="ro-bento">
+
+            <!-- HERO CARD -->
+            <div class="ro-card ro-hero">
+                <div>
+                    <div class="ro-card-tag ro-card-tag-dark">Tentang Penelitian</div>
+                    <h3>Mengapa Penelitian Ini Penting?</h3>
+                    <p>
+                        Kota Surabaya mencatat <strong>231 kasus DBD sepanjang 2024</strong> — meningkat 20% dari tahun sebelumnya.
+                        Kondisi curah hujan tinggi dan genangan air menciptakan habitat ideal bagi <em>Aedes aegypti</em>.
+                    </p>
+                    <p>
+                        AERIS mengintegrasikan <strong>analisis spasial, machine learning XGBoost</strong>, optimasi PSO,
+                        dan autokorelasi spasial LISA Moran untuk memetakan pola risiko DBD secara interaktif.
+                    </p>
+                </div>
+                <div class="ro-stat-row">
+                    <div class="ro-mini-stat">
+                        <div class="ro-mini-num">8<span>&nbsp;fitur</span></div>
+                        <div class="ro-mini-lbl">Variabel Prediktor</div>
+                    </div>
+                    <div class="ro-mini-stat">
+                        <div class="ro-mini-num">5<span>&nbsp;tahun</span></div>
+                        <div class="ro-mini-lbl">Data Time-Series</div>
+                    </div>
+                    <div class="ro-mini-stat">
+                        <div class="ro-mini-num">31<span>&nbsp;area</span></div>
+                        <div class="ro-mini-lbl">Kecamatan</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIPELINE CARD -->
+            <div class="ro-card ro-pipeline-card">
+                <div class="ro-pipe-hd">
+                    <h3>Alur Analisis</h3>
+                    <div class="ro-card-tag ro-card-tag-light">Metodologi</div>
+                </div>
+                <div class="pipe-flow">
+
+                    <div class="pipe-step">
+                        <div class="pipe-node pipe-node-data">🛰️</div>
+                        <div class="pipe-label">Data CHIRPS</div>
+                        <div class="pipe-sub">Curah hujan satelit 2020–2024</div>
+                    </div>
+
+                    <div class="pipe-step">
+                        <div class="pipe-node pipe-node-proc">⚙️</div>
+                        <div class="pipe-label">Preprocessing</div>
+                        <div class="pipe-sub">Zonal Stats · ArcGIS Pro · 31 wilayah</div>
+                    </div>
+
+                    <div class="pipe-step">
+                        <div class="pipe-node pipe-node-ml">🤖</div>
+                        <div class="pipe-label">XGBoost + PSO</div>
+                        <div class="pipe-sub">ML · Optimasi hiperparameter</div>
+                    </div>
+
+                    <div class="pipe-step">
+                        <div class="pipe-node pipe-node-stat">📍</div>
+                        <div class="pipe-label">LISA Moran</div>
+                        <div class="pipe-sub">Autokorelasi &amp; klaster spasial</div>
+                    </div>
+
+                    <div class="pipe-step">
+                        <div class="pipe-node pipe-node-out">🗺️</div>
+                        <div class="pipe-label">WebGIS</div>
+                        <div class="pipe-sub">Leaflet.js · Visualisasi peta risiko</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- VARIABEL PREDIKTOR -->
+            <div class="ro-card ro-vars">
+                <div class="ro-card-tag ro-card-tag-light">Variabel Prediktor</div>
+                <h3>8 Fitur Input Model</h3>
+                <div class="var-list">
+                    <span class="var-pill">IR DBD</span>
+                    <span class="var-pill">CFR DBD</span>
+                    <span class="var-pill">Curah Hujan</span>
+                    <span class="var-pill">Genangan</span>
+                    <span class="var-pill">Kepadatan Penduduk</span>
+                    <span class="var-pill">Suhu Udara</span>
+                    <span class="var-pill">Kelembapan</span>
+                    <span class="var-pill">Tutupan Lahan</span>
+                </div>
+            </div>
+
+            <!-- OUTPUT -->
+            <div class="ro-card ro-output">
+                <div class="ro-card-tag ro-card-tag-dark">Output Penelitian</div>
+                <h3>Apa yang Dihasilkan?</h3>
+                <div class="ro-out-item">
+                    <div class="ro-out-dot"></div>
+                    <p><strong>Peta risiko DBD</strong> per kecamatan berbasis prediksi ML</p>
+                </div>
+                <div class="ro-out-item">
+                    <div class="ro-out-dot"></div>
+                    <p><strong>Klaster LISA</strong>: High-High, Low-Low, dan outlier spasial</p>
+                </div>
+                <div class="ro-out-item">
+                    <div class="ro-out-dot"></div>
+                    <p><strong>Dashboard WebGIS</strong> interaktif berbasis Leaflet.js</p>
+                </div>
+                <div class="ro-out-item">
+                    <div class="ro-out-dot"></div>
+                    <p><strong>Rekomendasi</strong> bagi Dinas Kesehatan Kota Surabaya</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 8. SPATIAL INSIGHTS SECTION                 -->
+    <!-- ============================================ -->
+    <section class="insight-section" id="chain">
+
+        <div class="insight-glow"></div>
+        <div class="insight-glow-2"></div>
+
+        <!-- HEADER -->
+        <div class="insight-header">
+            <span class="insight-tag">✦ WAWASAN SPASIAL</span>
+            <h2>Rantai Risiko <span class="insight-accent">DBD</span></h2>
+            <p>
+                Setiap faktor saling terhubung — dari curah hujan ekstrem hingga kasus DBD yang meningkat.
+                Analisis spasial AERIS memetakan rantai risiko ini di seluruh 31 wilayah Kota Surabaya.
+            </p>
+        </div>
+
+        <!-- CHAIN FLOW VISUAL -->
+        <div class="insight-chain">
+            <div class="chain-step" data-step="01">
+                <div class="chain-icon">🌧</div>
+                <div class="chain-line"></div>
+                <div class="chain-body">
+                    <span class="chain-num">01</span>
+                    <h3>Variabilitas Curah Hujan</h3>
+                    <p>
+                        Data CHIRPS 2020–2024 menunjukkan intensitas hujan tinggi di Surabaya, 
+                        khususnya saat musim penghujan — pemicu utama rantai risiko.
+                    </p>
+                </div>
+            </div>
+            <div class="chain-arrow">→</div>
+
+            <div class="chain-step" data-step="02">
+                <div class="chain-icon">🌊</div>
+                <div class="chain-line"></div>
+                <div class="chain-body">
+                    <span class="chain-num">02</span>
+                    <h3>Potensi Genangan</h3>
+                    <p>
+                        Curah hujan lebat pada kawasan dengan drainase buruk menyebabkan 
+                        genangan yang bertahan hingga beberapa hari.
+                    </p>
+                </div>
+            </div>
+            <div class="chain-arrow">→</div>
+
+            <div class="chain-step" data-step="03">
+                <div class="chain-icon">🦟</div>
+                <div class="chain-line"></div>
+                <div class="chain-body">
+                    <span class="chain-num">03</span>
+                    <h3>Habitat <em>Aedes aegypti</em></h3>
+                    <p>
+                        Genangan menjadi breeding ground ideal nyamuk vektor DBD, 
+                        terutama di wilayah padat penduduk ≥20.000 jiwa/km².
+                    </p>
+                </div>
+            </div>
+            <div class="chain-arrow">→</div>
+
+            <div class="chain-step" data-step="04">
+                <div class="chain-icon">📈</div>
+                <div class="chain-line"></div>
+                <div class="chain-body">
+                    <span class="chain-num">04</span>
+                    <h3>Peningkatan Kasus DBD</h3>
+                    <p>
+                        231 kasus DBD tercatat di 2024 — meningkat 20% dari tahun sebelumnya. 
+                        Pola sebaran bersifat clustered, bukan acak.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 9. WEBGIS PREVIEW CTA SECTION               -->
+    <!-- ============================================ -->
+    <section class="preview-section" id="webgis">
+
+        <div class="preview-glow"></div>
+        <div class="preview-glow-2"></div>
+
+        <!-- HEADER -->
+        <div class="pv-header">
+            <span class="pv-tag">✦ WEBGIS INTERAKTIF</span>
+            <h2>Jelajahi <span class="pv-accent">Dashboard Spasial</span></h2>
+        </div>
+
+        <!-- MAIN CTA AREA -->
+        <div class="pv-main">
+
+            <!-- MOCKUP BESAR -->
+            <div class="pv-mockup">
+                <a href="pages/webgis.html" class="pv-mockup-link">
+                    <div class="pv-screen">
+                        <div class="pv-screen-bar">
+                            <span></span><span></span><span></span>
+                            <div class="pv-screen-url">aeris-webgis.vercel.app/webgis</div>
+                        </div>
+                        <img src="assets/logo/mockup-webgis.png" alt="Preview WebGIS" class="pv-img">
+                        <div class="pv-screen-overlay">
+                            <div class="pv-open-btn">
+                                <svg viewBox="0 0 24 24" fill="none" style="width:28px;height:28px;">
+                                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span>Buka WebGIS</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- FEATURE CARDS -->
+            <div class="pv-features">
+                <div class="pv-feat-card">
+                    <div class="pv-feat-icon">🗺️</div>
+                    <div class="pv-feat-body">
+                        <h4>Peta Risiko DBD</h4>
+                        <p>Visualisasi distribusi risiko per kecamatan berbasis prediksi XGBoost+PSO</p>
+                    </div>
+                </div>
+                <div class="pv-feat-card">
+                    <div class="pv-feat-icon">🌧</div>
+                    <div class="pv-feat-body">
+                        <h4>Variabilitas Curah Hujan</h4>
+                        <p>Eksplorasi data CHIRPS 2020–2024 secara interaktif per wilayah</p>
+                    </div>
+                </div>
+                <div class="pv-feat-card">
+                    <div class="pv-feat-icon">🌊</div>
+                    <div class="pv-feat-body">
+                        <h4>Potensi Genangan</h4>
+                        <p>Pemetaan daerah rawan genangan sebagai variabel risiko DBD</p>
+                    </div>
+                </div>
+                <div class="pv-feat-card">
+                    <div class="pv-feat-icon">🔴</div>
+                    <div class="pv-feat-body">
+                        <h4>Klaster LISA Moran</h4>
+                        <p>Identifikasi klaster spasial High-High, Low-Low, dan outlier</p>
+                    </div>
+                </div>
+                <div class="pv-feat-card">
+                    <div class="pv-feat-icon">📊</div>
+                    <div class="pv-feat-body">
+                        <h4>Statistik Interaktif</h4>
+                        <p>Data IR, CFR, dan kepadatan penduduk per kecamatan 2020–2024</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 10. TEAM SECTION                            -->
+    <!-- ============================================ -->
+    <section class="team-section" id="team">
+
+        <!-- HEADER -->
+        <div class="team-header">
+            <div class="section-badge">
+                <span class="badge-icon">👥</span>
+                <span class="badge-label">TIM KAMI</span>
+            </div>
+            <h2 class="section-title">
+                Temui <span class="gradient-text">Pengembang</span>
+            </h2>
+            <p class="section-desc">
+                Tim Geodesi yang mengembangkan WebGIS untuk analisis risiko DBD di Kota Surabaya
+            </p>
+        </div>
+
+        <!-- HEXAGON GRID -->
+        <div class="hexagon-grid">
+
+            <!-- MEMBER 1 - FAYRA -->
+            <div class="hex-item" data-aos="fade-up" data-delay="100">
+                <div class="hexagon">
+                    <div class="hex-inner">
+                        <div class="hex-content">
+                            <div class="member-photo">
+                                <img src="assets/team/Fayra1.png" alt="Fayra Alifya Annisa">
+                                <img src="assets/team/Fayra2.png" alt="Fayra Alifya Annisa">
+                                <img src="assets/team/Fayra3.png" alt="Fayra Alifya Annisa">
+                            </div>
+                            <div class="hex-overlay">
+                                <h3 class="hex-name">Fayra Alifya Annisa</h3>
+                                <p class="hex-nrp">5016231028</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMBER 2 - YUDHA -->
+            <div class="hex-item" data-aos="fade-up" data-delay="200">
+                <div class="hexagon">
+                    <div class="hex-inner">
+                        <div class="hex-content">
+                            <div class="member-photo">
+                                <img src="assets/team/Yudha1.png" alt="Faby Yudha Santoso">
+                                <img src="assets/team/Yudha2.png" alt="Faby Yudha Santoso">
+                                <img src="assets/team/Yudha3.png" alt="Faby Yudha Santoso">
+                            </div>
+                            <div class="hex-overlay">
+                                <h3 class="hex-name">Faby Yudha Santoso</h3>
+                                <p class="hex-nrp">5016231058</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMBER 3 - OKEN -->
+            <div class="hex-item" data-aos="fade-up" data-delay="300">
+                <div class="hexagon">
+                    <div class="hex-inner">
+                        <div class="hex-content">
+                            <div class="member-photo">
+                                <img src="assets/team/Oken1.png" alt="Oken Liza Tri Cahya">
+                                <img src="assets/team/Oken2.png" alt="Oken Liza Tri Cahya">
+                                <img src="assets/team/Oken3.png" alt="Oken Liza Tri Cahya">
+                            </div>
+                            <div class="hex-overlay">
+                                <h3 class="hex-name">Oken Liza Tri Cahya</h3>
+                                <p class="hex-nrp">5016231085</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMBER 4 - RIFQI -->
+            <div class="hex-item" data-aos="fade-up" data-delay="400">
+                <div class="hexagon">
+                    <div class="hex-inner">
+                        <div class="hex-content">
+                            <div class="member-photo">
+                                <img src="assets/team/Rifqi1.png" alt="Rifqi Pangestu Wiguna">
+                                <img src="assets/team/Rifqi2.png" alt="Rifqi Pangestu Wiguna">
+                                <img src="assets/team/Rifqi3.png" alt="Rifqi Pangestu Wiguna">
+                            </div>
+                            <div class="hex-overlay">
+                                <h3 class="hex-name">Rifqi Pangestu Wiguna</h3>
+                                <p class="hex-nrp">5016231105</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MEMBER 5 - INTAN -->
+            <div class="hex-item" data-aos="fade-up" data-delay="500">
+                <div class="hexagon">
+                    <div class="hex-inner">
+                        <div class="hex-content">
+                            <div class="member-photo">
+                                <img src="assets/team/Intan1.png" alt="Intan Nur Fadhila Sari">
+                                <img src="assets/team/Intan2.png" alt="Intan Nur Fadhila Sari">
+                                <img src="assets/team/Intan3.png" alt="Intan Nur Fadhila Sari">
+                            </div>
+                            <div class="hex-overlay">
+                                <h3 class="hex-name">Intan Nur Fadhila Sari</h3>
+                                <p class="hex-nrp">5016231116</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- DIVIDER -->
+    <!-- ========================================================= -->
+
+    <div class="section-divider">
+        <div class="divider-glow"></div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 11. FOOTER                                  -->
+    <!-- ============================================ -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-container">
+
+                <!-- LEFT - BRAND -->
+                <div class="footer-brand">
+                    <h2 class="brand-title">AERIS</h2>
+                    <p class="brand-tagline">Kelompok 10 Field Camp Thematic</p>
+                    <p class="brand-lab">Laboratorium Geodesi dan Geodinamika</p>
+
+                    <!-- STATS -->
+                    <div class="footer-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">2026</span>
+                            <span class="stat-label">Tahun Proyek</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">Anggota Tim</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">ITS</span>
+                            <span class="stat-label">Surabaya</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-ornament">
+                        <div class="ornament-line"></div>
+                        <div class="ornament-dot"></div>
+                    </div>
+                </div>
+
+                <!-- RIGHT - CONTACT -->
+                <div class="footer-contact">
+                    <h3 class="contact-title">Hubungi Kami</h3>
+
+                    <!-- SOCIAL LINKS -->
+                    <div class="social-links-simple">
+
+                        <!-- EMAIL -->
+                        <a href="mailto:geodyncamp10@gmail.com" class="social-icon-link" title="Email">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                                <path d="M3 7l9 6 9-6"/>
+                            </svg>
+                            <span class="icon-label">geodyncamp10@gmail.com</span>
+                        </a>
+
+                        <!-- INSTAGRAM -->
+                        <a href="https://www.instagram.com/ae.risk10?igsh=MWE4Z21pZXY5bnNoYQ==" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Instagram">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                            <span class="icon-label">@ae.risk10</span>
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM BAR -->
+            <div class="footer-bottom">
+                <div class="footer-divider"></div>
+                <div class="footer-credits">
+                    <p class="footer-copyright">
+                        <span class="copyright-year">© 2026</span>
+                        <span class="copyright-sep">·</span>
+                        <span class="copyright-text">AERIS — Dibangun dengan data, peta, dan banyak kopi ☕</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- BACKGROUND PATTERN -->
+        <div class="footer-bg-pattern">
+            <div class="pattern-circle circle-1"></div>
+            <div class="pattern-circle circle-2"></div>
+            <div class="pattern-circle circle-3"></div>
+            <div class="pattern-grid"></div>
+        </div>
+    </footer>
+
+
+    <!-- ============================================ -->
+    <!-- 12. MODAL DETAIL                            -->
+    <!-- ============================================ -->
+    <div class="stat-modal" id="statModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Tutup modal">&times;</button>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+
+    <!-- ============================================ -->
+    <!-- 13. JAVASCRIPT                              -->
+    <!-- ============================================ -->
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Main Script -->
+    <script src="js/script.js"></script>
+
+    <!-- Leaflet Map Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Check if map element exists
+            const mapElement = document.getElementById('mapSurabaya');
+            if (!mapElement) return;
+
+            // Initialize map
+            const map = L.map('mapSurabaya', {
+                center: [-7.2575, 112.7321],
+                zoom: 12,
+                zoomControl: true,
+                scrollWheelZoom: false
+            });
+
+            // Add tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Data 31 Kecamatan Surabaya
+            const kecamatanData = [
+                { name: 'Asemrowo',        lat: -7.237721, lng: 112.689726 },
+                { name: 'Benowo',          lat: -7.227371, lng: 112.647253 },
+                { name: 'Bubutan',         lat: -7.248382, lng: 112.728029 },
+                { name: 'Bulak',           lat: -7.239459, lng: 112.790490 },
+                { name: 'Dukuh Pakis',     lat: -7.292104, lng: 112.699178 },
+                { name: 'Gayungan',        lat: -7.329878, lng: 112.727434 },
+                { name: 'Genteng',         lat: -7.258495, lng: 112.744091 },
+                { name: 'Gubeng',          lat: -7.279910, lng: 112.759557 },
+                { name: 'Gunung Anyar',    lat: -7.337314, lng: 112.794952 },
+                { name: 'Jambangan',       lat: -7.322740, lng: 112.716132 },
+                { name: 'Karang Pilang',   lat: -7.334637, lng: 112.688173 },
+                { name: 'Kenjeran',        lat: -7.217449, lng: 112.769075 },
+                { name: 'Krembangan',      lat: -7.228454, lng: 112.721783 },
+                { name: 'Lakarsantri',     lat: -7.314102, lng: 112.655819 },
+                { name: 'Mulyorejo',       lat: -7.267418, lng: 112.797331 },
+                { name: 'Pabean Cantian',  lat: -7.218936, lng: 112.733680 },
+                { name: 'Pakal',           lat: -7.229155, lng: 112.616201 },
+                { name: 'Rungkut',         lat: -7.318576, lng: 112.802090 },
+                { name: 'Sambikerep',      lat: -7.276269, lng: 112.653321 },
+                { name: 'Sawahan',         lat: -7.272474, lng: 112.722081 },
+                { name: 'Semampir',        lat: -7.213285, lng: 112.748849 },
+                { name: 'Simokerto',       lat: -7.239756, lng: 112.752716 },
+                { name: 'Sukolilo',        lat: -7.292402, lng: 112.805659 },
+                { name: 'Sukomanunggal',   lat: -7.269130, lng: 112.700434 },
+                { name: 'Tambaksari',      lat: -7.250166, lng: 112.767588 },
+                { name: 'Tandes',          lat: -7.255567, lng: 112.671880 },
+                { name: 'Tegalsari',       lat: -7.275746, lng: 112.736952 },
+                { name: 'Tenggilis Mejoyo',lat: -7.324822, lng: 112.753906 },
+                { name: 'Wiyung',          lat: -7.312032, lng: 112.689066 },
+                { name: 'Wonocolo',        lat: -7.322443, lng: 112.742009 },
+                { name: 'Wonokromo',       lat: -7.297756, lng: 112.738439 }
+            ];
+
+            // Custom icon (red marker)
+            const redIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize:    [25, 41],
+                iconAnchor:  [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize:  [41, 41]
+            });
+
+            // Add markers
+            kecamatanData.forEach(function(kec) {
+                L.marker([kec.lat, kec.lng], { icon: redIcon })
+                    .addTo(map)
+                    .bindPopup(
+                        '<div style="text-align: center;">' +
+                        '<strong style="font-size: 14px; color: #ffd700;">' + kec.name + '</strong><br>' +
+                        '<span style="font-size: 12px; color: rgba(255,255,255,0.8);">Kecamatan di Surabaya</span>' +
+                        '</div>'
+                    );
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>
