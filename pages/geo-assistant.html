@@ -1,1128 +1,818 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panduan Lengkap DBD - AERIS</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --red-deep: #7c0000;
-            --red-mid: #c62828;
-            --red-bright: #ff4d4d;
-            --red-glow: #ff6b6b;
-            --gold: #f5c842;
-            --gold-dim: #c9a227;
-            --cream: #fff8f0;
-            --bg-base: #0d0000;
-            --bg-layer: #140202;
-            --bg-card: rgba(255,255,255,0.04);
-            --border: rgba(255,255,255,0.09);
-            --text-main: rgba(255,255,255,0.92);
-            --text-dim: rgba(255,255,255,0.6);
-            --font-display: 'DM Serif Display', Georgia, serif;
-            --font-body: 'DM Sans', sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panduan DBD — AERIS Surabaya</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --r1:#7c0000; --r2:#c0392b; --r3:#e74c3c; --r4:#ff6b6b; --r5:#ffb3b3;
+  --g1:#f39c12; --g2:#f5c842; --g3:#fde68a;
+  --b1:#1a3a5c; --b2:#2980b9; --b3:#5dade2;
+  --gr1:#0a0000; --gr2:#110101; --gr3:#1a0202; --gr4:#240303;
+  --tx1:rgba(255,255,255,.93); --tx2:rgba(255,255,255,.7); --tx3:rgba(255,255,255,.45);
+  --card:rgba(255,255,255,.04); --brd:rgba(255,255,255,.08);
+  --ff:'Playfair Display',Georgia,serif; --fb:'Outfit',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--gr1);color:var(--tx1);font-family:var(--fb);overflow-x:hidden;line-height:1.7}
 
-        * { margin:0; padding:0; box-sizing:border-box; }
+/* ── GRAIN OVERLAY ── */
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.6}
 
-        html { scroll-behavior: smooth; }
+/* ── AMBIENT ── */
+.amb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(120px)}
+.a1{width:600px;height:600px;background:rgba(192,57,43,.1);top:-200px;right:-150px}
+.a2{width:500px;height:500px;background:rgba(124,0,0,.14);bottom:0;left:-200px}
+.a3{width:350px;height:350px;background:rgba(41,128,185,.06);top:40%;right:0}
+.a4{width:280px;height:280px;background:rgba(243,156,18,.05);bottom:20%;left:30%}
 
-        body {
-            background: var(--bg-base);
-            color: var(--text-main);
-            font-family: var(--font-body);
-            overflow-x: hidden;
-            line-height: 1.65;
-        }
+/* ── PROGRESS ── */
+#pg{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--r3),var(--g2),var(--b3));z-index:1000;transition:width .1s;box-shadow:0 0 8px var(--r3)}
 
-        /* ─── NOISE OVERLAY ─── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.5;
-        }
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(10,0,0,.5);border-bottom:1px solid var(--brd);transition:all .3s}
+.nav-logo{font-family:var(--ff);font-size:22px;color:var(--g2);letter-spacing:.05em}
+.nav-logo span{color:var(--r4)}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.nav-link{padding:6px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--tx2);border:1px solid var(--brd);transition:all .3s;cursor:pointer}
+.nav-link:hover,.nav-link.active{color:white;background:rgba(255,107,107,.15);border-color:var(--r4)}
 
-        /* ─── AMBIENT BLOBS ─── */
-        .blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(100px);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .blob-1 { width:500px; height:500px; background:rgba(198,40,40,0.12); top:-100px; right:-100px; }
-        .blob-2 { width:400px; height:400px; background:rgba(124,0,0,0.15); bottom:200px; left:-150px; }
-        .blob-3 { width:300px; height:300px; background:rgba(245,200,66,0.06); top:50%; right:5%; }
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero-bg-ring{position:absolute;border-radius:50%;border:1px solid rgba(231,76,60,.12)}
+.hero-bg-ring:nth-child(1){width:700px;height:700px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.hero-bg-ring:nth-child(2){width:900px;height:900px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.hero-bg-ring:nth-child(3){width:1100px;height:1100px;top:50%;left:50%;transform:translate(-50%,-50%);animation:pulse-ring 4s ease-in-out infinite}
+@keyframes pulse-ring{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:.6;transform:translate(-50%,-50%) scale(1.02)}}
 
-        /* ─── PROGRESS BAR ─── */
-        #progress-bar {
-            position: fixed;
-            top: 0; left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--red-bright), var(--gold));
-            z-index: 1000;
-            transition: width 0.1s;
-        }
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border:1px solid rgba(245,200,66,.35);border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--g2);background:rgba(245,200,66,.07);margin-bottom:28px;animation:fadeUp .8s ease both}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--g2);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-        /* ─── HEADER ─── */
-        .header {
-            position: relative;
-            z-index: 10;
-            padding: 60px 24px 80px;
-            text-align: center;
-            overflow: hidden;
-        }
+.hero h1{font-family:var(--ff);font-size:clamp(44px,7vw,88px);line-height:1.05;margin-bottom:20px;animation:fadeUp .9s .1s ease both}
+.hero h1 em{font-style:italic;background:linear-gradient(135deg,var(--r3),var(--r4),var(--g2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(14px,2vw,18px);color:var(--tx2);max-width:560px;line-height:1.85;margin-bottom:44px;animation:fadeUp .9s .2s ease both}
 
-        .header::after {
-            content:'';
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--red-bright), transparent);
-        }
+.hero-stats{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;animation:fadeUp .9s .3s ease both}
+.h-stat{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:20px 28px;text-align:center;backdrop-filter:blur(10px)}
+.h-stat-n{font-family:var(--ff);font-size:38px;color:var(--r4);line-height:1}
+.h-stat-l{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.1em;margin-top:6px}
 
-        .back-btn {
-            position: absolute;
-            top: 30px; left: 30px;
-            padding: 10px 20px;
-            background: rgba(255,77,77,0.12);
-            border: 1px solid rgba(255,77,77,0.3);
-            border-radius: 100px;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            transition: all 0.3s;
-            display: flex; align-items: center; gap: 8px;
-            backdrop-filter: blur(10px);
-        }
-        .back-btn:hover {
-            background: rgba(255,77,77,0.25);
-            border-color: var(--red-bright);
-            transform: translateX(-4px);
-        }
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--tx3);font-size:11px;letter-spacing:.12em;text-transform:uppercase;animation:fadeIn 1.5s 1s ease both}
+.scroll-dot{width:1px;height:50px;background:linear-gradient(180deg,transparent,var(--r4));animation:scroll-anim 2s ease-in-out infinite}
+@keyframes scroll-anim{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
-        .badge {
-            display: inline-block;
-            padding: 6px 18px;
-            border: 1px solid rgba(245,200,66,0.4);
-            border-radius: 100px;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 20px;
-            background: rgba(245,200,66,0.07);
-        }
+/* ── SECTIONS ── */
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px 120px;position:relative;z-index:2}
+section{margin-bottom:80px;position:relative}
+.sec{background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid var(--brd);border-radius:32px;padding:56px;position:relative;overflow:hidden;backdrop-filter:blur(16px)}
+.sec::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(231,76,60,.04),transparent 50%);pointer-events:none}
+.sec-bar{position:absolute;top:0;left:0;width:3px;height:100px;background:linear-gradient(180deg,var(--r3),transparent);border-radius:0 0 3px 0}
 
-        .header h1 {
-            font-family: var(--font-display);
-            font-size: clamp(36px, 6vw, 68px);
-            line-height: 1.1;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #fff 30%, #ff8a8a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.sec-tag{display:inline-flex;align-items:center;gap:8px;padding:4px 14px;background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);border-radius:100px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--r4);margin-bottom:16px}
+.sec-title{font-family:var(--ff);font-size:clamp(26px,3.5vw,40px);color:var(--g2);margin-bottom:10px;line-height:1.2}
+.sec-lead{font-size:15px;color:var(--tx2);line-height:1.9;margin-bottom:32px;max-width:720px}
 
-        .header-sub {
-            font-size: 16px;
-            color: var(--text-dim);
-            max-width: 500px;
-            margin: 0 auto;
-        }
+/* ── CARDS ── */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.sec{padding:28px 20px}nav{padding:12px 20px}.nav-links{display:none}}
 
-        /* ─── CONTAINER ─── */
-        .container {
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 20px 24px 100px;
-            position: relative;
-            z-index: 2;
-        }
+.card{background:rgba(255,255,255,.03);border:1px solid var(--brd);border-radius:22px;padding:28px 24px;transition:all .35s cubic-bezier(.25,.8,.25,1);position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--r3),var(--g2));opacity:0;transition:opacity .3s}
+.card:hover{background:rgba(255,77,77,.07);border-color:rgba(255,77,77,.25);transform:translateY(-6px);box-shadow:0 24px 60px rgba(255,77,77,.1)}
+.card:hover::after{opacity:1}
+.card-ico{font-size:36px;margin-bottom:16px;display:block}
+.card-h{font-size:15px;font-weight:700;color:var(--r4);margin-bottom:10px;letter-spacing:.02em}
+.card-p{font-size:13px;color:var(--tx2);line-height:1.8}
 
-        /* ─── SECTION ─── */
-        .section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 52px;
-            margin-bottom: 48px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(16px);
-        }
-        .section::before {
-            content:'';
-            position: absolute;
-            inset:0;
-            background: linear-gradient(135deg, rgba(255,77,77,0.03) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .section-accent {
-            position: absolute;
-            top: 0; left: 0;
-            width: 4px;
-            height: 80px;
-            background: linear-gradient(180deg, var(--red-bright), transparent);
-            border-radius: 0 0 4px 0;
-        }
+/* ── ALERT BOXES ── */
+.alert{border-radius:20px;padding:28px 32px;margin:24px 0;position:relative;overflow:hidden}
+.alert-red{background:linear-gradient(135deg,rgba(192,57,43,.15),rgba(124,0,0,.06));border:1px solid rgba(231,76,60,.3)}
+.alert-red::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--r3)}
+.alert-gold{background:linear-gradient(135deg,rgba(245,200,66,.1),rgba(243,156,18,.04));border:1px solid rgba(245,200,66,.28)}
+.alert-gold::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--g2)}
+.alert-blue{background:linear-gradient(135deg,rgba(41,128,185,.12),rgba(26,58,92,.04));border:1px solid rgba(93,173,226,.25)}
+.alert-blue::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--b3)}
+.alert-green{background:linear-gradient(135deg,rgba(39,174,96,.12),rgba(20,90,50,.04));border:1px solid rgba(39,174,96,.25)}
+.alert-green::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#2ecc71}
+.alert-h{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.alert-red .alert-h{color:var(--r4)}
+.alert-gold .alert-h{color:var(--g2)}
+.alert-blue .alert-h{color:var(--b3)}
+.alert-green .alert-h{color:#2ecc71}
+.alert p,.alert ul{font-size:14px;color:var(--tx2);line-height:1.85}
+.alert ul{list-style:none;padding:0}
+.alert ul li{padding:8px 0 8px 26px;position:relative;border-bottom:1px solid rgba(255,255,255,.05)}
+.alert ul li:last-child{border:none}
+.alert-red ul li::before{content:'▸';position:absolute;left:0;color:var(--r4)}
+.alert-gold ul li::before{content:'✦';position:absolute;left:0;color:var(--g2);font-size:11px;top:10px}
+.alert-green ul li::before{content:'✓';position:absolute;left:0;color:#2ecc71;font-weight:700}
 
-        /* ─── SECTION TITLE ─── */
-        .section-title {
-            font-family: var(--font-display);
-            font-size: clamp(26px, 3.5vw, 38px);
-            color: var(--gold);
-            margin-bottom: 28px;
-            display: flex; align-items: center; gap: 14px;
-        }
-        .section-icon {
-            font-size: 36px;
-            line-height: 1;
-        }
+/* ── TIMELINE ── */
+.timeline{position:relative;margin:32px 0}
+.timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,var(--r3),var(--g2),transparent)}
+.tl-item{display:flex;gap:24px;padding:20px 0;position:relative}
+.tl-num{flex-shrink:0;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ff);font-size:18px;font-weight:700;position:relative;z-index:1}
+.tl-num.red{background:linear-gradient(135deg,var(--r2),var(--r1));color:white;box-shadow:0 4px 18px rgba(231,76,60,.4)}
+.tl-num.gold{background:linear-gradient(135deg,var(--g1),#a0700a);color:white;box-shadow:0 4px 18px rgba(243,156,18,.4)}
+.tl-num.green{background:linear-gradient(135deg,#27ae60,#1a6e3c);color:white;box-shadow:0 4px 18px rgba(39,174,96,.4)}
+.tl-num.blue{background:linear-gradient(135deg,var(--b2),var(--b1));color:white;box-shadow:0 4px 18px rgba(41,128,185,.35)}
+.tl-body{flex:1;padding-top:4px}
+.tl-body h4{font-size:16px;font-weight:700;color:var(--g2);margin-bottom:8px}
+.tl-body p{font-size:14px;color:var(--tx2);line-height:1.8}
+.tl-badge{display:inline-block;padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;margin-left:10px;vertical-align:middle}
+.tl-badge.danger{background:rgba(231,76,60,.2);color:var(--r4);border:1px solid rgba(231,76,60,.3)}
+.tl-badge.safe{background:rgba(39,174,96,.2);color:#2ecc71;border:1px solid rgba(39,174,96,.3)}
 
-        /* ─── HERO VISUAL BOX ─── */
-        .visual-box {
-            background: linear-gradient(135deg, rgba(198,40,40,0.08), rgba(124,0,0,0.04));
-            border: 1px solid rgba(255,77,77,0.18);
-            border-radius: 20px;
-            padding: 40px 24px;
-            margin: 32px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .visual-box::before {
-            content:'';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(ellipse at 70% 30%, rgba(255,77,77,0.07), transparent 60%);
-            pointer-events: none;
-        }
-        .visual-box svg { max-width: 100%; height: auto; }
-        .visual-caption {
-            margin-top: 18px;
-            font-size: 13px;
-            color: var(--text-dim);
-            font-style: italic;
-            text-align: center;
-        }
+/* ── 3M CARDS ── */
+.m-card{background:linear-gradient(160deg,rgba(255,77,77,.1),rgba(198,40,40,.04));border:1px solid rgba(255,77,77,.22);border-radius:24px;padding:36px 24px 28px;text-align:center;transition:all .35s}
+.m-card:hover{transform:translateY(-10px);box-shadow:0 28px 70px rgba(255,77,77,.2);border-color:rgba(255,77,77,.5)}
+.m-badge{display:inline-flex;align-items:center;justify-content:center;width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--r3),var(--r1));font-family:var(--ff);font-size:24px;color:white;margin-bottom:18px;box-shadow:0 8px 28px rgba(231,76,60,.45)}
+.m-title{font-size:13px;font-weight:800;color:var(--g2);letter-spacing:.15em;margin-bottom:12px}
+.m-desc{font-size:13px;color:var(--tx2);line-height:1.75}
 
-        /* ─── CARDS ─── */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-top: 28px;
-        }
-        .info-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 28px 24px;
-            transition: all 0.35s cubic-bezier(.25,.8,.25,1);
-            position: relative;
-            overflow: hidden;
-        }
-        .info-card::after {
-            content:'';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--red-bright), var(--gold));
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .info-card:hover {
-            background: rgba(255,77,77,0.08);
-            border-color: rgba(255,77,77,0.3);
-            transform: translateY(-6px);
-            box-shadow: 0 20px 50px rgba(255,77,77,0.12);
-        }
-        .info-card:hover::after { opacity: 1; }
-        .card-icon { font-size: 40px; margin-bottom: 14px; display: block; }
-        .card-title { font-size: 17px; font-weight: 700; color: var(--red-glow); margin-bottom: 10px; }
-        .card-text { font-size: 14px; color: var(--text-dim); line-height: 1.75; }
+/* ── PLUS CARDS ── */
+.plus-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-top:28px}
+.plus-card{background:rgba(255,255,255,.03);border:1px solid var(--brd);border-radius:18px;padding:20px;display:flex;gap:16px;align-items:flex-start;transition:all .3s}
+.plus-card:hover{background:rgba(255,77,77,.07);border-color:rgba(255,77,77,.25);transform:translateX(4px)}
+.plus-ico{font-size:30px;width:52px;height:52px;background:rgba(255,255,255,.05);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.plus-info h4{font-size:14px;font-weight:700;color:var(--r4);margin-bottom:4px}
+.plus-info p{font-size:12px;color:var(--tx2);line-height:1.7}
 
-        /* ─── WARNING BOX ─── */
-        .warning-box {
-            background: linear-gradient(135deg, rgba(255,77,77,0.12), rgba(198,40,40,0.06));
-            border: 1px solid rgba(255,77,77,0.3);
-            border-radius: 18px;
-            padding: 28px 32px;
-            margin: 28px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .warning-box::before {
-            content:'';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: var(--red-bright);
-            border-radius: 3px 0 0 3px;
-        }
-        .warning-title {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 18px; font-weight: 700;
-            color: var(--red-glow); margin-bottom: 12px;
-        }
-        .warning-text { color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 14px; }
+/* ── VISUAL BOX ── */
+.vis{background:linear-gradient(135deg,rgba(231,76,60,.07),rgba(124,0,0,.03));border:1px solid rgba(255,77,77,.15);border-radius:24px;padding:40px 24px;margin:28px 0;display:flex;flex-direction:column;align-items:center;position:relative;overflow:hidden}
+.vis::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(255,77,77,.07),transparent 60%);pointer-events:none}
+.vis svg{max-width:100%;height:auto}
+.vis-cap{margin-top:16px;font-size:12px;color:var(--tx3);font-style:italic;text-align:center}
 
-        /* ─── INFO BOX ─── */
-        .info-box {
-            background: linear-gradient(135deg, rgba(245,200,66,0.08), rgba(201,162,39,0.04));
-            border: 1px solid rgba(245,200,66,0.25);
-            border-radius: 18px;
-            padding: 28px 32px;
-            margin: 28px 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .info-box::before {
-            content:'';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: var(--gold);
-        }
-        .info-box-title {
-            font-size: 17px; font-weight: 700;
-            color: var(--gold); margin-bottom: 10px;
-            display: flex; align-items: center; gap: 8px;
-        }
+/* ── RISK TABLE ── */
+.risk-table{width:100%;border-collapse:collapse;margin:20px 0}
+.risk-table th{background:rgba(255,107,107,.1);color:var(--g2);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:14px 18px;text-align:left;border-bottom:1px solid rgba(255,107,107,.2)}
+.risk-table td{padding:14px 18px;font-size:13px;color:var(--tx2);border-bottom:1px solid rgba(255,255,255,.05)}
+.risk-table tr:hover td{background:rgba(255,255,255,.03)}
+.badge-low{padding:3px 12px;border-radius:100px;background:rgba(39,174,96,.15);color:#2ecc71;font-size:11px;font-weight:700;border:1px solid rgba(39,174,96,.3)}
+.badge-mid{padding:3px 12px;border-radius:100px;background:rgba(243,156,18,.15);color:var(--g2);font-size:11px;font-weight:700;border:1px solid rgba(243,156,18,.3)}
+.badge-high{padding:3px 12px;border-radius:100px;background:rgba(231,76,60,.15);color:var(--r4);font-size:11px;font-weight:700;border:1px solid rgba(231,76,60,.3)}
+.badge-crit{padding:3px 12px;border-radius:100px;background:rgba(124,0,0,.4);color:#ff9999;font-size:11px;font-weight:700;border:1px solid rgba(231,76,60,.5)}
 
-        /* ─── LIST ─── */
-        .custom-list { list-style: none; padding: 0; }
-        .custom-list li {
-            padding: 10px 0 10px 32px;
-            position: relative;
-            color: rgba(255,255,255,0.82);
-            font-size: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .custom-list li:last-child { border-bottom: none; }
-        .custom-list li::before {
-            content: '✦';
-            position: absolute; left: 0;
-            color: var(--gold); font-size: 12px;
-            top: 12px;
-        }
+/* ── MYTH CARDS ── */
+.myth-card{border:1px solid var(--brd);border-radius:18px;overflow:hidden;margin-bottom:14px}
+.myth-header{display:flex;align-items:flex-start;gap:14px;padding:18px 22px;background:rgba(255,77,77,.07)}
+.myth-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.myth-myth{font-size:14px;font-weight:600;color:var(--r4)}
+.myth-fact{padding:16px 22px;background:rgba(39,174,96,.04);border-top:1px solid rgba(39,174,96,.15)}
+.myth-fact p{font-size:13px;color:var(--tx2);line-height:1.8}
+.myth-fact strong{color:#2ecc71}
 
-        /* ─── 3M GRID ─── */
-        .method-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin: 28px 0;
-        }
-        @media(max-width:700px) { .method-grid { grid-template-columns: 1fr; } }
+/* ── MAP SECTION ── */
+.kec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:20px}
+.kec-card{border-radius:14px;padding:14px 16px;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:space-between;transition:all .3s}
+.kec-card:hover{transform:scale(1.04)}
+.kec-vhigh{background:rgba(124,0,0,.4);border:1px solid rgba(231,76,60,.5);color:#ffb3b3}
+.kec-high{background:rgba(192,57,43,.25);border:1px solid rgba(231,76,60,.3);color:var(--r4)}
+.kec-mid{background:rgba(243,156,18,.15);border:1px solid rgba(243,156,18,.3);color:var(--g2)}
+.kec-low{background:rgba(39,174,96,.12);border:1px solid rgba(39,174,96,.25);color:#2ecc71}
 
-        .method-card {
-            background: linear-gradient(160deg, rgba(255,77,77,0.1), rgba(198,40,40,0.04));
-            border: 1px solid rgba(255,77,77,0.22);
-            border-radius: 20px;
-            padding: 32px 20px 28px;
-            text-align: center;
-            transition: all 0.35s cubic-bezier(.25,.8,.25,1);
-            position: relative;
-            overflow: hidden;
-        }
-        .method-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 24px 60px rgba(255,77,77,0.2);
-            border-color: rgba(255,77,77,0.5);
-        }
-        .method-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, var(--red-bright), var(--red-deep));
-            border-radius: 50%;
-            font-size: 22px; font-weight: 900;
-            font-family: var(--font-display);
-            color: white;
-            margin-bottom: 18px;
-            box-shadow: 0 8px 24px rgba(255,77,77,0.4);
-        }
-        .method-title {
-            font-size: 16px; font-weight: 700;
-            color: var(--gold); margin-bottom: 10px;
-            letter-spacing: 0.05em;
-        }
-        .method-desc { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
-        .method-visual {
-            margin: 18px auto 0;
-            width: 90px; height: 90px;
-            display: flex; align-items: center; justify-content: center;
-        }
+/* ── FIRST AID STEPS ── */
+.step-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}
+.step-card{background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:24px 20px;transition:all .3s;position:relative}
+.step-card:hover{background:rgba(41,128,185,.08);border-color:rgba(93,173,226,.3);transform:translateY(-4px)}
+.step-n{font-family:var(--ff);font-size:48px;color:rgba(255,107,107,.15);position:absolute;top:12px;right:16px;line-height:1}
+.step-ico{font-size:32px;margin-bottom:12px}
+.step-h{font-size:15px;font-weight:700;color:var(--b3);margin-bottom:8px}
+.step-p{font-size:13px;color:var(--tx2);line-height:1.75}
 
-        /* ─── PLUS GRID ─── */
-        .plus-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-top: 28px;
-        }
-        .plus-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 22px 20px;
-            display: flex; gap: 14px; align-items: flex-start;
-            transition: all 0.3s;
-        }
-        .plus-card:hover {
-            background: rgba(255,77,77,0.07);
-            border-color: rgba(255,77,77,0.25);
-            transform: translateX(4px);
-        }
-        .plus-icon {
-            font-size: 32px; line-height: 1; flex-shrink: 0;
-            width: 52px; height: 52px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .plus-info h4 { font-size: 15px; font-weight: 700; color: var(--red-glow); margin-bottom: 4px; }
-        .plus-info p { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+/* ── VACCINE SECTION ── */
+.vac-row{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}
+.vac-card{flex:1;min-width:200px;background:rgba(41,128,185,.08);border:1px solid rgba(93,173,226,.2);border-radius:18px;padding:24px 20px}
+.vac-card h4{font-size:14px;font-weight:700;color:var(--b3);margin-bottom:10px}
+.vac-card p{font-size:13px;color:var(--tx2);line-height:1.8}
 
-        /* ─── STAT BAR ─── */
-        .stat-row {
-            display: flex; gap: 20px; flex-wrap: wrap;
-            margin: 28px 0;
-        }
-        .stat-card {
-            flex: 1; min-width: 160px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px 20px;
-            text-align: center;
-        }
-        .stat-num {
-            font-family: var(--font-display);
-            font-size: 42px;
-            color: var(--red-glow);
-            line-height: 1;
-            margin-bottom: 6px;
-        }
-        .stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+/* ── CTA ── */
+.cta{text-align:center;background:linear-gradient(135deg,rgba(255,77,77,.15),rgba(192,57,43,.05));border:1px solid rgba(255,77,77,.3);position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,77,77,.12),transparent 60%);pointer-events:none}
+.cta h2{font-family:var(--ff);font-size:clamp(28px,4vw,50px);color:var(--g2);margin-bottom:16px;position:relative;z-index:2}
+.cta p{font-size:15px;color:var(--tx2);max-width:600px;margin:0 auto 36px;line-height:1.85;position:relative;z-index:2}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;border-radius:100px;font-weight:700;font-size:14px;text-decoration:none;transition:all .3s;position:relative;z-index:2}
+.btn-red{background:linear-gradient(135deg,var(--r3),var(--r1));color:white;box-shadow:0 8px 28px rgba(231,76,60,.4)}
+.btn-red:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(231,76,60,.5)}
+.btn-outline{background:transparent;color:var(--tx1);border:1px solid var(--brd);margin-left:12px}
+.btn-outline:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2)}
 
-        /* ─── PHASE TIMELINE ─── */
-        .phase-timeline { margin: 28px 0; }
-        .phase-item {
-            display: flex; gap: 20px;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            position: relative;
-        }
-        .phase-item:last-child { border-bottom: none; }
-        .phase-num {
-            flex-shrink: 0;
-            width: 48px; height: 48px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-family: var(--font-display);
-            font-size: 18px; font-weight: 700;
-            background: linear-gradient(135deg, var(--red-mid), var(--red-deep));
-            color: white;
-            box-shadow: 0 4px 14px rgba(255,77,77,0.3);
-        }
-        .phase-body h4 { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
-        .phase-body p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .75s ease,transform .75s ease}
+.reveal.vis2{opacity:1;transform:translateY(0)}
 
-        /* ─── CTA ─── */
-        .cta-section {
-            text-align: center;
-            background: linear-gradient(135deg, rgba(255,77,77,0.15), rgba(198,40,40,0.06));
-            border: 1px solid rgba(255,77,77,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(255,77,77,0.15), transparent 60%);
-        }
-        .cta-section h2 {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4vw, 46px);
-            color: var(--gold);
-            margin-bottom: 16px;
-            position: relative; z-index:2;
-        }
-        .cta-section p {
-            font-size: 16px; color: rgba(255,255,255,0.8);
-            max-width: 640px; margin: 0 auto 32px;
-            line-height: 1.8; position: relative; z-index: 2;
-        }
-        .btn-primary {
-            display: inline-flex; align-items: center; gap: 10px;
-            padding: 16px 36px;
-            background: linear-gradient(135deg, var(--red-bright), var(--red-deep));
-            color: white;
-            text-decoration: none;
-            border-radius: 100px;
-            font-weight: 700; font-size: 15px;
-            transition: all 0.3s;
-            box-shadow: 0 8px 24px rgba(255,77,77,0.4);
-            position: relative; z-index: 2;
-        }
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 16px 40px rgba(255,77,77,0.5);
-        }
+/* ── DIVIDER ── */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,107,107,.3),transparent);margin:48px 0}
 
-        /* ─── RESPONSIVE ─── */
-        @media(max-width:768px) {
-            .section { padding: 28px 20px; }
-            .back-btn { position: static; margin-bottom: 20px; display: inline-flex; }
-            .header { padding: 40px 20px 60px; }
-            .info-grid { grid-template-columns: 1fr; }
-            .method-grid { grid-template-columns: 1fr; }
-        }
+/* ── FOOTNOTE ── */
+footer{text-align:center;padding:40px 24px;color:var(--tx3);font-size:12px;border-top:1px solid var(--brd);position:relative;z-index:2}
+footer span{color:var(--g2)}
 
-        /* ─── SCROLL ANIMATIONS ─── */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+/* ── TOOLTIP ── */
+[data-tip]{position:relative;cursor:help;border-bottom:1px dashed rgba(255,107,107,.5)}
+[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100%+8px);left:50%;transform:translateX(-50%);background:#1a0202;border:1px solid rgba(255,107,107,.3);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--tx2);white-space:nowrap;z-index:100;pointer-events:none}
+</style>
 </head>
 <body>
 
-<div id="progress-bar" style="width:0%"></div>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
+<div id="pg" style="width:0"></div>
+<div class="amb a1"></div><div class="amb a2"></div><div class="amb a3"></div><div class="amb a4"></div>
 
-<!-- ══ HEADER ══ -->
-<div class="header">
-    <a href="../index.html" class="back-btn">← Dashboard</a>
-    <div class="badge">🦟 Kesehatan Masyarakat · AERIS</div>
-    <h1>Panduan Lengkap<br>Demam Berdarah Dengue</h1>
-    <p class="header-sub">Kenali penyebab, gejala, dan cara pencegahan DBD secara lengkap dan mudah dipahami</p>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AE<span>R</span>IS</div>
+  <div class="nav-links">
+    <a class="nav-link" onclick="scrollTo('#apa')">Apa itu DBD</a>
+    <a class="nav-link" onclick="scrollTo('#nyamuk')">Nyamuk</a>
+    <a class="nav-link" onclick="scrollTo('#gejala')">Gejala</a>
+    <a class="nav-link" onclick="scrollTo('#cegah')">Pencegahan</a>
+    <a class="nav-link" onclick="scrollTo('#risiko')">Risiko</a>
+    <a class="nav-link" onclick="scrollTo('#aid')">Pertolongan</a>
+    <a class="nav-link" onclick="scrollTo('#vaksin')">Vaksin</a>
+    <a class="nav-link" onclick="scrollTo('#mitos')">Mitos</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+  <div class="hero-eyebrow">🦟 Panduan Kesehatan · AERIS Surabaya 2024</div>
+  <h1>Panduan Lengkap<br><em>Demam Berdarah Dengue</em></h1>
+  <p class="hero-sub">Kenali, cegah, dan hadapi DBD dengan informasi yang akurat, lengkap, dan mudah dipahami untuk seluruh warga Kota Surabaya.</p>
+  <div class="hero-stats">
+    <div class="h-stat"><div class="h-stat-n">231</div><div class="h-stat-l">Kasus DBD Surabaya 2024</div></div>
+    <div class="h-stat"><div class="h-stat-n">31</div><div class="h-stat-l">Kecamatan Terdampak</div></div>
+    <div class="h-stat"><div class="h-stat-n">4</div><div class="h-stat-l">Serotipe Virus Dengue</div></div>
+    <div class="h-stat"><div class="h-stat-n">7hr</div><div class="h-stat-l">Masa Inkubasi Rata-rata</div></div>
+    <div class="h-stat"><div class="h-stat-n">90%</div><div class="h-stat-l">Bisa Dicegah dengan 3M+</div></div>
+  </div>
+  <div class="scroll-hint"><span>Gulir ke bawah</span><div class="scroll-dot"></div></div>
 </div>
 
-<!-- ══ CONTAINER ══ -->
-<div class="container">
+<div class="wrap">
 
-    <!-- ── SECTION 1: APA ITU DBD ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">🔍</span> Apa itu Demam Berdarah Dengue?</h2>
+<!-- ══ SECTION 1: APA ITU DBD ══ -->
+<section id="apa" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🔍 Pengenalan Penyakit</div>
+    <h2 class="sec-title">Apa itu Demam Berdarah Dengue?</h2>
+    <p class="sec-lead">DBD adalah infeksi virus <strong style="color:white">dengue</strong> yang ditularkan melalui gigitan nyamuk <em>Aedes aegypti</em> betina yang terinfeksi. Virus ini menyerang sistem imun dan trombosit, berpotensi menyebabkan pendarahan serius bahkan kematian jika tidak ditangani cepat.</p>
 
-        <p style="color:rgba(255,255,255,0.85); font-size:15px; line-height:1.85; margin-bottom:24px;">
-            <strong style="color:var(--gold)">Demam Berdarah Dengue (DBD)</strong> adalah penyakit infeksi berbahaya yang disebabkan oleh
-            <strong style="color:var(--red-glow)">virus dengue</strong> — ditularkan melalui gigitan nyamuk
-            <em>Aedes aegypti</em> betina. Virus masuk ke aliran darah dan menyerang trombosit (keping darah),
-            menyebabkan pendarahan yang bisa mengancam jiwa jika tidak ditangani cepat.
-        </p>
+    <!-- SVG: Virus dengue illustration -->
+    <div class="vis">
+      <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" width="700" height="280">
+        <defs>
+          <radialGradient id="vg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c0392b" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#7c0000" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="vcore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#e74c3c"/>
+            <stop offset="100%" stop-color="#7c0000"/>
+          </radialGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Glow -->
+        <ellipse cx="350" cy="140" rx="200" ry="140" fill="url(#vg)"/>
+        <!-- Virus body -->
+        <circle cx="350" cy="140" r="65" fill="url(#vcore)" opacity=".85" filter="url(#glow)"/>
+        <!-- Inner detail -->
+        <circle cx="350" cy="140" r="45" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+        <circle cx="350" cy="140" r="25" fill="rgba(255,107,107,.2)" stroke="rgba(255,107,107,.3)" stroke-width="1.5"/>
+        <!-- Spike proteins (key DBD feature) -->
+        <g stroke="rgba(255,107,107,.8)" stroke-width="2" fill="rgba(231,76,60,.4)">
+          <line x1="350" y1="75" x2="350" y2="58"/><circle cx="350" cy="54" r="6"/>
+          <line x1="350" y1="205" x2="350" y2="222"/><circle cx="350" cy="226" r="6"/>
+          <line x1="285" y1="140" x2="268" y2="140"/><circle cx="264" cy="140" r="6"/>
+          <line x1="415" y1="140" x2="432" y2="140"/><circle cx="436" cy="140" r="6"/>
+          <line x1="304" y1="94" x2="291" y2="81"/><circle cx="287" cy="77" r="6"/>
+          <line x1="396" y1="94" x2="409" y2="81"/><circle cx="413" cy="77" r="6"/>
+          <line x1="304" y1="186" x2="291" y2="199"/><circle cx="287" cy="203" r="6"/>
+          <line x1="396" y1="186" x2="409" y2="199"/><circle cx="413" cy="203" r="6"/>
+        </g>
+        <!-- Label: Virus -->
+        <text x="350" y="137" text-anchor="middle" fill="white" font-size="13" font-family="Outfit,sans-serif" font-weight="700">VIRUS</text>
+        <text x="350" y="153" text-anchor="middle" fill="rgba(255,179,179,.8)" font-size="11" font-family="Outfit,sans-serif">DENGUE</text>
+        <!-- Info callouts -->
+        <!-- LEFT -->
+        <rect x="30" y="50" width="180" height="52" rx="10" fill="rgba(231,76,60,.12)" stroke="rgba(231,76,60,.3)" stroke-width="1"/>
+        <text x="120" y="72" text-anchor="middle" fill="#ff9999" font-size="12" font-family="Outfit,sans-serif" font-weight="600">4 Serotipe Berbeda</text>
+        <text x="120" y="90" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">DENV-1, DENV-2, DENV-3, DENV-4</text>
+        <line x1="210" y1="76" x2="282" y2="100" stroke="rgba(231,76,60,.4)" stroke-width="1" stroke-dasharray="4,3"/>
 
-        <!-- Mosquito SVG Illustration -->
-        <div class="visual-box">
-            <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" width="600" height="300">
-                <defs>
-                    <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#ff4d4d" stop-opacity="0.2"/>
-                        <stop offset="100%" stop-color="#ff4d4d" stop-opacity="0"/>
-                    </radialGradient>
-                    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#2a2a2a"/>
-                        <stop offset="100%" stop-color="#111"/>
-                    </linearGradient>
-                </defs>
+        <rect x="30" y="130" width="180" height="52" rx="10" fill="rgba(231,76,60,.12)" stroke="rgba(231,76,60,.3)" stroke-width="1"/>
+        <text x="120" y="152" text-anchor="middle" fill="#ff9999" font-size="12" font-family="Outfit,sans-serif" font-weight="600">Menyerang Trombosit</text>
+        <text x="120" y="170" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">Turun hingga &lt;20.000/µL</text>
+        <line x1="210" y1="156" x2="280" y2="145" stroke="rgba(231,76,60,.4)" stroke-width="1" stroke-dasharray="4,3"/>
 
-                <!-- Glow background -->
-                <ellipse cx="300" cy="150" rx="160" ry="120" fill="url(#glow1)"/>
+        <rect x="30" y="210" width="180" height="52" rx="10" fill="rgba(245,200,66,.1)" stroke="rgba(245,200,66,.3)" stroke-width="1"/>
+        <text x="120" y="232" text-anchor="middle" fill="#f5c842" font-size="12" font-family="Outfit,sans-serif" font-weight="600">Inkubasi 4–10 Hari</text>
+        <text x="120" y="250" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">Rata-rata 7 hari setelah gigitan</text>
+        <line x1="210" y1="234" x2="283" y2="195" stroke="rgba(245,200,66,.4)" stroke-width="1" stroke-dasharray="4,3"/>
 
-                <!-- Wings (left) -->
-                <ellipse cx="200" cy="130" rx="90" ry="30" fill="rgba(200,200,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1" transform="rotate(-20,200,130)"/>
-                <ellipse cx="185" cy="155" rx="70" ry="22" fill="rgba(200,200,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(-15,185,155)"/>
+        <!-- RIGHT -->
+        <rect x="490" y="50" width="180" height="52" rx="10" fill="rgba(93,173,226,.1)" stroke="rgba(93,173,226,.3)" stroke-width="1"/>
+        <text x="580" y="72" text-anchor="middle" fill="#5dade2" font-size="12" font-family="Outfit,sans-serif" font-weight="600">Hanya Nyamuk Betina</text>
+        <text x="580" y="90" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">Yang menghisap darah manusia</text>
+        <line x1="490" y1="76" x2="420" y2="102" stroke="rgba(93,173,226,.4)" stroke-width="1" stroke-dasharray="4,3"/>
 
-                <!-- Wings (right) -->
-                <ellipse cx="400" cy="130" rx="90" ry="30" fill="rgba(200,200,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1" transform="rotate(20,400,130)"/>
-                <ellipse cx="415" cy="155" rx="70" ry="22" fill="rgba(200,200,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1" transform="rotate(15,415,155)"/>
+        <rect x="490" y="130" width="180" height="52" rx="10" fill="rgba(93,173,226,.1)" stroke="rgba(93,173,226,.3)" stroke-width="1"/>
+        <text x="580" y="152" text-anchor="middle" fill="#5dade2" font-size="12" font-family="Outfit,sans-serif" font-weight="600">Tidak Menular Langsung</text>
+        <text x="580" y="170" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">Harus lewat gigitan nyamuk</text>
+        <line x1="490" y1="156" x2="418" y2="145" stroke="rgba(93,173,226,.4)" stroke-width="1" stroke-dasharray="4,3"/>
 
-                <!-- Body segments -->
-                <ellipse cx="300" cy="145" rx="18" ry="30" fill="#1a1a1a" stroke="#ff4d4d" stroke-width="1.5"/>
-                <ellipse cx="300" cy="175" rx="14" ry="22" fill="#1a1a1a" stroke="#ff4d4d" stroke-width="1"/>
-                <!-- Stripes -->
-                <rect x="283" y="140" width="34" height="5" rx="2" fill="white" opacity="0.7"/>
-                <rect x="285" y="152" width="30" height="4" rx="2" fill="white" opacity="0.5"/>
-                <rect x="287" y="162" width="26" height="4" rx="2" fill="white" opacity="0.4"/>
-
-                <!-- Head -->
-                <circle cx="300" cy="112" r="14" fill="#111" stroke="#ff4d4d" stroke-width="1.5"/>
-                <!-- Eyes -->
-                <circle cx="294" cy="109" r="4" fill="#ff4d4d" opacity="0.9"/>
-                <circle cx="306" cy="109" r="4" fill="#ff4d4d" opacity="0.9"/>
-                <circle cx="295" cy="108" r="1.5" fill="white"/>
-                <circle cx="307" cy="108" r="1.5" fill="white"/>
-
-                <!-- Proboscis -->
-                <line x1="300" y1="126" x2="300" y2="175" stroke="#888" stroke-width="1.5" stroke-dasharray="3,2"/>
-                <line x1="300" y1="175" x2="295" y2="210" stroke="#888" stroke-width="1.5"/>
-
-                <!-- Legs (left) -->
-                <line x1="283" y1="145" x2="235" y2="160" stroke="white" stroke-width="1.5" opacity="0.6"/>
-                <line x1="283" y1="155" x2="230" y2="178" stroke="white" stroke-width="1.5" opacity="0.6"/>
-                <line x1="283" y1="167" x2="228" y2="200" stroke="white" stroke-width="1.5" opacity="0.6"/>
-                <!-- Legs (right) -->
-                <line x1="317" y1="145" x2="365" y2="160" stroke="white" stroke-width="1.5" opacity="0.6"/>
-                <line x1="317" y1="155" x2="370" y2="178" stroke="white" stroke-width="1.5" opacity="0.6"/>
-                <line x1="317" y1="167" x2="372" y2="200" stroke="white" stroke-width="1.5" opacity="0.6"/>
-
-                <!-- White stripe pattern on legs -->
-                <circle cx="248" cy="157" r="2.5" fill="white" opacity="0.6"/>
-                <circle cx="243" cy="175" r="2.5" fill="white" opacity="0.6"/>
-                <circle cx="352" cy="157" r="2.5" fill="white" opacity="0.6"/>
-                <circle cx="357" cy="175" r="2.5" fill="white" opacity="0.6"/>
-
-                <!-- Label -->
-                <text x="300" y="250" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="13" font-family="DM Sans, sans-serif" font-style="italic">Nyamuk Aedes aegypti — Vektor Utama Virus Dengue</text>
-
-                <!-- Info tags -->
-                <rect x="40" y="90" width="120" height="40" rx="8" fill="rgba(255,77,77,0.15)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="100" y="106" text-anchor="middle" fill="#ff9999" font-size="11" font-family="DM Sans, sans-serif">Belang putih khas</text>
-                <text x="100" y="122" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="10" font-family="DM Sans, sans-serif">pada kaki &amp; tubuh</text>
-                <line x1="160" y1="110" x2="200" y2="130" stroke="rgba(255,77,77,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
-
-                <rect x="440" y="80" width="120" height="40" rx="8" fill="rgba(255,77,77,0.15)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="500" y="96" text-anchor="middle" fill="#ff9999" font-size="11" font-family="DM Sans, sans-serif">Aktif pagi &amp; sore</text>
-                <text x="500" y="112" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="10" font-family="DM Sans, sans-serif">08.00–10.00 / 15.00–17.00</text>
-                <line x1="440" y1="100" x2="395" y2="120" stroke="rgba(255,77,77,0.4)" stroke-width="1" stroke-dasharray="3,3"/>
-            </svg>
-            <p class="visual-caption">Ilustrasi nyamuk <em>Aedes aegypti</em> — penular utama virus dengue di Indonesia</p>
-        </div>
-
-        <!-- Stat row -->
-        <div class="stat-row">
-            <div class="stat-card">
-                <div class="stat-num">231</div>
-                <div class="stat-label">Kasus DBD Surabaya 2024</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">+20%</div>
-                <div class="stat-label">Peningkatan dari tahun lalu</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">4</div>
-                <div class="stat-label">Serotipe virus dengue</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-num">7 hr</div>
-                <div class="stat-label">Masa inkubasi virus</div>
-            </div>
-        </div>
-
-        <div class="warning-box">
-            <div class="warning-title">⚠️ Situasi DBD di Surabaya 2024</div>
-            <p class="warning-text">
-                Kota Surabaya mencatat <strong>231 kasus DBD</strong> pada 2024, meningkat <strong>20%</strong>
-                dibanding tahun sebelumnya. Faktor utamanya: curah hujan tinggi, genangan air di permukiman padat,
-                serta rendahnya kesadaran masyarakat dalam melakukan pencegahan rutin. DBD bisa dicegah — tapi butuh
-                aksi nyata <em>setiap hari</em>, bukan hanya saat wabah terjadi.
-            </p>
-        </div>
+        <rect x="490" y="210" width="180" height="52" rx="10" fill="rgba(39,174,96,.1)" stroke="rgba(39,174,96,.3)" stroke-width="1"/>
+        <text x="580" y="232" text-anchor="middle" fill="#2ecc71" font-size="12" font-family="Outfit,sans-serif" font-weight="600">Bisa Dicegah</text>
+        <text x="580" y="250" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="10" font-family="Outfit,sans-serif">Dengan 3M PLUS konsisten</text>
+        <line x1="490" y1="234" x2="418" y2="195" stroke="rgba(39,174,96,.4)" stroke-width="1" stroke-dasharray="4,3"/>
+      </svg>
+      <p class="vis-cap">Ilustrasi virus dengue dan karakteristik utamanya</p>
     </div>
 
-    <!-- ── SECTION 2: KENALI NYAMUK ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">🔬</span> Kenali Nyamuk Aedes aegypti</h2>
-
-        <div class="info-grid">
-            <div class="info-card">
-                <span class="card-icon">👁️</span>
-                <h3 class="card-title">Ciri-ciri Fisik</h3>
-                <p class="card-text">Tubuh kecil berwarna <strong>hitam dengan belang putih</strong> khas pada kaki dan badan.
-                Ukurannya lebih kecil dari nyamuk biasa, dan sangat mudah dikenali dari corak belang-nya.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">⏰</span>
-                <h3 class="card-title">Waktu Aktif Menggigit</h3>
-                <p class="card-text">Berbeda dari nyamuk malam biasa, Aedes aegypti aktif di <strong>siang hari</strong>:<br>
-                🌅 Pagi: 08.00 – 10.00<br>🌆 Sore: 15.00 – 17.00<br>
-                Hindari gigitan di jam-jam ini.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🏠</span>
-                <h3 class="card-title">Habitat Favorit</h3>
-                <p class="card-text">Lebih sering berada <strong>di dalam rumah</strong> dibanding nyamuk lain. 
-                Berkembang biak di air bersih yang tenang: bak mandi, vas bunga, dispenser, bahkan tutup botol.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🥚</span>
-                <h3 class="card-title">Siklus Berkembang Biak</h3>
-                <p class="card-text">Telur → Jentik → Kepompong → Nyamuk dewasa hanya dalam <strong>8–10 hari</strong>.
-                Satu nyamuk betina bisa bertelur hingga <strong>300 butir</strong> seumur hidupnya.</p>
-            </div>
-        </div>
-
-        <!-- Mosquito Life Cycle SVG -->
-        <div class="visual-box">
-            <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" width="640" height="260">
-                <defs>
-                    <linearGradient id="arrowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#ff4d4d"/>
-                        <stop offset="100%" stop-color="#f5c842"/>
-                    </linearGradient>
-                </defs>
-
-                <!-- Stage 1: Egg -->
-                <circle cx="90" cy="130" r="50" fill="rgba(255,77,77,0.1)" stroke="rgba(255,77,77,0.35)" stroke-width="1.5"/>
-                <text x="90" y="118" text-anchor="middle" font-size="28">🥚</text>
-                <text x="90" y="148" text-anchor="middle" fill="var(--gold)" font-size="13" font-family="DM Sans,sans-serif" font-weight="700">Telur</text>
-                <text x="90" y="165" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Di permukaan air</text>
-
-                <!-- Arrow 1 -->
-                <path d="M148,130 L188,130" stroke="url(#arrowGrad)" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-                <text x="168" y="122" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="10" font-family="DM Sans,sans-serif">2–3 hari</text>
-
-                <!-- Stage 2: Larva -->
-                <circle cx="240" cy="130" r="50" fill="rgba(255,77,77,0.1)" stroke="rgba(255,77,77,0.35)" stroke-width="1.5"/>
-                <text x="240" y="118" text-anchor="middle" font-size="28">🐛</text>
-                <text x="240" y="148" text-anchor="middle" fill="var(--gold)" font-size="13" font-family="DM Sans,sans-serif" font-weight="700">Jentik</text>
-                <text x="240" y="165" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Hidup di air</text>
-
-                <!-- Arrow 2 -->
-                <path d="M298,130 L338,130" stroke="url(#arrowGrad)" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-                <text x="318" y="122" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="10" font-family="DM Sans,sans-serif">4–6 hari</text>
-
-                <!-- Stage 3: Pupa -->
-                <circle cx="390" cy="130" r="50" fill="rgba(255,77,77,0.1)" stroke="rgba(255,77,77,0.35)" stroke-width="1.5"/>
-                <text x="390" y="118" text-anchor="middle" font-size="28">🫘</text>
-                <text x="390" y="148" text-anchor="middle" fill="var(--gold)" font-size="13" font-family="DM Sans,sans-serif" font-weight="700">Kepompong</text>
-                <text x="390" y="165" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Transformasi</text>
-
-                <!-- Arrow 3 -->
-                <path d="M448,130 L488,130" stroke="url(#arrowGrad)" stroke-width="2" fill="none" marker-end="url(#arr)"/>
-                <text x="468" y="122" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="10" font-family="DM Sans,sans-serif">1–2 hari</text>
-
-                <!-- Stage 4: Adult -->
-                <circle cx="545" cy="130" r="50" fill="rgba(255,77,77,0.15)" stroke="rgba(255,77,77,0.5)" stroke-width="2"/>
-                <text x="545" y="118" text-anchor="middle" font-size="28">🦟</text>
-                <text x="545" y="148" text-anchor="middle" fill="var(--gold)" font-size="13" font-family="DM Sans,sans-serif" font-weight="700">Nyamuk Dewasa</text>
-                <text x="545" y="165" text-anchor="middle" fill="#ff6b6b" font-size="10" font-family="DM Sans,sans-serif">⚠ Menularkan DBD</text>
-
-                <!-- Arrow marker -->
-                <defs>
-                    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-                        <path d="M0,0 L0,6 L8,3 z" fill="#f5c842" opacity="0.8"/>
-                    </marker>
-                </defs>
-
-                <!-- Total cycle label -->
-                <text x="320" y="235" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="12" font-family="DM Sans,sans-serif" font-style="italic">Total siklus: 8–10 hari · Satu betina bisa bertelur hingga 300 butir</text>
-            </svg>
-            <p class="visual-caption">Siklus hidup nyamuk Aedes aegypti — dari telur hingga nyamuk dewasa penular DBD</p>
-        </div>
-
-        <div class="info-box">
-            <div class="info-box-title">💡 Fakta Penting</div>
-            <p style="font-size:14px; color:rgba(255,255,255,0.8); line-height:1.8;">
-                Hanya <strong>nyamuk betina</strong> yang menggigit manusia — mereka membutuhkan darah untuk mematangkan telur.
-                Nyamuk jantan hanya menghisap nektar bunga. Satu nyamuk betina yang terinfeksi bisa menularkan virus ke
-                banyak orang karena pola gigitnya yang sering berpindah-pindah.
-            </p>
-        </div>
+    <div class="alert alert-red">
+      <div class="alert-h">⚠️ Situasi DBD Surabaya 2024</div>
+      <p>Kota Surabaya mencatat <strong>231 kasus DBD</strong> sepanjang 2024, meningkat <strong>20%</strong> dari tahun sebelumnya. Wilayah dengan risiko tertinggi adalah kecamatan padat penduduk yang juga memiliki intensitas curah hujan tinggi dan sistem drainase yang kurang optimal. DBD sangat bisa dicegah — namun memerlukan komitmen dan tindakan nyata dari setiap individu dan keluarga <em>setiap harinya</em>.</p>
     </div>
 
-    <!-- ── SECTION 3: GEJALA ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">🤒</span> Gejala & Tanda Bahaya DBD</h2>
+    <!-- Transmission chain -->
+    <h3 style="color:var(--g2);font-family:var(--ff);font-size:22px;margin:32px 0 16px">Rantai Penularan DBD</h3>
+    <div class="vis" style="margin:0">
+      <svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg" width="680" height="110">
+        <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="rgba(245,200,66,.7)"/></marker></defs>
+        <!-- Steps -->
+        <g font-family="Outfit,sans-serif" text-anchor="middle">
+          <!-- 1 -->
+          <rect x="10" y="20" width="110" height="70" rx="12" fill="rgba(231,76,60,.1)" stroke="rgba(231,76,60,.3)" stroke-width="1"/>
+          <text x="65" y="50" font-size="22">🤒</text>
+          <text x="65" y="68" fill="#ff9999" font-size="11" font-weight="600">Manusia Sakit</text>
+          <text x="65" y="82" fill="rgba(255,255,255,.4)" font-size="9">(Mengandung virus)</text>
+          <!-- arrow -->
+          <line x1="122" y1="55" x2="148" y2="55" stroke="rgba(245,200,66,.6)" stroke-width="1.5" marker-end="url(#a2)"/>
+          <!-- 2 -->
+          <rect x="150" y="20" width="110" height="70" rx="12" fill="rgba(231,76,60,.1)" stroke="rgba(231,76,60,.3)" stroke-width="1"/>
+          <text x="205" y="50" font-size="22">🦟</text>
+          <text x="205" y="68" fill="#ff9999" font-size="11" font-weight="600">Nyamuk Gigit</text>
+          <text x="205" y="82" fill="rgba(255,255,255,.4)" font-size="9">(Virus masuk nyamuk)</text>
+          <!-- arrow -->
+          <line x1="262" y1="55" x2="288" y2="55" stroke="rgba(245,200,66,.6)" stroke-width="1.5" marker-end="url(#a2)"/>
+          <!-- 3 -->
+          <rect x="290" y="20" width="120" height="70" rx="12" fill="rgba(243,156,18,.1)" stroke="rgba(243,156,18,.3)" stroke-width="1"/>
+          <text x="350" y="50" font-size="22">⏳</text>
+          <text x="350" y="68" fill="#f5c842" font-size="11" font-weight="600">Inkubasi Ekstrinsik</text>
+          <text x="350" y="82" fill="rgba(255,255,255,.4)" font-size="9">(8–12 hari dalam nyamuk)</text>
+          <!-- arrow -->
+          <line x1="412" y1="55" x2="438" y2="55" stroke="rgba(245,200,66,.6)" stroke-width="1.5" marker-end="url(#a2)"/>
+          <!-- 4 -->
+          <rect x="440" y="20" width="110" height="70" rx="12" fill="rgba(231,76,60,.1)" stroke="rgba(231,76,60,.3)" stroke-width="1"/>
+          <text x="495" y="50" font-size="22">🦟</text>
+          <text x="495" y="68" fill="#ff9999" font-size="11" font-weight="600">Nyamuk Infeksius</text>
+          <text x="495" y="82" fill="rgba(255,255,255,.4)" font-size="9">(Siap menularkan)</text>
+          <!-- arrow -->
+          <line x1="552" y1="55" x2="578" y2="55" stroke="rgba(245,200,66,.6)" stroke-width="1.5" marker-end="url(#a2)"/>
+          <!-- 5 -->
+          <rect x="580" y="20" width="90" height="70" rx="12" fill="rgba(39,174,96,.08)" stroke="rgba(39,174,96,.3)" stroke-width="1"/>
+          <text x="625" y="50" font-size="22">😰</text>
+          <text x="625" y="68" fill="#2ecc71" font-size="11" font-weight="600">Manusia Baru</text>
+          <text x="625" y="82" fill="rgba(255,255,255,.4)" font-size="9">(Tertular DBD)</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
 
-        <!-- Symptom SVG Illustration -->
-        <div class="visual-box">
-            <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" width="640" height="280">
-                <!-- Human silhouette (simple) -->
-                <circle cx="320" cy="60" r="30" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                <path d="M295,90 Q320,150 295,200 M345,90 Q320,150 345,200" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-                <rect x="298" y="90" width="44" height="80" rx="10" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-                <line x1="298" y1="95" x2="260" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="342" y1="95" x2="380" y2="150" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="308" y1="170" x2="295" y2="230" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="332" y1="170" x2="345" y2="230" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-linecap="round"/>
+<!-- ══ SECTION 2: NYAMUK ══ -->
+<section id="nyamuk" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🔬 Kenali Vektornya</div>
+    <h2 class="sec-title">Mengenal Nyamuk Aedes aegypti</h2>
+    <p class="sec-lead">Musuh utama kita bukan virus dengue secara langsung — melainkan nyamuknya. Semakin mengenal perilaku nyamuk ini, semakin efektif langkah pencegahan yang bisa kita lakukan.</p>
 
-                <!-- Symptom callouts LEFT -->
-                <!-- Fever -->
-                <line x1="290" y1="55" x2="200" y2="40" stroke="rgba(255,77,77,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="80" y="20" width="115" height="42" rx="8" fill="rgba(255,77,77,0.12)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="138" y="38" text-anchor="middle" fill="#ff9999" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">🌡️ Demam Tinggi</text>
-                <text x="138" y="54" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">39–40°C, 2–7 hari</text>
-
-                <!-- Headache -->
-                <line x1="298" y1="50" x2="195" y2="90" stroke="rgba(255,77,77,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="60" y="72" width="130" height="42" rx="8" fill="rgba(255,77,77,0.12)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="125" y="90" text-anchor="middle" fill="#ff9999" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">😵 Sakit Kepala</text>
-                <text x="125" y="106" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Hebat di bagian dahi</text>
-
-                <!-- Rash -->
-                <line x1="295" y1="130" x2="195" y2="145" stroke="rgba(255,77,77,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="55" y="127" width="135" height="42" rx="8" fill="rgba(255,77,77,0.12)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="123" y="145" text-anchor="middle" fill="#ff9999" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">🔴 Bintik Merah</text>
-                <text x="123" y="161" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Ruam di kulit</text>
-
-                <!-- Muscle pain -->
-                <line x1="295" y1="155" x2="195" y2="195" stroke="rgba(255,77,77,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="55" y="180" width="135" height="42" rx="8" fill="rgba(255,77,77,0.12)" stroke="rgba(255,77,77,0.3)" stroke-width="1"/>
-                <text x="123" y="198" text-anchor="middle" fill="#ff9999" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">💢 Nyeri Otot &amp; Sendi</text>
-                <text x="123" y="214" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Terasa nyeri seluruh tubuh</text>
-
-                <!-- Symptom callouts RIGHT -->
-                <!-- Nausea -->
-                <line x1="340" y1="110" x2="435" y2="85" stroke="rgba(245,200,66,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="435" y="67" width="125" height="42" rx="8" fill="rgba(245,200,66,0.1)" stroke="rgba(245,200,66,0.3)" stroke-width="1"/>
-                <text x="498" y="85" text-anchor="middle" fill="#f5c842" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">🤢 Mual &amp; Muntah</text>
-                <text x="498" y="101" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Sulit makan &amp; minum</text>
-
-                <!-- Fatigue -->
-                <line x1="345" y1="130" x2="440" y2="140" stroke="rgba(245,200,66,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="440" y="122" width="125" height="42" rx="8" fill="rgba(245,200,66,0.1)" stroke="rgba(245,200,66,0.3)" stroke-width="1"/>
-                <text x="503" y="140" text-anchor="middle" fill="#f5c842" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">😴 Tubuh Lemas</text>
-                <text x="503" y="156" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Tidak bertenaga</text>
-
-                <!-- Bleeding -->
-                <line x1="340" y1="160" x2="440" y2="195" stroke="rgba(245,200,66,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-                <rect x="440" y="178" width="125" height="42" rx="8" fill="rgba(245,200,66,0.1)" stroke="rgba(245,200,66,0.3)" stroke-width="1"/>
-                <text x="503" y="196" text-anchor="middle" fill="#f5c842" font-size="12" font-family="DM Sans,sans-serif" font-weight="600">🩸 Perdarahan</text>
-                <text x="503" y="212" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="DM Sans,sans-serif">Mimisan, gusi berdarah</text>
-
-                <!-- Caption -->
-                <text x="320" y="260" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="11" font-family="DM Sans,sans-serif" font-style="italic">Gejala dapat muncul 4–7 hari setelah gigitan nyamuk terinfeksi</text>
-            </svg>
-            <p class="visual-caption">Gejala-gejala utama DBD yang perlu diwaspadai sejak dini</p>
-        </div>
-
-        <!-- 3 Phases -->
-        <h3 style="color:var(--red-glow); font-size:18px; margin-bottom:16px; margin-top:8px;">📅 3 Fase Perjalanan Penyakit DBD</h3>
-        <div class="phase-timeline">
-            <div class="phase-item">
-                <div class="phase-num">1</div>
-                <div class="phase-body">
-                    <h4>Fase Demam (Hari 1–3)</h4>
-                    <p>Demam tinggi mendadak hingga 39–40°C, sakit kepala, nyeri otot dan sendi, ruam merah muncul di kulit.
-                    Fase ini nyamuk tampak "sembuh" — jangan terkecoh!</p>
-                </div>
-            </div>
-            <div class="phase-item">
-                <div class="phase-num">2</div>
-                <div class="phase-body">
-                    <h4>Fase Kritis (Hari 4–5) — ⚠️ BERBAHAYA</h4>
-                    <p>Demam bisa turun, namun ini adalah fase <strong style="color:var(--red-glow)">paling berbahaya</strong>.
-                    Trombosit menurun drastis, risiko pendarahan internal meningkat. Pasien wajib diawasi ketat oleh dokter.</p>
-                </div>
-            </div>
-            <div class="phase-item">
-                <div class="phase-num">3</div>
-                <div class="phase-body">
-                    <h4>Fase Pemulihan (Hari 6–7)</h4>
-                    <p>Jika melewati fase kritis dengan selamat, tubuh mulai pulih. Trombosit naik, nafsu makan kembali,
-                    dan kondisi umum membaik. Istirahat dan asupan cairan tetap penting.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="warning-box">
-            <div class="warning-title">🚨 Segera ke Dokter / Rumah Sakit Jika:</div>
-            <ul class="custom-list" style="margin-top:10px;">
-                <li>Demam tidak turun setelah <strong>3 hari</strong></li>
-                <li>Muncul bintik merah atau lebam di kulit yang tidak hilang</li>
-                <li>Muntah terus-menerus, tidak bisa makan atau minum</li>
-                <li>Mimisan atau gusi berdarah tanpa sebab</li>
-                <li>Nyeri perut yang sangat hebat</li>
-                <li>Tangan dan kaki terasa <strong>dingin</strong> (tanda syok)</li>
-                <li>Penurunan kesadaran atau tidak bisa diajak bicara</li>
-            </ul>
-        </div>
+    <div class="grid-4">
+      <div class="card"><span class="card-ico">👁️</span><h3 class="card-h">Ciri Fisik Khas</h3><p class="card-p">Tubuh kecil hitam dengan <strong>belang putih mencolok</strong> pada kaki dan abdomen. Ukurannya sekitar 4–7 mm, lebih kecil dari nyamuk Culex biasa. Sayap tembus pandang dengan sisik gelap.</p></div>
+      <div class="card"><span class="card-ico">⏰</span><h3 class="card-h">Jam Aktif Menggigit</h3><p class="card-p">Aktif di <strong>siang hari</strong>, paling agresif pagi <strong>08.00–10.00</strong> dan sore <strong>15.00–17.00</strong>. Berbeda dari nyamuk malam (malaria), sehingga kelambu malam tidak cukup melindungi.</p></div>
+      <div class="card"><span class="card-ico">🏠</span><h3 class="card-h">Preferensi Habitat</h3><p class="card-p">Lebih memilih <strong>di dalam dan sekitar rumah</strong>. Bertelur di air bersih yang tenang dan gelap: bak mandi, vas bunga, tatakan pot, tempat minum hewan, dispenser, bahkan lubang pohon.</p></div>
+      <div class="card"><span class="card-ico">📏</span><h3 class="card-h">Jangkauan Terbang</h3><p class="card-p">Hanya terbang <strong>sekitar 100–200 meter</strong> sepanjang hidupnya. Artinya, sumber penyakit DBD hampir selalu berasal dari lingkungan <em>dalam radius yang sangat dekat</em> dari rumah penderita.</p></div>
     </div>
 
-    <!-- ── SECTION 4: 3M PLUS ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">🛡️</span> Pencegahan DBD dengan 3M PLUS</h2>
-
-        <p style="color:var(--text-dim); font-size:14px; margin-bottom:28px; line-height:1.8;">
-            3M PLUS adalah gerakan nasional yang terbukti efektif menekan populasi nyamuk <em>Aedes aegypti</em>.
-            Lakukan secara <strong style="color:white">rutin dan konsisten</strong> — bukan hanya saat ada kasus DBD di sekitar.
-        </p>
-
-        <!-- 3M Cards with SVG Icons -->
-        <div class="method-grid">
-            <!-- M1 Menguras -->
-            <div class="method-card">
-                <div class="method-badge">M1</div>
-                <h3 class="method-title">MENGURAS</h3>
-                <p class="method-desc">Kuras dan bersihkan tempat penampungan air secara rutin, minimal <strong>1 minggu sekali</strong>, untuk membuang telur nyamuk yang mungkin menempel di dinding wadah.</p>
-                <div class="method-visual">
-                    <svg viewBox="0 0 90 90" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Bucket -->
-                        <path d="M25,30 L15,80 L75,80 L65,30 Z" fill="rgba(255,77,77,0.15)" stroke="rgba(255,77,77,0.5)" stroke-width="2" stroke-linejoin="round"/>
-                        <ellipse cx="45" cy="30" rx="20" ry="7" fill="rgba(255,77,77,0.2)" stroke="rgba(255,77,77,0.5)" stroke-width="2"/>
-                        <!-- Handle -->
-                        <path d="M30,30 Q45,15 60,30" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"/>
-                        <!-- Water drops -->
-                        <path d="M38,55 Q38,65 45,65 Q52,65 52,55 Q52,45 45,42 Q38,45 38,55Z" fill="rgba(100,180,255,0.5)" stroke="rgba(100,180,255,0.7)" stroke-width="1"/>
-                        <!-- Scrub lines -->
-                        <line x1="32" y1="72" x2="58" y2="72" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"/>
-                        <line x1="28" y1="66" x2="62" y2="66" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- M2 Menutup -->
-            <div class="method-card">
-                <div class="method-badge">M2</div>
-                <h3 class="method-title">MENUTUP</h3>
-                <p class="method-desc">Tutup rapat semua wadah penampungan air — bak mandi, toren, ember, dispenser — agar nyamuk tidak bisa masuk dan bertelur di dalamnya.</p>
-                <div class="method-visual">
-                    <svg viewBox="0 0 90 90" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Container -->
-                        <rect x="18" y="40" width="54" height="40" rx="5" fill="rgba(255,77,77,0.15)" stroke="rgba(255,77,77,0.5)" stroke-width="2"/>
-                        <!-- Lid -->
-                        <rect x="14" y="34" width="62" height="10" rx="5" fill="rgba(255,77,77,0.3)" stroke="rgba(255,77,77,0.6)" stroke-width="2"/>
-                        <!-- Water inside -->
-                        <rect x="20" y="60" width="50" height="18" rx="3" fill="rgba(100,180,255,0.2)"/>
-                        <!-- Lock/check icon -->
-                        <circle cx="45" cy="25" r="10" fill="rgba(100,200,100,0.2)" stroke="rgba(100,200,100,0.6)" stroke-width="2"/>
-                        <path d="M39,25 L43,29 L52,20" fill="none" stroke="#88ee88" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <!-- Mosquito blocked -->
-                        <text x="62" y="48" font-size="14" text-anchor="middle">🚫</text>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- M3 Mendaur Ulang -->
-            <div class="method-card">
-                <div class="method-badge">M3</div>
-                <h3 class="method-title">MENDAUR ULANG</h3>
-                <p class="method-desc">Buang atau manfaatkan kembali barang bekas yang dapat menampung air hujan: ban, kaleng, botol, pot bekas, dan plastik yang berserakan.</p>
-                <div class="method-visual">
-                    <svg viewBox="0 0 90 90" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Recycle arrows -->
-                        <path d="M45,20 L55,32 L49,32 Q52,45 45,55 Q38,45 41,32 L35,32 Z" fill="rgba(100,200,100,0.3)" stroke="rgba(100,200,100,0.6)" stroke-width="1.5" stroke-linejoin="round"/>
-                        <!-- Circular arrows -->
-                        <path d="M25,55 A22,22 0 0 1 65,42" fill="none" stroke="rgba(100,200,100,0.5)" stroke-width="2" stroke-linecap="round" marker-end="url(#garr)"/>
-                        <path d="M65,55 A22,22 0 0 1 25,68" fill="none" stroke="rgba(100,200,100,0.5)" stroke-width="2" stroke-linecap="round" marker-end="url(#garr)"/>
-                        <defs>
-                            <marker id="garr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                                <path d="M0,0 L0,6 L6,3 z" fill="rgba(100,200,100,0.7)"/>
-                            </marker>
-                        </defs>
-                        <!-- Old items -->
-                        <text x="30" y="76" font-size="12">🥫</text>
-                        <text x="45" y="76" font-size="12">🪣</text>
-                        <text x="60" y="76" font-size="12">♻️</text>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- PLUS section -->
-        <div style="text-align:center; margin: 40px 0 24px;">
-            <span style="
-                display:inline-block;
-                padding: 10px 32px;
-                background: linear-gradient(135deg, rgba(245,200,66,0.15), rgba(245,200,66,0.05));
-                border: 1px solid rgba(245,200,66,0.4);
-                border-radius: 100px;
-                font-family: var(--font-display);
-                font-size: 26px;
-                color: var(--gold);
-                letter-spacing: 0.05em;
-            ">✚ PLUS — Langkah Tambahan</span>
-        </div>
-
-        <div class="plus-grid">
-            <div class="plus-card">
-                <div class="plus-icon">🧴</div>
-                <div class="plus-info">
-                    <h4>Lotion Anti Nyamuk</h4>
-                    <p>Oleskan lotion mengandung DEET atau bahan alami saat beraktivitas di dalam dan luar ruangan, terutama pagi dan sore hari.</p>
-                </div>
-            </div>
-            <div class="plus-card">
-                <div class="plus-icon">🪟</div>
-                <div class="plus-info">
-                    <h4>Kawat Kasa</h4>
-                    <p>Pasang kawat kasa di seluruh jendela dan ventilasi rumah sebagai penghalang fisik agar nyamuk tidak masuk ke dalam ruangan.</p>
-                </div>
-            </div>
-            <div class="plus-card">
-                <div class="plus-icon">🌿</div>
-                <div class="plus-info">
-                    <h4>Tanaman Pengusir Nyamuk</h4>
-                    <p>Tanam <strong>lavender, serai, zodia, atau kemangi</strong> di sekitar rumah. Aroma alaminya terbukti mengusir nyamuk.</p>
-                </div>
-            </div>
-            <div class="plus-card">
-                <div class="plus-icon">🧹</div>
-                <div class="plus-info">
-                    <h4>Jaga Kebersihan Lingkungan</h4>
-                    <p>Bersihkan selokan, tumpukan sampah, dan genangan air secara rutin. Ajak tetangga melakukan kerja bakti berkala.</p>
-                </div>
-            </div>
-            <div class="plus-card">
-                <div class="plus-icon">🐟</div>
-                <div class="plus-info">
-                    <h4>Ikan Pemakan Jentik</h4>
-                    <p>Masukkan ikan seperti <strong>ikan cupang atau ikan mas</strong> ke dalam bak air terbuka untuk memakan jentik nyamuk.</p>
-                </div>
-            </div>
-            <div class="plus-card">
-                <div class="plus-icon">💊</div>
-                <div class="plus-info">
-                    <h4>Abatisasi</h4>
-                    <p>Taburkan bubuk <strong>abate</strong> (temephos) ke dalam tempat penampungan air yang sulit dikuras. Efektif 3 bulan sekali.</p>
-                </div>
-            </div>
-        </div>
+    <!-- Life cycle SVG -->
+    <div class="vis">
+      <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" width="680" height="220">
+        <defs>
+          <linearGradient id="lcg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#e74c3c"/><stop offset="100%" stop-color="#f5c842"/>
+          </linearGradient>
+          <marker id="lca" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3z" fill="#f5c842" opacity=".8"/>
+          </marker>
+        </defs>
+        <!-- Stages -->
+        <g font-family="Outfit,sans-serif" text-anchor="middle">
+          <!-- Egg -->
+          <circle cx="85" cy="110" r="60" fill="rgba(231,76,60,.08)" stroke="rgba(231,76,60,.3)" stroke-width="1.5"/>
+          <text x="85" y="95" font-size="30">🥚</text>
+          <text x="85" y="128" fill="#f5c842" font-size="14" font-weight="700">Telur</text>
+          <text x="85" y="147" fill="rgba(255,255,255,.5)" font-size="10">Di dinding wadah</text>
+          <text x="85" y="162" fill="rgba(255,255,255,.4)" font-size="9">⏱ 1–3 hari</text>
+          <!-- arrow -->
+          <path d="M149,110 L195,110" stroke="url(#lcg)" stroke-width="2" fill="none" marker-end="url(#lca)"/>
+          <!-- Larva -->
+          <circle cx="255" cy="110" r="60" fill="rgba(231,76,60,.08)" stroke="rgba(231,76,60,.3)" stroke-width="1.5"/>
+          <text x="255" y="95" font-size="30">🐛</text>
+          <text x="255" y="128" fill="#f5c842" font-size="14" font-weight="700">Jentik</text>
+          <text x="255" y="147" fill="rgba(255,255,255,.5)" font-size="10">Hidup di air</text>
+          <text x="255" y="162" fill="rgba(255,255,255,.4)" font-size="9">⏱ 4–6 hari</text>
+          <!-- arrow -->
+          <path d="M319,110 L365,110" stroke="url(#lcg)" stroke-width="2" fill="none" marker-end="url(#lca)"/>
+          <!-- Pupa -->
+          <circle cx="425" cy="110" r="60" fill="rgba(231,76,60,.08)" stroke="rgba(231,76,60,.3)" stroke-width="1.5"/>
+          <text x="425" y="95" font-size="30">🫘</text>
+          <text x="425" y="128" fill="#f5c842" font-size="14" font-weight="700">Kepompong</text>
+          <text x="425" y="147" fill="rgba(255,255,255,.5)" font-size="10">Transformasi</text>
+          <text x="425" y="162" fill="rgba(255,255,255,.4)" font-size="9">⏱ 1–2 hari</text>
+          <!-- arrow -->
+          <path d="M489,110 L535,110" stroke="url(#lcg)" stroke-width="2" fill="none" marker-end="url(#lca)"/>
+          <!-- Adult -->
+          <circle cx="595" cy="110" r="60" fill="rgba(231,76,60,.15)" stroke="rgba(231,76,60,.5)" stroke-width="2"/>
+          <text x="595" y="95" font-size="30">🦟</text>
+          <text x="595" y="128" fill="#f5c842" font-size="14" font-weight="700">Dewasa</text>
+          <text x="595" y="147" fill="#ff9999" font-size="10" font-weight="600">⚠ Menularkan DBD</text>
+          <text x="595" y="162" fill="rgba(255,255,255,.4)" font-size="9">Hidup 2–4 minggu</text>
+        </g>
+        <!-- Total label -->
+        <text x="340" y="205" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="11" font-family="Outfit,sans-serif" font-style="italic">Total siklus: 8–11 hari · Satu betina bertelur hingga 100–300 butir seumur hidup</text>
+      </svg>
+      <p class="vis-cap">Siklus hidup nyamuk Aedes aegypti — setiap fase adalah peluang untuk memutus rantai perkembangbiakan</p>
     </div>
 
-    <!-- ── SECTION 5: FAKTOR RISIKO ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">📊</span> Faktor yang Meningkatkan Risiko DBD</h2>
+    <div class="alert alert-gold">
+      <div class="alert-h">💡 Tempat Berkembang Biak Tersembunyi yang Sering Terlewat</div>
+      <ul>
+        <li><strong>Tatakan pot bunga</strong> — selalu kuras air yang menggenang di bawah pot</li>
+        <li><strong>Dispenser air minum</strong> — periksa baki tampungan air di bagian bawah secara rutin</li>
+        <li><strong>Talang atap tersumbat</strong> — daun dan kotoran menghambat aliran, menciptakan genangan panjang</li>
+        <li><strong>Tempat minum hewan peliharaan</strong> — ganti airnya setiap hari</li>
+        <li><strong>Plastik dan sampah bekas</strong> di halaman yang menampung air hujan</li>
+        <li><strong>Lubang pada tembok atau bambu</strong> yang terisi air</li>
+        <li><strong>Kantong plastik</strong> yang terisi air dan terlupakan</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <span class="card-icon">🌧️</span>
-                <h3 class="card-title">Curah Hujan Tinggi</h3>
-                <p class="card-text">Hujan deras menciptakan ratusan titik genangan air baru yang menjadi tempat nyamuk bertelur. Puncak kasus DBD biasanya terjadi 2–3 minggu setelah musim hujan mulai.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">💧</span>
-                <h3 class="card-title">Genangan Air Tersembunyi</h3>
-                <p class="card-text">Selain bak mandi, waspadai: vas bunga, tatakan pot, dispenser, kulkas bagian belakang, tempat minum hewan peliharaan, dan talang air yang tersumbat.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🏘️</span>
-                <h3 class="card-title">Kepadatan Penduduk</h3>
-                <p class="card-text">Wilayah padat (≥20.000 jiwa/km²) mempercepat penyebaran karena nyamuk bisa berpindah dari satu rumah ke rumah lain dengan mudah dalam radius 100 meter.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🗑️</span>
-                <h3 class="card-title">Pengelolaan Sampah Buruk</h3>
-                <p class="card-text">Sampah anorganik seperti kaleng, botol, dan plastik yang dibuang sembarangan akan menampung air hujan dan menjadi sarang nyamuk yang produktif.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🌡️</span>
-                <h3 class="card-title">Suhu & Kelembaban</h3>
-                <p class="card-text">Nyamuk berkembang biak optimal pada suhu <strong>25–28°C</strong> dengan kelembaban >70%. Iklim tropis Surabaya sangat ideal bagi pertumbuhan populasi nyamuk.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">💉</span>
-                <h3 class="card-title">Riwayat Infeksi Sebelumnya</h3>
-                <p class="card-text">Orang yang pernah terkena DBD dengan serotipe tertentu berisiko lebih tinggi mengalami <strong>DBD berat</strong> jika terinfeksi serotipe virus yang berbeda.</p>
-            </div>
-        </div>
+<!-- ══ SECTION 3: GEJALA ══ -->
+<section id="gejala" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🤒 Kenali Tandanya</div>
+    <h2 class="sec-title">Gejala & 3 Fase Perjalanan DBD</h2>
+    <p class="sec-lead">DBD memiliki tiga fase khas yang harus dipahami. Salah mengenali fase kritis sebagai "kesembuhan" adalah kesalahan paling berbahaya yang bisa dilakukan penderita maupun keluarganya.</p>
 
-        <div class="info-box" style="margin-top:28px;">
-            <div class="info-box-title">💡 Tahukah Anda?</div>
-            <p style="font-size:14px; color:rgba(255,255,255,0.82); line-height:1.85;">
-                Kombinasi curah hujan tinggi + genangan air + kepadatan penduduk tinggi + pengelolaan sampah buruk
-                membuat Surabaya termasuk kota <strong style="color:white">berisiko tinggi</strong> DBD di Jawa Timur.
-                Pencegahan harus dilakukan <em>setiap hari</em> — tidak bisa menunggu sampai ada kasus di sekitar kita.
-                Mulai dari hal kecil: cek rumah sendiri, bersihkan genangan, dan ajak orang-orang terdekat!
-            </p>
-        </div>
+    <!-- Symptom grid -->
+    <div class="grid-4" style="margin-bottom:32px">
+      <div class="card"><span class="card-ico">🌡️</span><h3 class="card-h">Demam Tinggi Mendadak</h3><p class="card-p">Suhu tubuh mencapai <strong>39–40°C</strong> secara tiba-tiba. Berbeda dari demam flu yang naik bertahap, demam DBD terasa sangat tinggi sejak awal.</p></div>
+      <div class="card"><span class="card-ico">😵</span><h3 class="card-h">Nyeri Kepala & Mata</h3><p class="card-p">Sakit kepala berat di dahi dan belakang mata. Nyeri terasa lebih parah saat bola mata digerakkan — gejala khas DBD yang membedakannya dari flu biasa.</p></div>
+      <div class="card"><span class="card-ico">💢</span><h3 class="card-h">Nyeri Otot & Tulang</h3><p class="card-p">Rasa nyeri di seluruh otot, sendi, dan tulang sehingga DBD dijuluki <strong>"breakbone fever"</strong>. Nyeri terasa sangat menyiksa dan dapat berlangsung beberapa hari.</p></div>
+      <div class="card"><span class="card-ico">🔴</span><h3 class="card-h">Ruam & Bintik Merah</h3><p class="card-p">Ruam kemerahan muncul 2–5 hari setelah demam, biasanya di dada, punggung, dan menyebar ke anggota badan. Bintik pendarahan (petechiae) bisa muncul di kulit.</p></div>
+      <div class="card"><span class="card-ico">🤢</span><h3 class="card-h">Mual & Muntah</h3><p class="card-p">Penderita sulit makan dan minum akibat mual terus-menerus. Risiko dehidrasi meningkat, terutama jika disertai diare. Asupan cairan harus tetap dijaga.</p></div>
+      <div class="card"><span class="card-ico">😴</span><h3 class="card-h">Tubuh Sangat Lemas</h3><p class="card-p">Kelelahan ekstrem yang tidak sebanding dengan aktivitas. Penderita merasa tidak punya tenaga sama sekali — bahkan untuk bangkit dari tempat tidur.</p></div>
+      <div class="card"><span class="card-ico">🩸</span><h3 class="card-h">Pendarahan Ringan</h3><p class="card-p">Mimisan, gusi berdarah, atau pendarahan kecil di bawah kulit. Ini merupakan <strong>tanda penurunan trombosit</strong> yang signifikan dan harus segera ditangani dokter.</p></div>
+      <div class="card"><span class="card-ico">🧪</span><h3 class="card-h">Trombosit Menurun</h3><p class="card-p">Pemeriksaan darah akan menunjukkan penurunan trombosit (PLT). Normal: <strong>150.000–400.000/µL</strong>. Waspadai jika di bawah 100.000. Kritis jika di bawah 20.000.</p></div>
     </div>
 
-    <!-- ── SECTION 6: FIRST AID ── -->
-    <div class="section reveal">
-        <div class="section-accent"></div>
-        <h2 class="section-title"><span class="section-icon">🏥</span> Apa yang Harus Dilakukan Jika Terkena DBD?</h2>
-
-        <div class="info-grid">
-            <div class="info-card">
-                <span class="card-icon">🛏️</span>
-                <h3 class="card-title">Istirahat Total</h3>
-                <p class="card-text">Tirah baring (bed rest) penuh sangat penting. Aktivitas berlebihan saat fase kritis bisa memperburuk kondisi dan mempercepat penurunan trombosit.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">💧</span>
-                <h3 class="card-title">Perbanyak Cairan</h3>
-                <p class="card-text">Minum air putih minimal <strong>8–10 gelas sehari</strong>, ditambah jus jambu biji, air kelapa, atau oralit untuk mengganti cairan yang hilang akibat demam.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">💊</span>
-                <h3 class="card-title">Obat yang Tepat</h3>
-                <p class="card-text">Gunakan <strong>parasetamol</strong> untuk menurunkan demam. <strong>HINDARI aspirin dan ibuprofen</strong> — keduanya dapat memperparah pendarahan pada penderita DBD.</p>
-            </div>
-            <div class="info-card">
-                <span class="card-icon">🩺</span>
-                <h3 class="card-title">Pantau Rutin</h3>
-                <p class="card-text">Cek <strong>jumlah trombosit</strong> setiap hari. Normal: 150.000–400.000/µL. Jika turun di bawah 100.000, segera rawat inap. Di bawah 20.000 = darurat.</p>
-            </div>
+    <!-- 3 Phases timeline -->
+    <h3 style="color:var(--g2);font-family:var(--ff);font-size:22px;margin:0 0 20px">Tiga Fase Kritis Perjalanan DBD</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-num red">1</div>
+        <div class="tl-body">
+          <h4>Fase Demam (Hari 1–3) <span class="tl-badge danger">Waspada</span></h4>
+          <p>Demam mendadak tinggi (39–40°C), sakit kepala parah, nyeri otot dan sendi, dan mungkin muncul ruam merah. Fase ini terasa seperti flu berat. <strong>Segera periksa ke dokter</strong> — jangan menunggu hingga 3 hari tanpa ada perbaikan. Lakukan tes darah awal untuk memantau trombosit.</p>
         </div>
-
-        <div class="warning-box" style="margin-top:24px;">
-            <div class="warning-title">⛔ JANGAN Lakukan Ini!</div>
-            <ul class="custom-list" style="margin-top:10px;">
-                <li>❌ Minum aspirin atau ibuprofen — berbahaya untuk penderita DBD</li>
-                <li>❌ Memaksakan aktivitas fisik saat demam</li>
-                <li>❌ Mengabaikan gejala dan tidak periksa ke dokter</li>
-                <li>❌ Mengandalkan obat tradisional tanpa konsultasi dokter</li>
-                <li>❌ Menunda ke rumah sakit saat trombosit terus turun</li>
-            </ul>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num red" style="background:linear-gradient(135deg,#7c0000,#4a0000);box-shadow:0 4px 18px rgba(124,0,0,.6)">!</div>
+        <div class="tl-body">
+          <h4>Fase Kritis (Hari 4–6) <span class="tl-badge danger">⚠ PALING BERBAHAYA</span></h4>
+          <p>Demam bisa turun tiba-tiba — <strong>INI BUKAN KESEMBUHAN</strong>. Ini adalah fase paling mematikan. Trombosit menurun drastis, plasma darah bocor ke jaringan sekitarnya, risiko syok dengue (dengue shock syndrome) sangat tinggi. Gejala bahaya: nyeri perut hebat, muntah terus-menerus, tangan dan kaki dingin, gelisah ekstrem. <strong>Rawat inap di RS wajib pada fase ini.</strong></p>
         </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-num green">3</div>
+        <div class="tl-body">
+          <h4>Fase Pemulihan (Hari 7–10) <span class="tl-badge safe">Membaik</span></h4>
+          <p>Jika berhasil melewati fase kritis, tubuh mulai pulih. Trombosit mulai naik kembali, demam menghilang, nafsu makan membaik, dan kondisi umum membaik. Tetap istirahat, konsumsi cairan yang cukup, dan kontrol ke dokter untuk memastikan trombosit kembali normal.</p>
+        </div>
+      </div>
     </div>
 
-    <!-- ── CTA ── -->
-    <div class="section cta-section reveal">
-        <h2>🤝 Mari Bersama Berantas DBD!</h2>
-        <p>
-            DBD bukan takdir — ini masalah <strong>lingkungan dan kebiasaan</strong> yang bisa kita ubah bersama.
-            Mulai dari rumah sendiri, ajak keluarga dan tetangga, lakukan 3M PLUS setiap minggu.
-            <em>Satu langkah kecilmu bisa menyelamatkan satu nyawa.</em>
-        </p>
-        <a href="../index.html" class="btn-primary">
-            ← Kembali ke Dashboard AERIS
-        </a>
+    <div class="alert alert-red">
+      <div class="alert-h">🚨 Segera Bawa ke Rumah Sakit Jika:</div>
+      <ul>
+        <li>Demam tidak membaik setelah <strong>3 hari</strong> atau turun mendadak saat fase 4–6</li>
+        <li>Muncul bintik-bintik merah (petechiae) atau lebam tak wajar di kulit</li>
+        <li>Muntah darah atau BAB berwarna hitam (pendarahan saluran cerna)</li>
+        <li>Nyeri perut yang sangat hebat, terutama di perut kanan atas</li>
+        <li>Tangan dan kaki terasa <strong>dingin dan lembap</strong> — tanda syok</li>
+        <li>Penderita sulit dibangunkan, linglung, atau tidak responsif</li>
+        <li>Mimisan atau gusi berdarah yang sulit berhenti</li>
+        <li>Trombosit di bawah <strong>100.000/µL</strong> hasil cek darah</li>
+      </ul>
     </div>
 
-</div>
+    <!-- Trombosit table -->
+    <h3 style="color:var(--g2);font-family:var(--ff);font-size:20px;margin:28px 0 16px">Panduan Nilai Trombosit</h3>
+    <table class="risk-table">
+      <thead><tr><th>Nilai Trombosit</th><th>Status</th><th>Tindakan yang Diperlukan</th></tr></thead>
+      <tbody>
+        <tr><td>150.000 – 400.000 /µL</td><td><span class="badge-low">Normal</span></td><td>Monitor rutin, tidak perlu khawatir</td></tr>
+        <tr><td>100.000 – 149.999 /µL</td><td><span class="badge-mid">Rendah</span></td><td>Pantau ketat, cek darah tiap hari, istirahat total</td></tr>
+        <tr><td>50.000 – 99.999 /µL</td><td><span class="badge-high">Kritis</span></td><td>Rawat inap dianjurkan, hindari aktivitas berat</td></tr>
+        <tr><td>&lt; 20.000 /µL</td><td><span class="badge-crit">Darurat</span></td><td>Rawat inap segera, transfusi trombosit mungkin diperlukan</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ SECTION 4: PENCEGAHAN ══ -->
+<section id="cegah" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🛡️ Perlindungan Diri</div>
+    <h2 class="sec-title">Pencegahan DBD dengan 3M PLUS</h2>
+    <p class="sec-lead">3M PLUS adalah strategi pencegahan berbasis komunitas yang terbukti secara ilmiah paling efektif menekan populasi nyamuk. Kuncinya bukan pada intensitas sesekali, tapi pada <strong style="color:white">konsistensi setiap minggu</strong>.</p>
+
+    <div class="grid-3">
+      <div class="m-card">
+        <div class="m-badge">M1</div>
+        <div class="m-title">MENGURAS</div>
+        <p class="m-desc">Kuras dan gosok dinding tempat penampungan air (bak mandi, ember, toren) minimal <strong>1× seminggu</strong>. Telur nyamuk menempel di dinding — menyiram saja tidak cukup, harus disikat.</p>
+        <br><span style="font-size:40px">🪣</span>
+      </div>
+      <div class="m-card">
+        <div class="m-badge">M2</div>
+        <div class="m-title">MENUTUP</div>
+        <p class="m-desc">Tutup rapat semua wadah penampungan air. Jika tidak bisa ditutup, tambahkan lapisan kain kasa halus di atasnya. Nyamuk hanya butuh sedikit celah untuk bertelur.</p>
+        <br><span style="font-size:40px">🔒</span>
+      </div>
+      <div class="m-card">
+        <div class="m-badge">M3</div>
+        <div class="m-title">MENDAUR ULANG</div>
+        <p class="m-desc">Buang, kubur, atau olah barang bekas yang bisa menampung air: ban, kaleng, botol, potongan bambu. Satu kaleng bekas di halaman cukup menjadi tempat ratusan telur nyamuk.</p>
+        <br><span style="font-size:40px">♻️</span>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin:36px 0 20px">
+      <span style="display:inline-block;padding:10px 32px;background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(245,200,66,.05));border:1px solid rgba(245,200,66,.4);border-radius:100px;font-family:var(--ff);font-size:24px;color:var(--g2)">✚ Langkah PLUS Tambahan</span>
+    </div>
+
+    <div class="plus-grid">
+      <div class="plus-card"><div class="plus-ico">🧴</div><div class="plus-info"><h4>Lotion Anti Nyamuk</h4><p>Gunakan lotion mengandung DEET, Picaridin, atau IR3535 saat beraktivitas. Efektif hingga 4–8 jam tergantung konsentrasi. Aman untuk anak di atas 2 bulan.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">🪟</div><div class="plus-info"><h4>Kawat Kasa</h4><p>Pasang kawat kasa di semua jendela dan ventilasi. Pilih kasa dengan ukuran lubang ≤1.2mm. Periksa dan tambal lubang secara berkala.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">🌿</div><div class="plus-info"><h4>Tanaman Pengusir Nyamuk</h4><p>Lavender, serai wangi, zodia, rosemary, dan basil terbukti memiliki senyawa yang mengganggu reseptor nyamuk. Tanam di sekitar pintu dan jendela.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">🐟</div><div class="plus-info"><h4>Ikan Pemakan Jentik</h4><p>Ikan cupang, ikan mas, atau ikan guppy efektif memakan jentik di bak air terbuka. Satu ikan bisa menghabiskan puluhan jentik per hari.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">💊</div><div class="plus-info"><h4>Abatisasi (Bubuk Abate)</h4><p>Taburkan 1 sendok makan bubuk abate per 100 liter air di wadah yang sulit dikuras. Efektif membunuh jentik selama 2–3 bulan.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">🦺</div><div class="plus-info"><h4>Pakaian Pelindung</h4><p>Gunakan pakaian lengan panjang dan celana panjang berwarna terang saat berada di luar ruangan pada jam aktif nyamuk. Warna gelap menarik nyamuk.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">🧹</div><div class="plus-info"><h4>Kebersihan Lingkungan RT/RW</h4><p>Ajak warga sekitar kerja bakti rutin. Satu rumah tidak bisa terlindungi jika tetangga sekitarnya masih ada breeding site aktif dalam radius 200 meter.</p></div></div>
+      <div class="plus-card"><div class="plus-ico">📱</div><div class="plus-info"><h4>Laporkan ke Puskesmas</h4><p>Jika ada kasus DBD di lingkungan, laporkan ke Puskesmas setempat untuk tindakan fogging dan pemantauan jentik yang terkoordinasi.</p></div></div>
+    </div>
+
+    <div class="alert alert-blue" style="margin-top:28px">
+      <div class="alert-h">💧 Fogging: Bukan Solusi Utama!</div>
+      <p>Fogging (pengasapan) hanya membunuh nyamuk <em>dewasa</em> yang ada saat itu — tidak menyentuh jentik atau telur yang tersisa. Tanpa 3M PLUS, nyamuk baru akan muncul kembali dalam hitungan minggu. Fogging hanya efektif jika dikombinasikan dengan tindakan pencegahan mandiri yang konsisten.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 5: FAKTOR RISIKO SURABAYA ══ -->
+<section id="risiko" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">📊 Data & Risiko</div>
+    <h2 class="sec-title">Faktor Risiko DBD di Kota Surabaya</h2>
+    <p class="sec-lead">Berdasarkan analisis data penelitian AERIS menggunakan model prediksi machine learning terhadap 31 kecamatan di Surabaya, berikut faktor-faktor yang paling berkontribusi terhadap tingginya kasus DBD.</p>
+
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card"><span class="card-ico">🌧️</span><h3 class="card-h">Curah Hujan Tinggi</h3><p class="card-p">Surabaya menerima rata-rata 1.600–2.200 mm curah hujan per tahun. Musim hujan menciptakan ribuan titik genangan baru. Puncak kasus DBD biasanya terjadi <strong>2–4 minggu setelah puncak curah hujan</strong> — sesuai siklus hidup nyamuk.</p></div>
+      <div class="card"><span class="card-ico">🏘️</span><h3 class="card-h">Kepadatan Penduduk Ekstrem</h3><p class="card-p">Beberapa kecamatan di Surabaya memiliki kepadatan hingga <strong>&gt;25.000 jiwa/km²</strong>. Semakin padat, semakin pendek jarak antar breeding site, semakin mudah nyamuk berpindah dari satu hunian ke hunian lain.</p></div>
+      <div class="card"><span class="card-ico">💧</span><h3 class="card-h">Genangan & Drainase Buruk</h3><p class="card-p">Data Dinas PU 2021 mencatat ratusan titik genangan persisten di Surabaya. Wilayah dengan sistem drainase yang buruk atau sering banjir memiliki risiko DBD <strong>2–3 kali lebih tinggi</strong>.</p></div>
+      <div class="card"><span class="card-ico">🌡️</span><h3 class="card-h">Suhu & Kelembaban Optimal</h3><p class="card-p">Surabaya memiliki suhu rata-rata <strong>27–30°C</strong> dengan kelembaban 70–85% — kondisi ideal bagi nyamuk Aedes aegypti untuk berkembang biak dan mempersingkat masa inkubasi virus di dalam tubuhnya.</p></div>
+      <div class="card"><span class="card-ico">🌿</span><h3 class="card-h">Tutupan Vegetasi (NDVI)</h3><p class="card-p">Wilayah dengan vegetasi lebat menyediakan tempat istirahat dan perlindungan bagi nyamuk dewasa, meningkatkan kelangsungan hidupnya. Namun vegetasi yang terpelihara baik berbeda dengan semak yang terbengkalai.</p></div>
+      <div class="card"><span class="card-ico">🌊</span><h3 class="card-h">Kedekatan dengan Sungai</h3><p class="card-p">Kecamatan yang berdekatan dengan sungai atau kanal berisiko lebih tinggi karena sering tergenang saat hujan. Indeks TWI (Topographic Wetness Index) digunakan untuk mengukur potensi akumulasi air permukaan.</p></div>
+    </div>
+
+    <!-- Risk level table per category -->
+    <h3 style="color:var(--g2);font-family:var(--ff);font-size:20px;margin:28px 0 16px">Klasifikasi Risiko DBD per Kecamatan</h3>
+    <div class="kec-grid">
+      <div class="kec-card kec-vhigh">Genteng <span>● Sangat Tinggi</span></div>
+      <div class="kec-card kec-vhigh">Simokerto <span>● Sangat Tinggi</span></div>
+      <div class="kec-card kec-high">Bubutan <span>● Tinggi</span></div>
+      <div class="kec-card kec-high">Tegalsari <span>● Tinggi</span></div>
+      <div class="kec-card kec-high">Semampir <span>● Tinggi</span></div>
+      <div class="kec-card kec-high">Krembangan <span>● Tinggi</span></div>
+      <div class="kec-card kec-mid">Wonokromo <span>● Sedang</span></div>
+      <div class="kec-card kec-mid">Sukolilo <span>● Sedang</span></div>
+      <div class="kec-card kec-mid">Kenjeran <span>● Sedang</span></div>
+      <div class="kec-card kec-mid">Benowo <span>● Sedang</span></div>
+      <div class="kec-card kec-low">Lakarsantri <span>● Rendah</span></div>
+      <div class="kec-card kec-low">Gunung Anyar <span>● Rendah</span></div>
+    </div>
+    <p style="font-size:11px;color:var(--tx3);margin-top:12px;font-style:italic">*Klasifikasi berdasarkan model prediksi AERIS 2024. Data lengkap tersedia di Web GIS AERIS.</p>
+
+    <div class="alert alert-gold" style="margin-top:24px">
+      <div class="alert-h">💡 Apa Artinya Bagi Anda?</div>
+      <p>Jika Anda tinggal di kecamatan berrisiko tinggi atau sangat tinggi, intensifkan langkah pencegahan 3M PLUS dan pantau kondisi lingkungan sekitar lebih aktif. Laporkan breeding site yang Anda temukan kepada RT/RW atau Puskesmas terdekat. Ingat: risiko tinggi bukan berarti pasti tertular — artinya Anda perlu <em>lebih waspada</em>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 6: FIRST AID ══ -->
+<section id="aid" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🏥 Penanganan Pertama</div>
+    <h2 class="sec-title">Apa yang Harus Dilakukan Saat Terkena DBD?</h2>
+    <p class="sec-lead">Tidak ada obat antivirus spesifik untuk DBD. Penanganannya bersifat <strong style="color:white">suportif</strong> — menjaga kondisi tubuh agar sistem imun bisa melawan virus sendiri sambil mencegah komplikasi berbahaya.</p>
+
+    <div class="step-grid">
+      <div class="step-card"><div class="step-n">01</div><div class="step-ico">🛏️</div><h3 class="step-h">Istirahat Total (Bed Rest)</h3><p class="step-p">Tirah baring penuh sangat penting. Aktivitas fisik bahkan ringan sekalipun dapat mempercepat penurunan trombosit dan memperburuk kebocoran plasma. Penderita harus benar-benar beristirahat.</p></div>
+      <div class="step-card"><div class="step-n">02</div><div class="step-ico">💧</div><h3 class="step-h">Perbanyak Cairan Oral</h3><p class="step-p">Minum minimal <strong>8–10 gelas/hari</strong>. Prioritaskan: air putih, jus jambu biji merah (mengandung quercetin yang membantu trombosit), air kelapa muda, dan oralit. Hindari minuman berkafein.</p></div>
+      <div class="step-card"><div class="step-n">03</div><div class="step-ico">💊</div><h3 class="step-h">Hanya Parasetamol!</h3><p class="step-p"><strong style="color:#ff9999">JANGAN konsumsi aspirin, ibuprofen, atau naproxen.</strong> Obat-obatan golongan NSAID tersebut menghambat fungsi trombosit dan bisa memperparah risiko pendarahan pada penderita DBD.</p></div>
+      <div class="step-card"><div class="step-n">04</div><div class="step-ico">🧪</div><h3 class="step-h">Cek Darah Setiap Hari</h3><p class="step-p">Pantau jumlah trombosit dan hematokrit setiap hari sejak hari ke-3 demam. Perubahan mendadak adalah sinyal bahwa kondisi memburuk dan perlu penanganan medis segera.</p></div>
+      <div class="step-card"><div class="step-n">05</div><div class="step-ico">🩺</div><h3 class="step-h">Kunjungi Dokter Sejak Dini</h3><p class="step-p">Jangan menunggu hingga kondisi parah. Diagnosis dini membantu dokter memantau perkembangan penyakit dan memberikan intervensi tepat waktu, terutama saat memasuki fase kritis.</p></div>
+      <div class="step-card"><div class="step-n">06</div><div class="step-ico">🏨</div><h3 class="step-h">Rawat Inap Jika Perlu</h3><p class="step-p">Rawat inap dibutuhkan jika trombosit &lt;100.000, ada tanda syok, atau penderita tidak bisa asupan cairan oral yang cukup. Di RS, cairan intravena dan pemantauan ketat dapat menyelamatkan jiwa.</p></div>
+    </div>
+
+    <div class="alert alert-red" style="margin-top:8px">
+      <div class="alert-h">⛔ Yang TIDAK Boleh Dilakukan</div>
+      <ul>
+        <li>❌ Minum aspirin, ibuprofen, atau obat anti-inflamasi lainnya</li>
+        <li>❌ Memaksakan aktivitas fisik saat masih demam</li>
+        <li>❌ Percaya sepenuhnya pada obat herbal tanpa konsultasi dokter</li>
+        <li>❌ Menganggap "demam turun = sudah sembuh" — ini fase paling berbahaya!</li>
+        <li>❌ Menunda ke RS saat trombosit terus turun atau muncul tanda syok</li>
+        <li>❌ Membuang masker saat masih demam — hindari menular via batuk/bersin ke anggota keluarga lain yang rentan</li>
+      </ul>
+    </div>
+
+    <div class="alert alert-green" style="margin-top:16px">
+      <div class="alert-h">✓ Nutrisi Pendukung Pemulihan DBD</div>
+      <ul>
+        <li><strong>Jambu biji merah</strong> — Kaya vitamin C dan quercetin yang membantu meningkatkan trombosit</li>
+        <li><strong>Air kelapa muda</strong> — Elektrolitnya membantu rehidrasi dan menjaga keseimbangan cairan tubuh</li>
+        <li><strong>Kurma</strong> — Mengandung zat besi yang membantu pembentukan sel darah</li>
+        <li><strong>Pepaya (daun & buah)</strong> — Beberapa penelitian menunjukkan efek positif ekstrak daun pepaya pada jumlah trombosit</li>
+        <li><strong>Makanan tinggi protein lunak</strong> — Sup ayam, telur, tahu — membantu pemulihan dan perbaikan jaringan</li>
+        <li><strong>ORS / Oralit</strong> — Minuman rehidrasi oral untuk mencegah dehidrasi</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 7: VAKSIN ══ -->
+<section id="vaksin" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">💉 Imunisasi</div>
+    <h2 class="sec-title">Vaksin DBD: Pelindung Tambahan</h2>
+    <p class="sec-lead">Kini tersedia vaksin DBD yang telah disetujui BPOM Indonesia sebagai langkah perlindungan tambahan, khususnya bagi yang pernah terinfeksi DBD sebelumnya.</p>
+
+    <div class="vac-row">
+      <div class="vac-card">
+        <h4>🧬 Dengvaxia (CYD-TDV)</h4>
+        <p>Vaksin chimeric yellow fever-dengue yang melindungi terhadap 4 serotipe. Direkomendasikan untuk usia 9–45 tahun yang terbukti <em>pernah</em> terinfeksi dengue sebelumnya. Diberikan 3 dosis selama 12 bulan.</p>
+      </div>
+      <div class="vac-card">
+        <h4>🛡️ Qdenga (TAK-003)</h4>
+        <p>Vaksin dengue generasi terbaru yang disetujui di Indonesia. Dapat diberikan tanpa harus punya riwayat infeksi dengue sebelumnya. Diberikan 2 dosis dengan interval 3 bulan untuk usia 6–45 tahun.</p>
+      </div>
+      <div class="vac-card">
+        <h4>⚕️ Efektivitas Vaksin</h4>
+        <p>Qdenga menunjukkan efektivitas hingga <strong>84%</strong> mencegah rawat inap akibat DBD dan <strong>61%</strong> mencegah infeksi bergejala. Bukan 100%, sehingga 3M PLUS tetap wajib dilakukan meski sudah divaksin.</p>
+      </div>
+    </div>
+
+    <div class="alert alert-blue">
+      <div class="alert-h">ℹ️ Siapa yang Sebaiknya Divaksin?</div>
+      <ul>
+        <li>Anak dan dewasa usia <strong>6–45 tahun</strong> yang tinggal di daerah endemis DBD (termasuk Surabaya)</li>
+        <li>Mereka yang pernah menderita DBD sebelumnya (risiko infeksi serotipe kedua jauh lebih berbahaya)</li>
+        <li>Individu yang berisiko tinggi terpapar nyamuk karena lingkungan atau pekerjaan</li>
+        <li>Konsultasikan dengan dokter untuk penilaian risiko dan manfaat individual sebelum vaksinasi</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 8: MITOS ══ -->
+<section id="mitos" class="reveal">
+  <div class="sec">
+    <div class="sec-bar"></div>
+    <div class="sec-tag">🔍 Fakta vs Mitos</div>
+    <h2 class="sec-title">Mitos & Fakta Seputar DBD</h2>
+    <p class="sec-lead">Banyak kesalahpahaman tentang DBD yang beredar di masyarakat dan berpotensi menghambat penanganan yang tepat. Mari kita luruskan bersama.</p>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "Fogging sudah cukup untuk memberantas DBD di lingkungan kita."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> Fogging hanya membunuh nyamuk <em>dewasa</em> yang terpapar asap insektisida saat itu. Telur dan jentik yang ada di dalam air sama sekali tidak terpengaruh. Tanpa eliminasi breeding site, populasi nyamuk akan pulih dalam 1–2 minggu.</p></div>
+    </div>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "DBD hanya menyerang anak-anak."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> DBD dapat menyerang <em>semua kelompok usia</em>, termasuk orang dewasa dan lansia. Bahkan, orang dewasa yang terinfeksi serotipe kedua berisiko mengalami Dengue Hemorrhagic Fever (DHF) yang lebih berat.</p></div>
+    </div>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "Kalau sudah pernah kena DBD, tubuh kebal seumur hidup."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> Ada <strong>4 serotipe</strong> virus dengue (DENV-1 hingga DENV-4). Kekebalan setelah infeksi hanya berlaku untuk serotipe <em>yang sama</em>. Infeksi serotipe berbeda bisa terjadi — dan seringkali lebih parah karena fenomena <em>antibody-dependent enhancement (ADE)</em>.</p></div>
+    </div>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "Air bersih tidak bisa jadi sarang nyamuk DBD."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> Justru sebaliknya! Aedes aegypti <em>lebih menyukai air bersih dan jernih</em> untuk bertelur. Air kotor atau air comberan justru bukan tempat favoritnya — itu habitat nyamuk Culex (penular filariasis). Bak mandi bersih dan wadah air minum adalah tempat bertelur favorit Aedes.</p></div>
+    </div>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "Minum jus daun pepaya pasti bisa menyembuhkan DBD."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> Beberapa studi <em>awal</em> menunjukkan potensi ekstrak daun pepaya dalam meningkatkan trombosit, namun belum ada bukti klinis yang cukup kuat. Jus daun pepaya boleh dikonsumsi sebagai <em>pendukung</em>, tapi <strong>tidak boleh menggantikan penanganan medis</strong>. Tetap konsultasikan dengan dokter.</p></div>
+    </div>
+
+    <div class="myth-card">
+      <div class="myth-header"><span class="myth-icon">❌</span><span class="myth-myth">Mitos: "Nyamuk DBD hanya aktif malam hari, jadi tidur siang aman."</span></div>
+      <div class="myth-fact"><p><strong>Fakta:</strong> Ini adalah kesalahan yang sangat umum. Aedes aegypti justru aktif di <em>siang hari</em>, terutama pagi dan sore. Tidur siang tanpa kelambu atau di ruangan tanpa penghalang justru sangat rentan. Nyamuk Culex (aktif malam) yang bukan penular dengue sering disalahpahami sebagai nyamuk DBD.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="reveal">
+  <div class="sec cta">
+    <h2>Bersama Kita Bisa Berantas DBD! 🤝</h2>
+    <p>DBD bukan nasib — ini tantangan bersama yang bisa kita atasi dengan informasi yang benar, tindakan yang konsisten, dan kepedulian terhadap sesama. Mulai dari rumah kita, mulai sekarang.</p>
+    <a href="#top" class="btn btn-red" onclick="window.scrollTo(0,0);return false">↑ Kembali ke Atas</a>
+    <a href="#cegah" class="btn btn-outline" onclick="document.getElementById('cegah').scrollIntoView({behavior:'smooth'});return false">🛡️ Lihat Panduan 3M+</a>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer>
+  <p>📊 Data berdasarkan penelitian <span>AERIS</span> — Analisis Epidemi & Risiko Infeksi Surabaya 2024</p>
+  <p style="margin-top:8px">Sumber: Dinas Kesehatan Kota Surabaya · Dinas PU Surabaya · WHO Dengue Guidelines</p>
+  <p style="margin-top:8px">⚠ Informasi ini bersifat edukatif. Selalu konsultasikan kondisi kesehatan Anda dengan tenaga medis profesional.</p>
+</footer>
 
 <script>
-    // Progress bar
-    window.addEventListener('scroll', () => {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-        document.getElementById('progress-bar').style.width = progress + '%';
-    });
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY,d=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('pg').style.width=(d>0?(s/d)*100:0)+'%';
+});
 
-    // Reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => entry.target.classList.add('visible'), i * 80);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    reveals.forEach(el => observer.observe(el));
+// Smooth scroll for nav
+function scrollTo(id){
+  const el=document.querySelector(id);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+
+// Reveal on scroll
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('vis2'),i*80);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Active nav link
+const sections=['#apa','#nyamuk','#gejala','#cegah','#risiko','#aid','#vaksin','#mitos'];
+const sectionObs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+      const id='#'+e.target.id;
+      const link=document.querySelector(`.nav-link[onclick="scrollTo('${id}')"]`);
+      if(link)link.classList.add('active');
+    }
+  });
+},{threshold:0.4});
+sections.forEach(s=>{const el=document.querySelector(s);if(el)sectionObs.observe(el);});
 </script>
 </body>
 </html>
