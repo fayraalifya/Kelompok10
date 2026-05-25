@@ -315,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
             title: 'Tren Kasus DBD Surabaya 2020-2024',
             description: 'Grafik menunjukkan peningkatan kasus Demam Berdarah Dengue di Kota Surabaya selama 5 tahun terakhir.',
             yearlyData: [
+                { year: '2019', cases: 277, color: '#e0b8b8' },
                 { year: '2020', cases: 73, color: '#ff9999' },
                 { year: '2021', cases: 111, color: '#ff7777' },
                 { year: '2022', cases: 195, color: '#ff5555' },

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tematik Prediksi DBD</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100vh;
+            background: #f8fafc;
+        }
+        
+        .legend {
+            background: white;
+            padding: 16px;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.18);
+            line-height: 26px;
+            font-size: 13px;
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            font-weight: 800;
+        }
+        
+        .legend i {
+            width: 20px;
+            height: 20px;
+            float: left;
+            margin-right: 10px;
+            opacity: .9;
+            border-radius: 6px;
+        }
+        
+        .leaflet-popup-content {
+            font-family: 'Plus Jakarta Sans';
+        }
+        
+        /* Download Button */
+        .download-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.15);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1f2937;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background: #f3f4f6;
+            box-shadow: 0 6px 20px rgba(0,0,0,.2);
+            transform: translateY(-2px);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* Hide elements during screenshot */
+        .hide-on-screenshot {
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <button class="download-btn" onclick="downloadMap()">📥 Download PNG</button>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>⏳ Sedang mengambil screenshot peta...</div>
+    </div>
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        var map = L.map('map').setView([-7.28, 112.74], 11);
+        L.control.scale({
+            imperial: false,    // hanya metrik (meter/km), tanpa miles
+            position: 'bottomleft'
+        }).addTo(map);
+        
+        var baseLayer = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+            {
+                attribution: '© Esri',
+                maxZoom: 13
+            }
+        ).addTo(map);
+        
+        // =======================
+        // COLOR 2025 (Warm Epidemiology Theme)
+        // =======================
+        function getColor2025(v) {
+            return v > 15 ? '#dc2626' :  // 🔴 Tinggi - Merah (>15)
+                   v > 5  ? '#fbbf24' :  // 🟡 Sedang - Kuning (6-15)
+                   v >= 1 ? '#3b82f6' :  // 🔵 Rendah - Biru (1-5)
+                            '#e5e7eb';   // Kelas Khusus - Abu muda (0)
+        }
+        
+        // =======================
+        // COLOR 2026 (Futuristic Prediction Theme)
+        // =======================
+        function getColor2026(v) {
+            return v > 15 ? '#9333ea' :  // 🟣 Tinggi - Ungu (>15)
+                   v > 5  ? '#ec4899' :  // 🩷 Sedang - Pink (6-15)
+                   v >= 1 ? '#94a3b8' :  // ⚪ Rendah - Abu modern (1-5)
+                            '#e5e7eb';   // Kelas Khusus - Abu muda (0)
+        }
+        
+        // =======================
+        // GET CATEGORY
+        // =======================
+        function getCategory(v) {
+            return v > 15 ? 'Tinggi' :      // >15
+                   v > 5  ? 'Sedang' :      // 6-15
+                   v >= 1 ? 'Rendah' :      // 1-5
+                            'Kelas Khusus'; // 0
+        }
+        
+        // =======================
+        // STYLE 2025
+        // =======================
+        function style2025(feature) {
+            return {
+                fillColor: getColor2025(feature.properties.Prediksi_2),
+                weight: 2,
+                opacity: 1,
+                color: '#ffffff',
+                dashArray: '3',
+                fillOpacity: 0.90
+            };
+        }
+        
+        // =======================
+        // STYLE 2026
+        // =======================
+        function style2026(feature) {
+            return {
+                fillColor: getColor2026(feature.properties.Prediksi_3),
+                weight: 2,
+                opacity: 1,
+                color: '#ffffff',
+                dashArray: '5',
+                fillOpacity: 0.90
+            };
+        }
+        
+        // =======================
+        // HOVER EFFECT
+        // =======================
+        function highlightFeature(e) {
+            var layer = e.target;
+            layer.setStyle({
+                weight: 4,
+                color: '#111827',
+                dashArray: '',
+                fillOpacity: 1
+            });
+            layer.bringToFront();
+        }
+        
+        // Store choropleth layers and controls globally
+        var choropleth2025, choropleth2026, layerControl, legend2025Control, legend2026Control;
+        
+        // =======================
+        // LOAD GEOJSON
+        // =======================
+        fetch('assets/dbdfiks.geojson')
+        .then(response => response.json())
+        .then(data => {
+            choropleth2025 = L.geoJSON(data, {
+                style: style2025,
+                onEachFeature: function(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: function(e) {
+                            choropleth2025.resetStyle(e.target);
+                        }
+                    });
+                    
+                    var nilai = feature.properties.Prediksi_2;
+                    var kategori = getCategory(nilai);
+                    
+                    layer.bindPopup(`
+                        <div style="padding:10px;">
+                            <h3 style="margin:0 0 10px; color:#dc2626; font-size:18px;">
+                                ${feature.properties.Kecamatan}
+                            </h3>
+                            <b>Prediksi 2025</b><br>
+                            ${nilai} kasus<br>
+                            <span style="display:inline-block; margin-top:5px; padding:4px 8px; background:#fef2f2; color:#dc2626; border-radius:6px; font-size:12px; font-weight:600;">
+                                ${kategori}
+                            </span>
+                        </div>
+                    `);
+                }
+            });
+            
+            choropleth2026 = L.geoJSON(data, {
+                style: style2026,
+                onEachFeature: function(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: function(e) {
+                            choropleth2026.resetStyle(e.target);
+                        }
+                    });
+                    
+                    var nilai = feature.properties.Prediksi_3;
+                    var kategori = getCategory(nilai);
+                    
+                    layer.bindPopup(`
+                        <div style="padding:10px;">
+                            <h3 style="margin:0 0 10px; color:#9333ea; font-size:18px;">
+                                ${feature.properties.Kecamatan}
+                            </h3>
+                            <b>Prediksi 2026</b><br>
+                            ${nilai} kasus<br>
+                            <span style="display:inline-block; margin-top:5px; padding:4px 8px; background:#faf5ff; color:#9333ea; border-radius:6px; font-size:12px; font-weight:600;">
+                                ${kategori}
+                            </span>
+                        </div>
+                    `);
+                }
+            });
+            
+            choropleth2025.addTo(map);
+            
+            layerControl = L.control.layers(
+                null,
+                {
+                    "Prediksi DBD 2025": choropleth2025,
+                    "Prediksi DBD 2026": choropleth2026
+                },
+                {
+                    collapsed: false
+                }
+            ).addTo(map);
+        });
+        
+        // =======================
+        // LEGEND 2025
+        // =======================
+        var legend2025 = L.control({
+            position: 'bottomright'
+        });
+        
+        legend2025.onAdd = function() {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `
+                <h4>🌡️ Prediksi DBD 2025</h4>
+                <i style="background:#e5e7eb"></i> 0 (Kelas Khusus)<br>
+                <i style="background:#3b82f6"></i> 1–5 (Rendah)<br>
+                <i style="background:#fbbf24"></i> 6–15 (Sedang)<br>
+                <i style="background:#dc2626"></i> >15 (Tinggi)
+            `;
+            return div;
+        };
+        
+        legend2025Control = legend2025.addTo(map);
+        
+        // =======================
+        // LEGEND 2026
+        // =======================
+        var legend2026 = L.control({
+            position: 'bottomleft'
+        });
+        
+        legend2026.onAdd = function() {
+            var div = L.DomUtil.create('div', 'legend');
+            div.innerHTML = `
+                <h4>🔮 Prediksi DBD 2026</h4>
+                <i style="background:#e5e7eb"></i> 0 (Kelas Khusus)<br>
+                <i style="background:#94a3b8"></i> 1–5 (Rendah)<br>
+                <i style="background:#ec4899"></i> 6–15 (Sedang)<br>
+                <i style="background:#9333ea"></i> >15 (Tinggi)
+            `;
+            return div;
+        };
+        
+        legend2026Control = legend2026.addTo(map);
+        
+        // =======================
+        // DOWNLOAD FUNCTION
+        // =======================
+        function downloadMap() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+    document.querySelector('.download-btn').style.display = 'none';
+
+    // Sembunyikan semua layer choropleth
+    if (choropleth2025 && map.hasLayer(choropleth2025)) map.removeLayer(choropleth2025);
+    if (choropleth2026 && map.hasLayer(choropleth2026)) map.removeLayer(choropleth2026);
+
+    // Sembunyikan semua kontrol UI
+    map.removeControl(legend2025Control);
+    map.removeControl(legend2026Control);
+    if (layerControl) map.removeControl(layerControl);
+    map.zoomControl.remove();
+    map.closePopup();
+    document.querySelector('.leaflet-control-attribution').style.display = 'none';
+
+    // Tunggu tile basemap selesai render
+    setTimeout(() => {
+        html2canvas(document.getElementById('map'), {
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            scale: 2,
+            logging: false
+        })
+        .then(function(canvas) {
+            var link = document.createElement('a');
+            link.download = 'basemap_' + new Date().getTime() + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            // Kembalikan semua elemen
+            choropleth2025.addTo(map);
+            legend2025Control = legend2025.addTo(map);
+            legend2026Control = legend2026.addTo(map);
+            layerControl = L.control.layers(null, {
+                "Prediksi DBD 2025": choropleth2025,
+                "Prediksi DBD 2026": choropleth2026
+            }, { collapsed: false }).addTo(map);
+            map.zoomControl.addTo(map);
+            document.querySelector('.download-btn').style.display = 'block';
+            document.querySelector('.leaflet-control-attribution').style.display = 'block';
+            document.getElementById('loadingOverlay').style.display = 'none';
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            alert('Gagal screenshot. Coba lagi.');
+
+            choropleth2025.addTo(map);
+            legend2025Control = legend2025.addTo(map);
+            legend2026Control = legend2026.addTo(map);
+            layerControl = L.control.layers(null, {
+                "Prediksi DBD 2025": choropleth2025,
+                "Prediksi DBD 2026": choropleth2026
+            }, { collapsed: false }).addTo(map);
+            map.zoomControl.addTo(map);
+            document.querySelector('.download-btn').style.display = 'block';
+            document.querySelector('.leaflet-control-attribution').style.display = 'block';
+            document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    }, 1500); // sedikit lebih lama biar tile ESRI sempat load
+}
+    </script>
+</body>
+</html>

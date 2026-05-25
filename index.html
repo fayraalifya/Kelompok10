@@ -407,10 +407,7 @@
             <div>
                 <div class="dv-bento-icon">🛰️</div>
                 <h3>Variabel Respon</h3>
-                <p>Data kasus DBD per kecamatan sebagai variabel target dalam pemodelan prediksi risiko spasial.</p>
-            </div>
-            <div class="dv-badge-large">
-                📋 Kasus DBD per Kecamatan
+                <p>Data kasus DBD per kecamatan tahun 2019 - 2024 sebagai variabel target dalam pemodelan prediksi risiko spasial.</p>
             </div>
         </div>
 
@@ -419,12 +416,12 @@
             <div class="dv-bento-icon" style="font-size:30px;margin-bottom:12px;">🌍</div>
             <h3>Variabel Dinamis</h3>
             <div class="dv-pills">
-                <span class="dv-pill">CH mean, max, min</span>
-                <span class="dv-pill">Std Dev, CV, Range</span>
-                <span class="dv-pill">NDVI min, max, mean</span>
-                <span class="dv-pill">NDWI mean, max, min</span>
-                <span class="dv-pill">Suhu mean, max, min</span>
+                <span class="dv-pill">Curah Hujan</span>
+                <span class="dv-pill">NDVI (Normalized Difference Vegetation Index)</span>
+                <span class="dv-pill">NDWI (Normalized Difference Water Index)</span>
+                <span class="dv-pill">Suhu</span>
                 <span class="dv-pill">Kelembapan</span>
+                <span class="dv-pill">Kepadatan Penduduk</span>
             </div>
         </div>
 
@@ -433,10 +430,9 @@
             <div class="dv-bento-icon" style="font-size:30px;margin-bottom:12px;">🏙️</div>
             <h3>Variabel Statis</h3>
             <div class="dv-pills">
-                <span class="dv-pill">TWI</span>
+                <span class="dv-pill">TWI (Topographic Wetness Index)</span>
                 <span class="dv-pill">Elevasi</span>
                 <span class="dv-pill">Buffer Sungai</span>
-                <span class="dv-pill">Kepadatan Penduduk</span>
                 <span class="dv-pill">Titik Genangan</span>
             </div>
         </div>
@@ -444,7 +440,7 @@
         <!-- Card Count -->
         <div class="dv-count-card">
             <div style="font-size:32px;margin-bottom:6px;">📐</div>
-            <div class="dv-count-num">10+</div>
+            <div class="dv-count-num">10</div>
             <div class="dv-count-label">Total Variabel</div>
             <div class="dv-count-sub">Lingkungan &amp; Spasial</div>
         </div>
@@ -456,62 +452,67 @@
 
 
 <!-- ============================================ -->
-<!-- 10. METHODOLOGY — HORIZONTAL                -->
+<!-- 10. METHODOLOGY — HORIZONTAL FLOW          -->
 <!-- ============================================ -->
 <section class="research-section" id="methodology">
-    <div class="research-glow"></div>
-    <div class="research-glow-2"></div>
+  <div class="research-glow"></div>
+  <div class="research-glow-2"></div>
+  
+  <div class="ro-header">
+    <span class="ro-tag">✦ ALUR ANALISIS</span>
+    <h2>Metodologi <span class="ro-accent">Penelitian</span></h2>
+    <p>Tahapan analisis dari pengumpulan data hingga prediksi dan visualisasi risiko DBD.</p>
+  </div>
 
-    <div class="ro-header">
-        <span class="ro-tag">✦ ALUR ANALISIS</span>
-        <h2>Metodologi <span class="ro-accent">Penelitian</span></h2>
-        <p>Tahapan analisis dari pengumpulan data lingkungan hingga visualisasi WebGIS interaktif.</p>
+  <!-- Main Methodology Flow -->
+  <div class="methodology-flow">
+    
+    <!-- Step 1: Data Collection -->
+    <div class="method-step" data-num="1">
+      <div class="method-node method-node-data">📥</div>
+      <div class="method-label">Pengumpulan Data</div>
+      <div class="method-sub">Kasus DBD · Data Iklim · Variabel Spasial</div>
     </div>
 
-    <!-- 6-step horizontal pipeline -->
-    <div class="methodology-flow">
-
-        <div class="method-step" data-num="1">
-            <div class="method-node method-node-data">🛰️</div>
-            <div class="method-label">Data Lingkungan</div>
-            <div class="method-sub">CHIRPS · NDVI · NDWI · DEM</div>
-        </div>
-
-        <div class="method-step" data-num="2">
-            <div class="method-node method-node-spatial">⚙️</div>
-            <div class="method-label">Analisis Spasial</div>
-            <div class="method-sub">TWI · Elevasi · Buffer Sungai</div>
-        </div>
-
-        <div class="method-step" data-num="3">
-            <div class="method-node method-node-extract">📊</div>
-            <div class="method-label">Ekstraksi Variabel</div>
-            <div class="method-sub">Zonal Statistics · Feature Engineering</div>
-        </div>
-
-        <div class="method-step" data-num="4">
-            <div class="method-node method-node-ml">🤖</div>
-            <div class="method-label">Machine Learning</div>
-            <div class="method-sub">Neg. Binomial · RF · XGBoost</div>
-        </div>
-
-        <div class="method-step" data-num="5">
-            <div class="method-node method-node-predict">📈</div>
-            <div class="method-label">Prediksi 2025–2026</div>
-            <div class="method-sub">Kasus DBD per Kecamatan</div>
-        </div>
-
-        <div class="method-step" data-num="6">
-            <div class="method-node method-node-viz">🗺️</div>
-            <div class="method-label">Dashboard WebGIS</div>
-            <div class="method-sub">Visualisasi Risiko Spasial</div>
-        </div>
-
+    <!-- Step 2: Variable Analysis -->
+    <div class="method-step" data-num="2">
+      <div class="method-node method-node-spatial">🔍</div>
+      <div class="method-label">Variabel Penelitian</div>
+      <div class="method-sub">Kontrol · Diskrit · Semi-Statis</div>
     </div>
+
+    <!-- Step 3: Spatial & Statistical Analysis -->
+    <div class="method-step" data-num="3">
+      <div class="method-node method-node-extract">📊</div>
+      <div class="method-label">Agregasi & Analisis</div>
+      <div class="method-sub">Statistik Spasial · Regresi · Random Forest</div>
+    </div>
+
+    <!-- Step 4: Model Evaluation -->
+    <div class="method-step" data-num="4">
+      <div class="method-node method-node-ml">✅</div>
+      <div class="method-label">Evaluasi Model</div>
+      <div class="method-sub">Best Model · AHP · Pembobotan</div>
+    </div>
+
+    <!-- Step 5: DHF Case Prediction -->
+    <div class="method-step" data-num="5">
+      <div class="method-node method-node-predict">📈</div>
+      <div class="method-label">Prediksi Kasus DBD</div>
+      <div class="method-sub">Hotmap · Choroplet</div>
+    </div>
+
+    <!-- Step 6: WebGIS Visualization -->
+    <div class="method-step" data-num="6">
+      <div class="method-node method-node-viz">🗺️</div>
+      <div class="method-label">Dashboard WebGIS</div>
+      <div class="method-sub">Visualisasi Interaktif</div>
+    </div>
+
+  </div>
 </section>
 
 <div class="section-divider"><div class="divider-glow"></div></div>
-
 
 <!-- ============================================ -->
 <!-- 11. WEBGIS PREVIEW CTA                      -->
@@ -561,13 +562,15 @@
                     <p>Eksplorasi data CHIRPS 2020–2024 secara interaktif per wilayah</p>
                 </div>
             </div>
-            <div class="pv-feat-card">
+            <a href="http://localhost/Kelompok10/pages/genangan.html" target="_blank" class="pv-feat-card pv-feat-highlight" style="text-decoration:none;display:flex;cursor:pointer;position:relative;border:1.5px solid rgba(255,180,50,0.55);background:linear-gradient(120deg,rgba(255,180,50,0.08),rgba(255,100,30,0.07));transition:box-shadow 0.2s,transform 0.2s;">
                 <div class="pv-feat-icon">🌊</div>
                 <div class="pv-feat-body">
-                    <h4>Potensi Genangan</h4>
+                    <h4 style="color:#ffd700;">Potensi Genangan</h4>
                     <p>Pemetaan daerah rawan genangan sebagai variabel risiko DBD</p>
+                    <span style="display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:#ffb432;letter-spacing:0.5px;background:rgba(255,180,50,0.15);padding:3px 10px;border-radius:20px;border:1px solid rgba(255,180,50,0.35);">🔗 Buka Peta Genangan →</span>
                 </div>
-            </div>
+                <div style="position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;background:#ffb432;color:#1a1200;padding:2px 8px;border-radius:20px;letter-spacing:0.5px;">LIVE</div>
+            </a>
             <div class="pv-feat-card">
                 <div class="pv-feat-icon">🔴</div>
                 <div class="pv-feat-body">

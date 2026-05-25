@@ -15,7 +15,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Core palette - dark premium merah tua */
   --r1: #7c0000;
   --r2: #a30000;
   --r3: #c0392b;
@@ -23,13 +22,11 @@
   --r5: #ff8a80;
   --r6: rgba(124,0,0,0.15);
 
-  /* Gold accents */
   --g1: #c8a96e;
   --g2: #e0c88a;
   --g3: #f5e6c8;
   --g4: rgba(200,169,110,0.12);
 
-  /* Dark backgrounds */
   --gr0: #050000;
   --gr1: #0a0101;
   --gr2: #0f0101;
@@ -37,44 +34,41 @@
   --gr4: #1d0303;
   --gr5: #260404;
 
-  /* Blue accent for water/data */
   --b1: #1a4a7a;
   --b2: #2471a3;
   --b3: #5dade2;
   --b4: rgba(93,173,226,0.12);
 
-  /* Text */
   --tx1: rgba(255,255,255,.93);
   --tx2: rgba(255,255,255,.68);
   --tx3: rgba(255,255,255,.40);
   --tx4: rgba(255,255,255,.18);
 
-  /* Cards & borders */
   --card: rgba(255,255,255,.035);
   --card2: rgba(255,255,255,.06);
   --brd: rgba(255,255,255,.07);
   --brd2: rgba(255,255,255,.12);
   --brd-r: rgba(124,0,0,0.35);
 
-  /* Depth colors */
   --d1: #27ae60;
   --d2: #f39c12;
   --d3: #e74c3c;
   --d4: #7c0000;
 
-  /* Typography */
+  --zona-rendah: #27ae60;
+  --zona-sedang: #f39c12;
+  --zona-tinggi: #c0392b;
+
   --ff: 'Playfair Display', Georgia, serif;
   --fb: 'Outfit', sans-serif;
   --fm: 'Space Mono', monospace;
 
-  /* Spacing */
   --panel-w: 320px;
   --topbar-h: 60px;
   --radius: 12px;
   --radius-sm: 8px;
   --radius-xs: 5px;
 
-  /* Shadows */
   --shadow: 0 2px 12px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3);
   --shadow-lg: 0 12px 48px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4);
   --glow-r: 0 0 20px rgba(124,0,0,0.4);
@@ -102,7 +96,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
   background: linear-gradient(90deg, transparent 0%, var(--r2) 30%, var(--g1) 50%, var(--r2) 70%, transparent 100%);
   opacity: 0.55;
 }
-/* Subtle noise texture overlay */
 .topbar::before {
   content: '';
   position: absolute; inset: 0;
@@ -111,7 +104,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
   pointer-events: none;
 }
 
-/* Logo */
 .logo-wrap { display: flex; align-items: center; gap: 12px; flex-shrink: 0; position: relative; z-index: 1; }
 .logo-emblem {
   width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
@@ -137,7 +129,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 
 .divider-v { width: 1px; height: 26px; background: var(--brd); flex-shrink: 0; position: relative; z-index: 1; }
 
-/* Nav tabs */
 .nav-tabs { display: flex; gap: 2px; position: relative; z-index: 1; }
 .nav-tab {
   font-family: var(--fb); font-size: 11.5px; font-weight: 600; padding: 6px 14px;
@@ -156,7 +147,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; position: relative; z-index: 1; }
 
-/* Live badge */
 .live-badge {
   display: flex; align-items: center; gap: 6px;
   background: rgba(39,174,96,0.1); border: 1px solid rgba(39,174,96,0.25);
@@ -178,7 +168,7 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 }
 .btn-icon:hover { background: var(--r6); color: var(--g2); border-color: var(--brd-r); }
 
-/* DSADBM badge */
+/* DSADBM badge — logo dari PNG */
 .dsadbm-badge {
   display: flex; align-items: center; gap: 8px;
   padding: 5px 10px 5px 7px;
@@ -187,15 +177,13 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 }
 .dsadbm-logo {
   width: 26px; height: 26px; border-radius: 5px;
-  overflow: hidden; flex-shrink: 0; display: flex;
-  align-items: center; justify-content: center;
-  background: transparent;
+  overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
 }
 .dsadbm-logo img { width: 26px; height: 26px; object-fit: contain; }
 .dsadbm-text { font-size: 9px; color: var(--tx3); line-height: 1.35; }
 .dsadbm-text strong { display: block; color: var(--tx2); font-weight: 700; font-size: 10px; letter-spacing: 0.04em; }
 
-/* Primary button */
 .btn-primary {
   background: linear-gradient(135deg, var(--r2) 0%, var(--r1) 100%);
   color: var(--g3); border: 1px solid var(--brd-r); border-radius: var(--radius-sm);
@@ -232,7 +220,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 .sec-title i { font-size: 12px; color: var(--g1); }
 .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--brd); }
 
-/* Basemap switcher */
 .basemap-switcher {
   display: flex; gap: 4px; background: var(--card);
   border: 1px solid var(--brd); border-radius: 10px; padding: 4px;
@@ -243,9 +230,7 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
   transition: all .2s; font-family: var(--fb);
 }
 .bm-btn:hover { background: var(--card2); }
-.bm-btn.active {
-  background: var(--r6); border: 1px solid var(--brd-r);
-}
+.bm-btn.active { background: var(--r6); border: 1px solid var(--brd-r); }
 .bm-icon {
   width: 38px; height: 28px; border-radius: 5px; overflow: hidden;
   border: 1.5px solid var(--brd); transition: border-color .2s; flex-shrink: 0;
@@ -255,7 +240,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 .bm-label { font-size: 9px; font-weight: 600; color: var(--tx3); white-space: nowrap; letter-spacing: 0.04em; }
 .bm-btn.active .bm-label { color: var(--g2); }
 
-/* Layer items */
 .layer-item {
   display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
   padding: 10px 11px; border-radius: var(--radius-sm);
@@ -264,7 +248,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 .layer-item:hover { border-color: var(--brd2); }
 .layer-item:last-child { margin-bottom: 0; }
 
-/* Toggle */
 .toggle { position: relative; flex-shrink: 0; width: 30px; height: 17px; margin-top: 2px; }
 .toggle input { opacity: 0; width: 0; height: 0; }
 .toggle-track {
@@ -291,7 +274,6 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 }
 .opacity-val { font-family: var(--fm); font-size: 9px; color: var(--tx3); width: 28px; text-align: right; }
 
-/* Legend */
 .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 .legend-item { display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: var(--tx2); padding: 6px 8px; background: var(--card); border-radius: var(--radius-xs); border: 1px solid var(--brd); }
 .legend-dot-lg { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 0 0 1px rgba(0,0,0,0.3); }
@@ -300,7 +282,15 @@ html, body { height: 100%; overflow: hidden; font-family: var(--fb); background:
 .dc-bar { height: 7px; border-radius: 4px; flex-shrink: 0; }
 .dc-val { font-family: var(--fm); font-size: 9px; color: var(--tx3); margin-left: auto; }
 
-/* Filter */
+.zona-legend-sub { margin-top: 9px; }
+.zona-legend-sub .sec-sub-title {
+  font-family: var(--fm); font-size: 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--tx3); margin-bottom: 5px;
+  display: flex; align-items: center; gap: 6px;
+}
+.zona-legend-sub .sec-sub-title::after { content: ''; flex: 1; height: 1px; background: var(--brd); }
+
 .filter-group { margin-bottom: 9px; }
 .filter-group:last-child { margin-bottom: 0; }
 .filter-label { font-size: 9px; color: var(--tx3); font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.1em; font-family: var(--fm); }
@@ -316,7 +306,6 @@ select {
 select:focus { border-color: var(--r3); box-shadow: 0 0 0 2px rgba(124,0,0,0.2); outline: none; }
 select option { background: var(--gr4); color: var(--tx1); }
 
-/* Stat mini */
 .stat-mini-row { display: flex; gap: 7px; }
 .stat-mini {
   flex: 1;
@@ -333,7 +322,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 .stat-mini-l { font-size: 9.5px; color: var(--tx3); font-weight: 400; }
 .stat-mini-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 24px; color: rgba(255,255,255,0.04); }
 
-/* Zona rawan */
 .zona-list { display: flex; flex-direction: column; gap: 5px; }
 .zona-item { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: var(--radius-xs); background: var(--card); border: 1px solid var(--brd); }
 .zona-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -347,7 +335,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 .map-wrap { flex: 1; position: relative; overflow: hidden; }
 #leaflet-map { width: 100%; height: 100%; z-index: 1; }
 
-/* Map search */
 .map-search {
   position: absolute; top: 14px; left: 14px; right: 14px; z-index: 500;
   display: flex; gap: 8px; pointer-events: all;
@@ -380,7 +367,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 .search-result-item:hover { background: var(--r6); color: var(--g2); }
 .search-result-item i { color: var(--tx3); font-size: 12px; flex-shrink: 0; }
 
-/* Map controls */
 .map-ctrl-group {
   position: absolute; bottom: 24px; right: 14px;
   display: flex; flex-direction: column; gap: 4px; z-index: 500;
@@ -404,20 +390,20 @@ select option { background: var(--gr4); color: var(--tx1); }
 }
 .coord-readout span { color: var(--g1); }
 
-/* Floating legend */
 .map-legend-float {
   position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
   background: rgba(10,1,1,0.88); border: 1px solid var(--brd2);
-  border-radius: var(--radius); padding: 8px 16px;
+  border-radius: var(--radius); padding: 7px 14px;
   z-index: 400; backdrop-filter: blur(12px);
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 10px;
   font-size: 10px; color: var(--tx2); white-space: nowrap;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg); flex-wrap: wrap; max-width: 680px;
 }
 .mleg-item { display: flex; align-items: center; gap: 5px; }
 .mleg-dot { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.1); }
 .mleg-sq  { width: 11px; height: 7px; border-radius: 2px; }
 .mleg-sep { width: 1px; height: 14px; background: var(--brd); }
+.mleg-group-label { font-family: var(--fm); font-size: 8px; color: var(--tx3); letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* Leaflet popup dark */
 .leaflet-popup-content-wrapper {
@@ -507,7 +493,7 @@ select option { background: var(--gr4); color: var(--tx1); }
 .bar-fill { height: 100%; border-radius: 3px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; transition: width 1.4s cubic-bezier(.4,0,.2,1); }
 .bar-val { font-family: var(--fm); font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85); }
 
-/* ══════ HERO / BERANDA ══════ */
+/* ══════ HERO ══════ */
 .hero-wrap { flex: 1; display: none; overflow-y: auto; background: var(--gr1); }
 .hero-wrap.active { display: flex; flex-direction: column; }
 
@@ -569,7 +555,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 }
 .hero-btn-secondary:hover { background: var(--card); color: var(--tx1); border-color: var(--brd2); }
 
-/* Hero stats bar */
 .hero-stats {
   display: grid; grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--brd); border-radius: var(--radius);
@@ -590,7 +575,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 .hero-stat-n span { color: var(--g1); }
 .hero-stat-l { font-size: 9px; color: var(--tx3); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; font-family: var(--fm); }
 
-/* Steps */
 .steps-section { padding: 36px 56px; flex-shrink: 0; border-bottom: 1px solid var(--brd); }
 .steps-title { font-family: var(--ff); font-size: 20px; font-weight: 700; color: var(--tx1); margin-bottom: 22px; }
 .steps-title span { color: var(--g1); font-style: italic; }
@@ -615,7 +599,6 @@ select option { background: var(--gr4); color: var(--tx1); }
 .step-name { font-size: 13px; font-weight: 700; color: var(--tx1); margin-bottom: 6px; }
 .step-desc { font-size: 11.5px; color: var(--tx3); line-height: 1.6; }
 
-/* Info */
 .info-section { padding: 28px 56px 36px; background: var(--gr2); border-top: 1px solid var(--brd); flex-shrink: 0; }
 .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .info-block h4 { font-size: 11px; font-weight: 700; color: var(--g1); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.1em; display: flex; align-items: center; gap: 7px; font-family: var(--fm); }
@@ -665,7 +648,7 @@ select option { background: var(--gr4); color: var(--tx1); }
 .form-req { color: var(--r4); }
 .form-hint { font-size: 9.5px; color: var(--tx3); margin-top: 3px; line-height: 1.5; }
 
-input[type=text], input[type=email], textarea {
+input[type=text], input[type=email], input[type=number], textarea {
   background: var(--card); border: 1px solid var(--brd);
   border-radius: var(--radius-xs); padding: 8px 11px; font-size: 13px;
   font-family: var(--fb); color: var(--tx1); width: 100%;
@@ -677,7 +660,28 @@ input[type=file] {
   border: 1px dashed var(--brd); border-radius: var(--radius-xs);
 }
 textarea { resize: vertical; min-height: 70px; }
-input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 0 0 2px rgba(124,0,0,0.2); }
+input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 0 0 2px rgba(124,0,0,0.2); }
+
+/* Koordinat manual box */
+.coord-manual-box {
+  background: rgba(93,173,226,0.05); border: 1px solid rgba(93,173,226,0.2);
+  border-radius: var(--radius-xs); padding: 10px 12px; margin-top: 8px;
+}
+.coord-manual-box .coord-title {
+  font-size: 9px; font-weight: 700; color: rgba(93,173,226,0.7);
+  text-transform: uppercase; letter-spacing: 0.12em; font-family: var(--fm);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
+}
+.coord-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.coord-row .coord-field label { font-size: 9px; color: var(--tx3); display: block; margin-bottom: 3px; font-family: var(--fm); }
+.btn-preview-map {
+  width: 100%; margin-top: 7px; padding: 7px; font-size: 11.5px; font-family: var(--fb);
+  font-weight: 700; border: 1px solid rgba(93,173,226,0.3); border-radius: var(--radius-xs);
+  background: rgba(93,173,226,0.08); color: rgba(93,173,226,0.85); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .18s;
+}
+.btn-preview-map:hover { background: rgba(93,173,226,0.15); border-color: rgba(93,173,226,0.5); }
+.btn-preview-map.confirmed { border-color: rgba(39,174,96,0.5); background: rgba(39,174,96,0.08); color: rgba(39,174,96,0.85); }
 
 .depth-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
 .depth-opt {
@@ -721,14 +725,12 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
 .btn-submit:hover { box-shadow: 0 0 28px rgba(124,0,0,0.5); transform: translateY(-1px); }
 .btn-submit:active { transform: scale(0.98); }
 
-/* Lightbox */
 .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:4000; align-items:center; justify-content:center; }
 .lightbox.open { display:flex; }
 .lightbox img { max-width:90vw; max-height:85vh; border-radius:8px; box-shadow:0 8px 60px rgba(0,0,0,.8); border: 1px solid var(--brd); }
 .lightbox-close { position:absolute; top:18px; right:22px; color:var(--tx2); font-size:22px; cursor:pointer; opacity:.7; transition: opacity .15s; }
 .lightbox-close:hover { opacity:1; color: var(--r5); }
 
-/* Toast */
 .toast {
   position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(16px);
   background: var(--gr3); color: var(--tx1); padding: 10px 18px; border-radius: 999px;
@@ -741,13 +743,15 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
 .toast.success i { color: #5dbb6f; }
 .toast.error i { color: var(--r5); }
 
-/* Animations */
+/* Preview marker sementara */
+.preview-marker-pin { width:20px; height:20px; border-radius:50%; background:rgba(93,173,226,0.7); border:2px solid rgba(93,173,226,0.9); box-shadow:0 0 0 4px rgba(93,173,226,0.2); animation: pulse-blue 1.5s infinite; }
+@keyframes pulse-blue { 0%,100%{box-shadow:0 0 0 4px rgba(93,173,226,0.2)} 50%{box-shadow:0 0 0 8px rgba(93,173,226,0.08)} }
+
 @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
 @keyframes barIn { from { width: 0 !important; } }
 .bar-fill { animation: barIn 1.4s cubic-bezier(.4,0,.2,1); }
 @keyframes spin { to { transform:rotate(360deg); } }
 
-/* Responsive */
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .stat-big-grid { grid-template-columns: repeat(2,1fr); }
@@ -770,7 +774,6 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
   <div class="logo-wrap">
     <div class="logo-emblem">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Water drop + signal waves -->
         <path d="M12 3C12 3 6 10.5 6 14.5C6 17.8 8.7 20.5 12 20.5C15.3 20.5 18 17.8 18 14.5C18 10.5 12 3 12 3Z" fill="rgba(200,169,110,0.9)"/>
         <path d="M9.5 15.5C9.5 15.5 10.2 17 12 17" stroke="rgba(124,0,0,0.5)" stroke-width="1.2" stroke-linecap="round"/>
         <circle cx="19" cy="6" r="1.5" fill="rgba(200,169,110,0.5)"/>
@@ -794,18 +797,11 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
     <button class="btn-icon" title="Refresh data" onclick="showToast('Data diperbarui','ti-refresh','success')"><i class="ti ti-refresh"></i></button>
     <button class="btn-icon" title="Export CSV" onclick="exportCSV()"><i class="ti ti-download"></i></button>
     <div class="divider-v"></div>
-    <!-- DSADBM Logo — ganti dengan img tag ketika file PNG tersedia -->
+    <!-- DSADBM badge — logo PNG dari file lokal -->
     <div class="dsadbm-badge">
       <div class="dsadbm-logo">
-        <!-- Placeholder: ganti src dengan path logo PNG Anda -->
-        <!-- <img src="./assets/dsadbm-logo.png" alt="DSADBM"> -->
-        <!-- Sementara SVG placeholder: -->
-        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
-          <circle cx="18" cy="18" r="17" fill="#00388f"/>
-          <path d="M6 22 Q10 18 14 22 Q18 26 22 22 Q26 18 30 22" stroke="#c8a96e" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M6 18 Q10 14 14 18 Q18 22 22 18 Q26 14 30 18" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".6"/>
-          <circle cx="18" cy="14" r="3" fill="#c8a96e"/>
-        </svg>
+        <img src="assets/dsadbm.png" alt="Logo DSADBM"
+             onerror="this.style.display='none';this.parentElement.innerHTML='<svg viewBox=\'0 0 36 36\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\' width=\'26\' height=\'26\'><circle cx=\'18\' cy=\'18\' r=\'17\' fill=\'#00388f\'/><path d=\'M6 22 Q10 18 14 22 Q18 26 22 22 Q26 18 30 22\' stroke=\'#c8a96e\' stroke-width=\'2\' fill=\'none\' stroke-linecap=\'round\'/><circle cx=\'18\' cy=\'14\' r=\'3\' fill=\'#c8a96e\'/></svg>';">
       </div>
       <div class="dsadbm-text">
         <strong>DSADBM</strong>
@@ -851,13 +847,15 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
           <div class="hero-stat-n" id="hs-total"><span>0</span></div>
           <div class="hero-stat-l">Laporan Masuk</div>
         </div>
+        <!-- Titik Data PU 2021 -->
         <div class="hero-stat">
-          <div class="hero-stat-n" id="hs-kec"><span>0</span></div>
-          <div class="hero-stat-l">Kecamatan Terpantau</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-n" id="hs-pu">—</div>
+          <div class="hero-stat-n" id="hs-pu"><span>—</span></div>
           <div class="hero-stat-l">Titik Data PU 2021</div>
+        </div>
+        <!-- Titik Data PU 2025 (menggantikan Kecamatan Terpantau) -->
+        <div class="hero-stat">
+          <div class="hero-stat-n" id="hs-pu2025"><span>—</span></div>
+          <div class="hero-stat-l">Titik Data PU 2025</div>
         </div>
         <div class="hero-stat">
           <div class="hero-stat-n">31</div>
@@ -874,21 +872,21 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
           <div class="step-num">01</div>
           <i class="ti ti-map-pin step-icon"></i>
           <div class="step-name">Tandai Lokasi Genangan</div>
-          <div class="step-desc">Klik "Laporkan Genangan" di kanan atas. Deteksi otomatis via GPS, atau ketik alamat jalan secara manual. Pilih kecamatan Anda.</div>
+          <div class="step-desc">Klik "Laporkan Genangan" di kanan atas. Deteksi otomatis via GPS, atau masukkan koordinat (Latitude &amp; Longitude) secara manual untuk menentukan titik di peta.</div>
         </div>
         <div class="step-card">
           <div class="step-accent"></div>
           <div class="step-num">02</div>
           <i class="ti ti-ruler-measure step-icon"></i>
-          <div class="step-name">Isi Detail & Foto</div>
-          <div class="step-desc">Pilih estimasi kedalaman air, tambahkan keterangan kondisi, dan unggah foto dokumentasi. Nama & WhatsApp untuk notifikasi tindak lanjut.</div>
+          <div class="step-name">Isi Detail &amp; Foto</div>
+          <div class="step-desc">Pilih estimasi kedalaman air, tambahkan keterangan kondisi, dan unggah foto dokumentasi. Nama &amp; WhatsApp untuk notifikasi tindak lanjut.</div>
         </div>
         <div class="step-card">
           <div class="step-accent"></div>
           <div class="step-num">03</div>
           <i class="ti ti-chart-dots step-icon"></i>
           <div class="step-name">Data Langsung Terpetakan</div>
-          <div class="step-desc">Laporan Anda langsung muncul di Peta Genangan real-time, teraggregasi di Statistik, dan dapat diekspor CSV untuk kebutuhan dinas.</div>
+          <div class="step-desc">Laporan Anda langsung muncul di Peta Genangan real-time, teraggregasi di Statistik, dan dapat diekspor CSV. Data tersimpan permanen di browser.</div>
         </div>
       </div>
     </div>
@@ -904,10 +902,10 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
         </div>
         <div class="info-block">
           <h4><i class="ti ti-info-circle"></i> Informasi Sistem</h4>
-          <div class="info-item"><i class="ti ti-check"></i>Data laporan tersimpan secara lokal dan dapat diekspor CSV kapan saja.</div>
-          <div class="info-item"><i class="ti ti-check"></i>Zona rawan genangan terbentuk otomatis dari akumulasi laporan warga.</div>
-          <div class="info-item"><i class="ti ti-check"></i>Data historis PU 2021 terintegrasi sebagai referensi titik rawan eksisting.</div>
-          <div class="info-item"><i class="ti ti-check"></i>Filter kecamatan, bulan, tahun, dan kedalaman tersedia di Peta Genangan.</div>
+          <div class="info-item"><i class="ti ti-check"></i>Data laporan tersimpan permanen di browser (localStorage) — tidak hilang meski halaman ditutup.</div>
+          <div class="info-item"><i class="ti ti-check"></i>Lokasi bisa diisi via GPS otomatis <strong>atau koordinat manual</strong> (Latitude &amp; Longitude).</div>
+          <div class="info-item"><i class="ti ti-check"></i>Data historis PU 2021 &amp; PU 2025 terintegrasi sebagai referensi titik rawan eksisting.</div>
+          <div class="info-item"><i class="ti ti-check"></i>Peta Zona Rawan Genangan per kecamatan tersedia berdasarkan klasifikasi UFSI.</div>
         </div>
       </div>
     </div>
@@ -938,6 +936,24 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
         <div class="sec-title"><i class="ti ti-stack-2"></i> Layer Peta</div>
         <div class="layer-item">
           <label class="toggle">
+            <input type="checkbox" checked id="toggle-zona" onchange="toggleLayer('zona',this)">
+            <div class="toggle-track"></div><div class="toggle-thumb"></div>
+          </label>
+          <div class="layer-info">
+            <div class="layer-name">
+              <div class="layer-swatch" style="background:linear-gradient(135deg,#27ae60,#f39c12,#c0392b);border-radius:2px;"></div>
+              Zona Rawan Genangan
+            </div>
+            <div class="layer-desc">Klasifikasi UFSI per kecamatan · klik untuk detail</div>
+            <div class="opacity-row">
+              <span class="opacity-label">Opacity</span>
+              <input type="range" min="10" max="90" value="55" step="5" oninput="setLayerOpacity('zona',this.value,this.nextElementSibling)">
+              <span class="opacity-val">55%</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-item">
+          <label class="toggle">
             <input type="checkbox" checked id="toggle-kecamatan" onchange="toggleLayer('kecamatan',this)">
             <div class="toggle-track"></div><div class="toggle-thumb"></div>
           </label>
@@ -966,6 +982,21 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
             </div>
           </div>
         </div>
+        <div class="layer-item">
+          <label class="toggle">
+            <input type="checkbox" checked id="toggle-pu2025" onchange="toggleLayer('pu2025',this)">
+            <div class="toggle-track"></div><div class="toggle-thumb"></div>
+          </label>
+          <div class="layer-info">
+            <div class="layer-name"><div class="layer-swatch" style="background:#8e44ad;border-radius:2px;"></div>Data PU 2025</div>
+            <div class="layer-desc">Genangan terkini · klik untuk detail</div>
+            <div class="opacity-row">
+              <span class="opacity-label">Opacity</span>
+              <input type="range" min="10" max="90" value="80" step="5" oninput="setLayerOpacity('pu2025',this.value,this.nextElementSibling)">
+              <span class="opacity-val">80%</span>
+            </div>
+          </div>
+        </div>
         <div class="layer-item" style="margin-bottom:0">
           <label class="toggle">
             <input type="checkbox" checked id="toggle-warga" onchange="toggleLayer('warga',this)">
@@ -980,20 +1011,29 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
 
       <div class="sidebar-section">
         <div class="sec-title"><i class="ti ti-bookmark"></i> Legenda</div>
-        <div class="legend-grid">
-          <div class="legend-item"><div><div style="width:16px;height:3px;background:#a30000;opacity:.6;border-radius:2px;"></div></div>Batas Kecamatan</div>
-          <div class="legend-item"><div class="legend-dot-lg" style="background:#2471a3;"></div>Data PU 2021</div>
-          <div class="legend-item" style="grid-column:span 2;gap:4px;">
-            <div style="display:flex;gap:4px;">
-              <div class="legend-dot-lg" style="background:#27ae60;"></div>
-              <div class="legend-dot-lg" style="background:#f39c12;"></div>
-              <div class="legend-dot-lg" style="background:#e74c3c;"></div>
-              <div class="legend-dot-lg" style="background:#7c0000;"></div>
-            </div>
-            <span>Laporan Warga (kedalaman)</span>
+        <div class="zona-legend-sub">
+          <div class="sec-sub-title"><i class="ti ti-map" style="font-size:10px;color:var(--g1);"></i> Zona Rawan Genangan</div>
+          <div class="depth-classes">
+            <div class="dc-row"><div class="dc-bar" style="width:28px;background:#27ae60;opacity:0.85;"></div><span>Rendah</span><span class="dc-val" style="color:#5dbb6f;">Rendah</span></div>
+            <div class="dc-row"><div class="dc-bar" style="width:28px;background:#f39c12;opacity:0.85;"></div><span>Sedang</span><span class="dc-val" style="color:#f5c842;">Sedang</span></div>
+            <div class="dc-row"><div class="dc-bar" style="width:28px;background:#c0392b;opacity:0.85;"></div><span>Tinggi</span><span class="dc-val" style="color:#ff8a80;">Tinggi</span></div>
           </div>
         </div>
-        <div class="depth-classes">
+        <div class="legend-grid" style="margin-top:10px;">
+          <div class="legend-item"><div><div style="width:16px;height:3px;background:#a30000;opacity:.6;border-radius:2px;"></div></div>Batas Kecamatan</div>
+          <div class="legend-item"><div class="legend-dot-lg" style="background:#2471a3;"></div>PU 2021</div>
+          <div class="legend-item"><div class="legend-dot-lg" style="background:#8e44ad;"></div>PU 2025</div>
+          <div class="legend-item" style="gap:4px;">
+            <div style="display:flex;gap:3px;">
+              <div class="legend-dot-lg" style="background:#27ae60;width:9px;height:9px;"></div>
+              <div class="legend-dot-lg" style="background:#f39c12;width:9px;height:9px;"></div>
+              <div class="legend-dot-lg" style="background:#e74c3c;width:9px;height:9px;"></div>
+              <div class="legend-dot-lg" style="background:#7c0000;width:9px;height:9px;"></div>
+            </div>
+            <span style="font-size:9.5px;">Laporan Warga</span>
+          </div>
+        </div>
+        <div class="depth-classes" style="margin-top:6px;">
           <div class="dc-row"><div class="dc-bar" style="width:28px;background:#27ae60;"></div><span>Ringan</span><span class="dc-val">&lt;20 cm</span></div>
           <div class="dc-row"><div class="dc-bar" style="width:28px;background:#f39c12;"></div><span>Sedang</span><span class="dc-val">20–40 cm</span></div>
           <div class="dc-row"><div class="dc-bar" style="width:28px;background:#e74c3c;"></div><span>Dalam</span><span class="dc-val">40–70 cm</span></div>
@@ -1045,6 +1085,18 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
             <i class="ti ti-database stat-mini-icon"></i>
           </div>
         </div>
+        <div class="stat-mini-row" style="margin-top:7px;">
+          <div class="stat-mini" style="background:linear-gradient(135deg,#3b0080 0%,var(--gr4) 100%);border-color:rgba(142,68,173,0.35);">
+            <div class="stat-mini-n" id="s-pu2025" style="color:#d9a8ff;">—</div>
+            <div class="stat-mini-l">Titik PU 2025</div>
+            <i class="ti ti-database stat-mini-icon"></i>
+          </div>
+          <div class="stat-mini" style="background:linear-gradient(135deg,#004d1a 0%,var(--gr4) 100%);border-color:rgba(39,174,96,0.35);">
+            <div class="stat-mini-n" id="s-zona" style="color:#a8ffca;">—</div>
+            <div class="stat-mini-l">Kec. Zona Tinggi</div>
+            <i class="ti ti-alert-triangle stat-mini-icon"></i>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -1072,13 +1124,19 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
         <button class="map-ctrl-btn" onclick="toggleFullscreen()" title="Fullscreen"><i class="ti ti-arrows-maximize"></i></button>
       </div>
       <div class="map-legend-float">
+        <span class="mleg-group-label">Zona</span>
+        <div class="mleg-item"><div class="mleg-sq" style="background:#27ae60;opacity:.75;"></div>Rendah</div>
+        <div class="mleg-item"><div class="mleg-sq" style="background:#f39c12;opacity:.75;"></div>Sedang</div>
+        <div class="mleg-item"><div class="mleg-sq" style="background:#c0392b;opacity:.75;"></div>Tinggi</div>
+        <div class="mleg-sep"></div>
         <div class="mleg-item"><div class="mleg-sq" style="background:#a30000;opacity:.5;"></div>Kecamatan</div>
         <div class="mleg-sep"></div>
         <div class="mleg-item"><div class="mleg-dot" style="background:#2471a3;"></div>PU 2021</div>
+        <div class="mleg-item"><div class="mleg-dot" style="background:#8e44ad;"></div>PU 2025</div>
         <div class="mleg-sep"></div>
         <div class="mleg-item"><div class="mleg-dot" style="background:#27ae60;"></div>&lt;20cm</div>
-        <div class="mleg-item"><div class="mleg-dot" style="background:#f39c12;"></div>20–40cm</div>
-        <div class="mleg-item"><div class="mleg-dot" style="background:#e74c3c;"></div>40–70cm</div>
+        <div class="mleg-item"><div class="mleg-dot" style="background:#f39c12;"></div>20–40</div>
+        <div class="mleg-item"><div class="mleg-dot" style="background:#e74c3c;"></div>40–70</div>
         <div class="mleg-item"><div class="mleg-dot" style="background:#7c0000;"></div>&gt;70cm</div>
       </div>
     </div>
@@ -1113,10 +1171,15 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
         <div class="stat-big-n" id="stat-pu">—</div>
         <div class="stat-big-l">Titik data PU 2021 (historis)</div>
       </div>
-      <div class="stat-big-card">
-        <div class="stat-big-n" id="stat-kec-aktif">0</div>
-        <div class="stat-big-l">Kecamatan dengan laporan</div>
+      <div class="stat-big-card" style="--card-accent: linear-gradient(90deg,#8e44ad,#d9a8ff);">
+        <div class="stat-big-n" id="stat-pu2025" style="color:#d9a8ff;">—</div>
+        <div class="stat-big-l">Titik data PU 2025 (terkini)</div>
       </div>
+    </div>
+
+    <div class="stat-section-title">Distribusi Zona Rawan Genangan per Kecamatan</div>
+    <div class="bar-chart-container" id="zonaBarChart">
+      <div style="color:var(--tx3);font-size:12px;padding:8px 0;">Memuat data zona rawan...</div>
     </div>
 
     <div class="stat-section-title">Top 10 Kecamatan — Laporan Terbanyak</div>
@@ -1127,7 +1190,7 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
     <div class="stat-section-title">Distribusi Kedalaman Genangan</div>
     <div class="bar-chart-container" id="depthChart"></div>
 
-    <div class="stat-section-title">Zona Rawan Genangan</div>
+    <div class="stat-section-title">Zona Rawan Genangan (Laporan Warga)</div>
     <div id="zonaStatList" style="display:flex;flex-direction:column;gap:6px;">
       <div style="color:var(--tx3);font-size:12px;padding:8px 0;">Belum ada data laporan.</div>
     </div>
@@ -1135,7 +1198,7 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
 
 </div>
 
-<!-- ══════ MODAL ══════ -->
+<!-- ══════ MODAL LAPORAN ══════ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal-box">
     <div class="modal-header">
@@ -1146,13 +1209,37 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
       <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
     </div>
     <div class="modal-body">
+
+      <!-- Lokasi GPS -->
       <div class="form-group">
         <label class="form-label">Titik Lokasi <span class="form-req">*</span></label>
         <button class="lokasi-btn" id="lokasiBtn" onclick="pickLokasi()">
           <i class="ti ti-current-location"></i> Deteksi lokasi otomatis (GPS)
         </button>
-        <div class="form-hint">atau isi alamat manual di bawah · koordinat untuk marker di peta</div>
+        <div class="form-hint">Atau isi koordinat secara manual di bawah ini.</div>
       </div>
+
+      <!-- Koordinat manual -->
+      <div class="form-group">
+        <div class="coord-manual-box">
+          <div class="coord-title"><i class="ti ti-map-pin" style="font-size:11px;"></i> Input Koordinat Manual</div>
+          <div class="coord-row">
+            <div class="coord-field">
+              <label>Latitude (Lintang)</label>
+              <input type="number" id="inp-lat" placeholder="-7.2575" step="0.00001" min="-90" max="90">
+            </div>
+            <div class="coord-field">
+              <label>Longitude (Bujur)</label>
+              <input type="number" id="inp-lng" placeholder="112.7521" step="0.00001" min="-180" max="180">
+            </div>
+          </div>
+          <button class="btn-preview-map" id="btnPreviewMap" onclick="applyManualCoord()">
+            <i class="ti ti-map-2"></i> Terapkan ke Peta
+          </button>
+          <div class="form-hint" style="margin-top:6px;">Contoh Surabaya: Lat <strong style="color:rgba(93,173,226,0.7);">-7.2575</strong> · Lng <strong style="color:rgba(93,173,226,0.7);">112.7521</strong></div>
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Nama Jalan / Alamat <span class="form-req">*</span></label>
         <input type="text" id="inp-alamat" placeholder="Contoh: Jl. Raya Wonokromo No. 5">
@@ -1222,8 +1309,22 @@ input[type=text]:focus, textarea:focus { border-color: var(--r3); box-shadow: 0 
 <script>
 'use strict';
 
+/* ══ LOCALSTORAGE — data laporan persisten ══ */
+const LS_KEY = 'hidra_laporan_v1';
+function saveLaporan() {
+  // Simpan tanpa fotoUrls (base64 terlalu besar), simpan semua field lain
+  const toSave = laporanData.map(d => ({ ...d, fotoUrls: [] }));
+  try { localStorage.setItem(LS_KEY, JSON.stringify(toSave)); } catch(e) { console.warn('[localStorage]', e); }
+}
+function loadLaporan() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
 /* ══ DATA ══ */
-let laporanData = [];
+let laporanData = loadLaporan(); // muat dari localStorage saat halaman dibuka
 const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const KEC_LIST = ['Asemrowo','Benowo','Bubutan','Bulak','Dukuh Pakis','Gayungan','Genteng','Gubeng','Gunung Anyar','Jambangan','Karang Pilang','Kenjeran','Krembangan','Lakarsantri','Mulyorejo','Pabean Cantian','Pakal','Rungkut','Sambikerep','Sawahan','Semampir','Simokerto','Sukolilo','Sukomanunggal','Tambaksari','Tandes','Tegalsari','Tenggilis Mejoyo','Wiyung','Wonocolo','Wonokromo'].sort();
 const KEC_BOUNDS = {
@@ -1257,8 +1358,86 @@ map.on('mousemove', e => {
 
 /* ══ LAYERS ══ */
 const LG = {};
-let puCount = 0, kecGeoJSON = null;
+let puCount = 0, pu2025Count = 0, kecGeoJSON = null;
+let zonaRawanData = null;
+let previewMarker = null; // marker preview koordinat manual
 
+/* ══ ZONA RAWAN ══ */
+function zonaColor(kelas) {
+  if (!kelas) return '#555555';
+  const k = kelas.trim().toLowerCase();
+  if (k === 'rendah') return '#27ae60';
+  if (k === 'sedang') return '#f39c12';
+  if (k === 'tinggi') return '#c0392b';
+  return '#555555';
+}
+function zonaFillOpacity(kelas) {
+  if (!kelas) return 0.15;
+  const k = kelas.trim().toLowerCase();
+  if (k === 'tinggi') return 0.55;
+  if (k === 'sedang') return 0.40;
+  if (k === 'rendah') return 0.28;
+  return 0.20;
+}
+
+function loadZonaRawan() {
+  fetch('./assets/rawangenangan.geojson')
+    .then(r => { if (!r.ok) throw r.status; return r.json(); })
+    .then(data => {
+      zonaRawanData = data;
+      const tinggiCount = data.features ? data.features.filter(f => (f.properties.Kelas_Gena||'').toLowerCase() === 'tinggi').length : 0;
+      const el = document.getElementById('s-zona');
+      if (el) el.textContent = tinggiCount;
+
+      LG.zona = L.geoJSON(data, {
+        style(feat) {
+          const kelas = feat.properties.Kelas_Gena || '';
+          const c = zonaColor(kelas);
+          return { color:c, weight:1.2, opacity:0.7, fillColor:c, fillOpacity:zonaFillOpacity(kelas) };
+        },
+        onEachFeature(feat, layer) {
+          layer.on('mouseover', function() { this.setStyle({ weight:2.2, fillOpacity:Math.min(zonaFillOpacity(feat.properties.Kelas_Gena||'')+0.15,0.85) }); });
+          layer.on('mouseout',  function() { this.setStyle({ weight:1.2, fillOpacity:zonaFillOpacity(feat.properties.Kelas_Gena||'') }); });
+          layer.on('click', function() { showZonaPopup(feat.properties, layer.getBounds().getCenter()); });
+        }
+      }).addTo(map);
+      renderZonaBarChart();
+    })
+    .catch(e => console.warn('[ZonaRawan]', e));
+}
+
+/* ── Popup zona rawan: ringkas, tanpa ranking/validasi/kelas DBD/kelas PU/titik PU/LULC ── */
+function showZonaPopup(p, latlng) {
+  const kelas = p.Kelas_Gena || '—';
+  const kecNm = p.Kecamatan || p.NAME_3 || '—';
+  const c = zonaColor(kelas);
+
+  let rBg = 'rgba(39,174,96,0.12)', rColor = '#5dbb6f';
+  if (kelas.toLowerCase() === 'tinggi') { rBg = 'rgba(192,57,43,0.2)'; rColor = '#ff8a80'; }
+  else if (kelas.toLowerCase() === 'sedang') { rBg = 'rgba(243,156,18,0.15)'; rColor = '#f5c842'; }
+
+  L.popup({ maxWidth: 260, minWidth: 230 }).setLatLng(latlng).setContent(`
+    <div style="font-family:'Outfit',sans-serif;">
+      <div style="height:3px;background:linear-gradient(90deg,${c},transparent);"></div>
+      <div style="padding:14px 16px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:3px;gap:8px;">
+          <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:rgba(255,255,255,.92);font-style:italic;flex:1;">${kecNm}</div>
+          <button onclick="map.closePopup()" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">✕</button>
+        </div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:10px;letter-spacing:.08em;text-transform:uppercase;font-family:'Space Mono',monospace;">Zona Rawan Genangan · Surabaya</div>
+        <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:10px;"></div>
+        <div style="display:flex;align-items:center;justify-content:center;padding:12px 11px;background:${rBg};border-radius:8px;border:1px solid ${c}30;">
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:4px;">Kelas Zona Rawan Genangan</div>
+            <div style="font-size:22px;font-weight:700;color:${rColor};">${kelas}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).openOn(map);
+}
+
+/* ══ KECAMATAN LAYER ══ */
 function loadKecamatan() {
   fetch('./assets/bataskecamatan.geojson')
     .then(r => { if (!r.ok) throw r.status; return r.json(); })
@@ -1280,6 +1459,7 @@ function buildKecLayer() {
   }).addTo(map);
 }
 
+/* ── Popup batas kecamatan: tanpa zona rawan UFSI ── */
 function showKecPopup(kecName, latlng) {
   const kecLaporan = laporanData.filter(d => d.kec === kecName);
   const total = kecLaporan.length;
@@ -1293,20 +1473,20 @@ function showKecPopup(kecName, latlng) {
   if (total >= 5) { risiko='Tinggi'; rColor='#ff8a80'; rBg='rgba(124,0,0,0.25)'; }
   else if (total >= 2) { risiko='Sedang'; rColor='#f5c842'; rBg='rgba(243,156,18,0.15)'; }
 
-  L.popup({ maxWidth:260, minWidth:220 }).setLatLng(latlng).setContent(`
-    <div style="padding:14px 16px;font-family:'Outfit',sans-serif;min-width:220px;background:transparent;">
+  L.popup({ maxWidth:240, minWidth:210 }).setLatLng(latlng).setContent(`
+    <div style="padding:14px 16px;font-family:'Outfit',sans-serif;min-width:210px;background:transparent;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
         <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:rgba(255,255,255,.9);font-style:italic;">${kecName}</div>
         <button onclick="map.closePopup()" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;">✕</button>
       </div>
       <div style="font-size:9.5px;color:rgba(255,255,255,.3);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;font-family:'Space Mono',monospace;">Kecamatan · Surabaya</div>
       <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:10px;"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-size:11.5px;color:rgba(255,255,255,.5);">Total laporan</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:11.5px;color:rgba(255,255,255,.5);">Total laporan warga</span>
         <span style="font-family:'Playfair Display',serif;font-weight:700;color:#c8a96e;font-size:16px;">${total}</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <span style="font-size:11.5px;color:rgba(255,255,255,.5);">Tingkat risiko</span>
+        <span style="font-size:11.5px;color:rgba(255,255,255,.5);">Risiko laporan</span>
         <span style="font-weight:700;color:${rColor};background:${rBg};padding:2px 9px;border-radius:4px;font-size:11px;">${risiko}</span>
       </div>
       ${total > 0 ? `<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:6px;font-family:'Space Mono',monospace;">Sebaran Kedalaman</div>${dalamRows}` : ''}
@@ -1314,7 +1494,7 @@ function showKecPopup(kecName, latlng) {
   `).openOn(map);
 }
 
-/* PU 2021 */
+/* ══ PU 2021 ══ */
 const UTM49S = '+proj=utm +zone=49 +south +datum=WGS84 +units=m +no_defs';
 const WGS84  = '+proj=longlat +datum=WGS84 +no_defs';
 function utmToWgs84(e, n) { return proj4(UTM49S, WGS84, [e, n]); }
@@ -1325,45 +1505,147 @@ function convertGeomCoords(geom) {
   cvt(g.coordinates); return g;
 }
 
+function makePUMarkerIcon(color) {
+  return L.divIcon({ className:'', html:`
+    <div style="width:16px;height:16px;background:linear-gradient(135deg,${color}cc,${color});border:2px solid rgba(255,255,255,.15);border-radius:4px;box-shadow:0 2px 8px ${color}60;display:flex;align-items:center;justify-content:center;">
+      <svg width="7" height="7" viewBox="0 0 8 8"><path d="M4 0C4 0 1 3.5 1 5.2C1 6.7 2.3 8 4 8C5.7 8 7 6.7 7 5.2C7 3.5 4 0 4 0Z" fill="rgba(255,255,255,.9)"/></svg>
+    </div>`, iconSize:[16,16], iconAnchor:[8,8] });
+}
+
+/* Label mapping untuk field PU 2021 */
+const LABEL_PU2021 = {
+  LOKASI: 'Lokasi Genangan',
+  KECAMATAN: 'Kecamatan',
+  KELURAHAN: 'Kelurahan',
+  RAYON: 'Rayon / Wilayah',
+  LUAS_GENAN: 'Luas Genangan (m²)',
+  TINGGI_GEN: 'Tinggi Genangan (cm)',
+  LAMA_GENAN: 'Durasi Genangan (mnt)',
+  SKOR_LUAS: 'Skor Luas',
+  SKOR_TINGG: 'Skor Tinggi',
+  SKOR_LAMA: 'Skor Durasi'
+};
+
+/* Label mapping untuk field PU 2025 — diperbagus */
+const LABEL_PU2025 = {
+  // Field umum yang mungkin ada
+  LOKASI: 'Lokasi Genangan',
+  KECAMATAN: 'Kecamatan',
+  KELURAHAN: 'Kelurahan',
+  RAYON: 'Rayon / Wilayah',
+  LUAS_GENAN: 'Luas Genangan (m²)',
+  LUAS: 'Luas Genangan (m²)',
+  TINGGI_GEN: 'Tinggi Genangan (cm)',
+  TINGGI: 'Tinggi Genangan (cm)',
+  KEDALAMAN: 'Kedalaman Genangan (cm)',
+  LAMA_GENAN: 'Durasi Genangan (mnt)',
+  LAMA: 'Durasi Genangan (mnt)',
+  DURASI: 'Durasi Genangan (mnt)',
+  SKOR_LUAS: 'Skor Luas',
+  SKOR_TINGG: 'Skor Tinggi',
+  SKOR_LAMA: 'Skor Durasi',
+  SKOR: 'Skor Risiko',
+  KELAS: 'Kelas Risiko',
+  KELAS_GENA: 'Kelas Genangan',
+  TAHUN: 'Tahun Data',
+  SUMBER: 'Sumber Data',
+  CATATAN: 'Catatan',
+  KETERANGAN: 'Keterangan',
+  STATUS: 'Status Penanganan',
+  // Field lain yang tidak dikenali → fallback label yang diperbagus
+};
+
+function prettifyFieldName(key) {
+  if (LABEL_PU2025[key]) return LABEL_PU2025[key];
+  // Fallback: ubah underscore jadi spasi, title case
+  return key.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function buildPUPopupRows(p, labelMap) {
+  return Object.entries(p)
+    .filter(([k]) => !k.startsWith('_') && k !== 'ORIG_FID' && k !== 'FID' && k !== 'OBJECTID')
+    .map(([k,v]) => {
+      const label = labelMap ? (labelMap[k] || prettifyFieldName(k)) : prettifyFieldName(k);
+      const val = (v !== null && v !== undefined && v !== '') ? v : '—';
+      return `<div style="display:flex;justify-content:space-between;align-items:flex-start;font-size:11px;color:rgba(255,255,255,.45);margin-bottom:4px;gap:10px;">
+        <span style="flex-shrink:0;">${label}</span>
+        <span style="font-weight:700;color:rgba(255,255,255,.85);text-align:right;">${val}</span>
+      </div>`;
+    }).join('');
+}
+
+function buildPULayer(data, color, yearLabel, isUTM, isPU2025) {
+  const features = isUTM
+    ? data.features.map(f => ({ ...f, geometry: convertGeomCoords(f.geometry) }))
+    : data.features;
+  const conv = { ...data, features };
+  const labelMap = isPU2025 ? null : LABEL_PU2021; // PU2025: prettifyFieldName, PU2021: labelMap
+
+  return L.geoJSON(conv, {
+    pointToLayer(feat, latlng) {
+      return L.marker(latlng, { icon: makePUMarkerIcon(color) });
+    },
+    style() { return { color, weight:2, opacity:.8, fillColor:color, fillOpacity:.15 }; },
+    onEachFeature(feat, layer) {
+      const p = feat.properties;
+      const rows = buildPUPopupRows(p, isPU2025 ? null : LABEL_PU2021);
+      const namaLokasi = p.LOKASI || p.Lokasi || p.NAMA || p.Nama || p.KETERANGAN || `Data PU ${yearLabel}`;
+      layer.bindPopup(`
+        <div style="padding:14px 15px;font-family:'Outfit',sans-serif;min-width:240px;max-width:280px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <div style="width:22px;height:22px;background:linear-gradient(135deg,${color}cc,${color});border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="9" height="9" viewBox="0 0 8 8"><path d="M4 0C4 0 1 3.5 1 5.2C1 6.7 2.3 8 4 8C5.7 8 7 6.7 7 5.2C7 3.5 4 0 4 0Z" fill="white"/></svg>
+            </div>
+            <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);font-style:italic;">Data PU ${yearLabel}</div>
+          </div>
+          <div style="font-size:9.5px;color:rgba(255,255,255,.35);margin-bottom:10px;font-family:'Space Mono',monospace;">${namaLokasi}</div>
+          <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:8px;"></div>
+          ${rows || '<div style="color:rgba(255,255,255,.3);font-size:11px;">Tidak ada data tambahan.</div>'}
+        </div>
+      `, { maxWidth:290 });
+    }
+  });
+}
+
 function loadPU() {
   fetch('./assets/pu2021.geojson')
     .then(r => { if (!r.ok) throw r.status; return r.json(); })
     .then(data => {
-      const conv = { ...data, features: data.features.map(f => ({ ...f, geometry: convertGeomCoords(f.geometry) })) };
-      puCount = conv.features ? conv.features.length : 0;
-      ['stat-pu','s-pu','hs-pu'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = puCount; });
-      LG.pu = L.geoJSON(conv, {
-        pointToLayer(feat, latlng) {
-          return L.marker(latlng, { icon: L.divIcon({ className:'', html:`
-            <div style="width:16px;height:16px;background:linear-gradient(135deg,#2471a3,#1a4a7a);border:2px solid rgba(255,255,255,.15);border-radius:4px;box-shadow:0 2px 8px rgba(36,113,163,0.5);display:flex;align-items:center;justify-content:center;">
-              <svg width="7" height="7" viewBox="0 0 8 8"><path d="M4 0C4 0 1 3.5 1 5.2C1 6.7 2.3 8 4 8C5.7 8 7 6.7 7 5.2C7 3.5 4 0 4 0Z" fill="rgba(255,255,255,.9)"/></svg>
-            </div>`, iconSize:[16,16], iconAnchor:[8,8] }) });
-        },
-        style() { return { color:'#2471a3', weight:2, opacity:.8, fillColor:'#2471a3', fillOpacity:.15 }; },
-        onEachFeature(feat, layer) {
-          const p = feat.properties;
-          const LABEL = { LOKASI:'Lokasi', KECAMATAN:'Kecamatan', KELURAHAN:'Kelurahan', RAYON:'Rayon', LUAS_GENAN:'Luas genangan (m²)', TINGGI_GEN:'Tinggi (cm)', LAMA_GENAN:'Lama (mnt)', SKOR_LUAS:'Skor luas', SKOR_TINGG:'Skor tinggi', SKOR_LAMA:'Skor lama' };
-          const rows = Object.entries(p).filter(([k])=>!k.startsWith('_')&&k!=='ORIG_FID').map(([k,v])=>
-            `<div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.45);margin-bottom:3px;gap:10px;"><span>${LABEL[k]||k}</span><span style="font-weight:700;color:rgba(255,255,255,.85);">${v??'—'}</span></div>`
-          ).join('');
-          layer.bindPopup(`
-            <div style="padding:14px 15px;font-family:'Outfit',sans-serif;min-width:230px;">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-                <div style="width:22px;height:22px;background:linear-gradient(135deg,#2471a3,#1a4a7a);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="9" height="9" viewBox="0 0 8 8"><path d="M4 0C4 0 1 3.5 1 5.2C1 6.7 2.3 8 4 8C5.7 8 7 6.7 7 5.2C7 3.5 4 0 4 0Z" fill="white"/></svg></div>
-                <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.9);font-style:italic;">Data PU 2021</div>
-              </div>
-              <div style="font-size:9.5px;color:rgba(255,255,255,.35);margin-bottom:10px;font-family:'Space Mono',monospace;">${p.LOKASI||'Genangan Historis'}</div>
-              <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:8px;"></div>
-              ${rows||'<div style="color:rgba(255,255,255,.3);font-size:11px;">Tidak ada data.</div>'}
-            </div>
-          `, { maxWidth:280 });
-        }
-      }).addTo(map);
+      puCount = data.features ? data.features.length : 0;
+      ['stat-pu','s-pu','hs-pu'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=puCount; });
+      LG.pu = buildPULayer(data, '#2471a3', '2021', true, false).addTo(map);
     })
-    .catch(err => { console.warn('[PU2021]', err); ['stat-pu','s-pu','hs-pu'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; }); });
+    .catch(err => {
+      console.warn('[PU2021]', err);
+      ['stat-pu','s-pu','hs-pu'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
+    });
 }
 
-/* Depth helpers */
+function loadPU2025() {
+  fetch('./assets/pu2025.geojson')
+    .then(r => { if (!r.ok) throw r.status; return r.json(); })
+    .then(data => {
+      pu2025Count = data.features ? data.features.length : 0;
+      ['stat-pu2025','s-pu2025','hs-pu2025'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=pu2025Count; });
+      const firstFeat = data.features && data.features[0];
+      let isUTM = false;
+      if (firstFeat && firstFeat.geometry && firstFeat.geometry.coordinates) {
+        const coords = firstFeat.geometry.coordinates;
+        const flat = (function flatten(c) {
+          if (typeof c[0] === 'number') return c;
+          return flatten(c[0]);
+        })(coords);
+        isUTM = Math.abs(flat[0]) > 10000;
+      }
+      LG.pu2025 = buildPULayer(data, '#8e44ad', '2025', isUTM, true).addTo(map);
+    })
+    .catch(err => {
+      console.warn('[PU2025]', err);
+      ['stat-pu2025','s-pu2025','hs-pu2025'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent='—'; });
+    });
+}
+
+/* ══ DEPTH HELPERS ══ */
 function depthColor(d) {
   if (d === '< 20 cm')  return '#27ae60';
   if (d === '20–40 cm') return '#f39c12';
@@ -1379,27 +1661,15 @@ function depthLabel(d) {
   return '';
 }
 
-/* Warga layer */
+/* ══ WARGA LAYER ══ */
 function buildWargaLayer(data) {
   const grp = L.layerGroup();
   data.forEach(d => {
     const c = depthColor(d.dalam);
-    // Pulse ring
     grp.addLayer(L.circleMarker([d.lat, d.lng], { radius:16, fillColor:c, color:c, weight:0, opacity:0, fillOpacity:.12, interactive:false }));
-    // Marker
     const m = L.marker([d.lat, d.lng], { icon: L.divIcon({ className:'', html:`
-      <div style="
-        width:24px;height:24px;border-radius:50%;
-        background:radial-gradient(circle at 35% 35%, ${c}cc, ${c});
-        border:2px solid rgba(255,255,255,.2);
-        box-shadow:0 0 0 2px ${c}50, 0 3px 12px ${c}60;
-        display:flex;align-items:center;justify-content:center;
-        cursor:pointer;
-      ">
-        <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-          <path d="M6 1C6 1 2 5.5 2 7.8C2 9.7 3.8 11 6 11C8.2 11 10 9.7 10 7.8C10 5.5 6 1 6 1Z" fill="rgba(255,255,255,.9)"/>
-          <path d="M4.5 8C4.5 8 5 9 6 9" stroke="rgba(0,0,0,.2)" stroke-width="1" stroke-linecap="round"/>
-        </svg>
+      <div style="width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 35%, ${c}cc, ${c});border:2px solid rgba(255,255,255,.2);box-shadow:0 0 0 2px ${c}50, 0 3px 12px ${c}60;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+        <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M6 1C6 1 2 5.5 2 7.8C2 9.7 3.8 11 6 11C8.2 11 10 9.7 10 7.8C10 5.5 6 1 6 1Z" fill="rgba(255,255,255,.9)"/><path d="M4.5 8C4.5 8 5 9 6 9" stroke="rgba(0,0,0,.2)" stroke-width="1" stroke-linecap="round"/></svg>
       </div>`, iconSize:[24,24], iconAnchor:[12,12] }) });
     m.on('click', () => showWargaPopup(d));
     grp.addLayer(m);
@@ -1412,8 +1682,9 @@ function showWargaPopup(d) {
   const fotoHtml = d.fotoUrls && d.fotoUrls.length
     ? `<div style="margin-top:10px;"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:6px;font-family:'Space Mono',monospace;">Foto Dokumentasi</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
-          ${d.fotoUrls.map(u=>`<img src="${u}" onclick="openLightbox('${u}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:opacity .15s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'"/>`).join('')}
+          ${d.fotoUrls.map(u=>`<img src="${u}" onclick="openLightbox('${u}')" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,.08);cursor:pointer;" />`).join('')}
         </div></div>` : '';
+  const coordsRow = `<div style="font-size:10px;color:rgba(255,255,255,.28);font-family:'Space Mono',monospace;margin-top:5px;">📍 ${d.lat.toFixed(5)}, ${d.lng.toFixed(5)}</div>`;
   L.popup({ maxWidth:290, minWidth:265 }).setLatLng([d.lat, d.lng]).setContent(`
     <div style="font-family:'Outfit',sans-serif;">
       <div style="height:3px;background:linear-gradient(90deg,${c},transparent);"></div>
@@ -1422,9 +1693,7 @@ function showWargaPopup(d) {
           <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:rgba(255,255,255,.9);line-height:1.3;flex:1;">${d.loc}</div>
           <button onclick="map.closePopup()" style="border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);border-radius:6px;width:22px;height:22px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">✕</button>
         </div>
-        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:10px;display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;">
-          📍 ${d.kec} &nbsp;·&nbsp; ${fmtTgl(d.tgl)}
-        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,.35);margin-bottom:10px;display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;">📍 ${d.kec} &nbsp;·&nbsp; ${fmtTgl(d.tgl)}</div>
         <div style="height:1px;background:rgba(255,255,255,.07);margin-bottom:10px;"></div>
         <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:${c}14;border-radius:8px;border:1px solid ${c}30;margin-bottom:8px;">
           <div>
@@ -1438,6 +1707,7 @@ function showWargaPopup(d) {
         </div>
         ${d.desc?`<div style="font-size:11.5px;color:rgba(255,255,255,.55);margin-bottom:7px;line-height:1.55;">${d.desc}</div>`:''}
         ${d.nama?`<div style="font-size:10px;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:4px;font-family:'Space Mono',monospace;">👤 ${d.nama}</div>`:''}
+        ${coordsRow}
         ${fotoHtml}
       </div>
     </div>
@@ -1445,7 +1715,13 @@ function showWargaPopup(d) {
 }
 
 /* ══ INIT ══ */
-function initLayers() { loadKecamatan(); loadPU(); LG.warga = buildWargaLayer(laporanData).addTo(map); }
+function initLayers() {
+  loadZonaRawan();
+  loadKecamatan();
+  loadPU();
+  loadPU2025();
+  LG.warga = buildWargaLayer(laporanData).addTo(map);
+}
 
 /* ══ TOGGLES ══ */
 function toggleLayer(name, cb) { if (!LG[name]) return; cb.checked ? map.addLayer(LG[name]) : map.removeLayer(LG[name]); }
@@ -1491,7 +1767,7 @@ function switchTab(name, btn) {
   if (name === 'beranda') { document.getElementById('tab-beranda').classList.add('active'); }
   else if (name === 'peta') { document.getElementById('tab-peta').classList.remove('hidden'); setTimeout(() => map.invalidateSize(), 60); }
   else if (name === 'daftar') { document.getElementById('tab-daftar').classList.add('active'); renderDaftar(); }
-  else { document.getElementById('tab-statistik').classList.add('active'); setTimeout(() => { renderBarChart(); renderDepthChart(); updateStatCards(); renderZonaStat(); }, 50); }
+  else { document.getElementById('tab-statistik').classList.add('active'); setTimeout(() => { renderBarChart(); renderDepthChart(); updateStatCards(); renderZonaStat(); renderZonaBarChart(); }, 50); }
 }
 
 /* ══ FORMAT ══ */
@@ -1556,7 +1832,7 @@ function applyFilters() {
   LG.warga = buildWargaLayer(filtered).addTo(map);
 }
 
-/* ══ ZONA RAWAN ══ */
+/* ══ ZONA RAWAN WARGA ══ */
 function updateZonaRawan() {
   const counts = {};
   laporanData.forEach(d => { counts[d.kec]=(counts[d.kec]||0)+1; });
@@ -1588,19 +1864,47 @@ function renderZonaStat() {
   }).join('');
 }
 
+/* ══ ZONA BAR CHART ══ */
+function renderZonaBarChart() {
+  const el = document.getElementById('zonaBarChart');
+  if (!zonaRawanData || !zonaRawanData.features || !zonaRawanData.features.length) {
+    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;padding:8px 0;">Data zona rawan belum tersedia.</div>';
+    return;
+  }
+  const cols = { 'Tinggi': '#c0392b', 'Sedang': '#f39c12', 'Rendah': '#27ae60' };
+  const byKelas = { 'Tinggi': [], 'Sedang': [], 'Rendah': [] };
+  zonaRawanData.features.forEach(f => {
+    const k = f.properties.Kelas_Gena || '—';
+    const kecNm = f.properties.Kecamatan || f.properties.NAME_3 || '—';
+    const ranking = f.properties.Ranking || 99;
+    if (byKelas[k]) byKelas[k].push({ kec: kecNm, ranking });
+  });
+  Object.keys(byKelas).forEach(k => byKelas[k].sort((a,b) => a.ranking - b.ranking));
+  const order = ['Tinggi','Sedang','Rendah'];
+  el.innerHTML = order.map(kelas => {
+    const items = byKelas[kelas];
+    if (!items.length) return '';
+    const c = cols[kelas];
+    const header = `<div style="font-size:10px;font-weight:700;color:${c};margin-bottom:5px;margin-top:8px;font-family:var(--fm);letter-spacing:.08em;text-transform:uppercase;">${kelas} (${items.length} kecamatan)</div>`;
+    const rows = items.map(item => {
+      const pct = Math.max(15, 100 - ((item.ranking - 1) * 3));
+      return `<div class="bar-row"><span class="bar-label">${item.kec}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${c};opacity:.8;"><span class="bar-val">#${item.ranking}</span></div></div></div>`;
+    }).join('');
+    return header + rows;
+  }).join('');
+}
+
 /* ══ COUNTERS ══ */
 function updateCounters() {
   document.getElementById('s-total').textContent = laporanData.length;
   document.getElementById('total-badge').textContent = laporanData.length + ' total';
   document.getElementById('hs-total').innerHTML = `<span>${laporanData.length}</span>`;
-  const kecs = new Set(laporanData.map(d => d.kec));
-  document.getElementById('hs-kec').innerHTML = `<span>${kecs.size}</span>`;
   updateZonaRawan();
 }
 function updateStatCards() {
   document.getElementById('stat-total').textContent = laporanData.length;
   if (puCount > 0) { ['stat-pu','s-pu'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=puCount; }); }
-  document.getElementById('stat-kec-aktif').textContent = new Set(laporanData.map(d=>d.kec)).size;
+  if (pu2025Count > 0) { ['stat-pu2025','s-pu2025'].forEach(id => { const el=document.getElementById(id); if(el) el.textContent=pu2025Count; }); }
 }
 
 /* ══ BAR CHARTS ══ */
@@ -1652,7 +1956,11 @@ function exportCSV() {
 
 /* ══ MODAL ══ */
 function openModal()  { document.getElementById('modalOverlay').classList.add('open'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  // Hapus preview marker saat modal ditutup tanpa submit
+  if (previewMarker) { map.removeLayer(previewMarker); previewMarker = null; }
+}
 document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
 
 function selectDepth(el) {
@@ -1660,13 +1968,79 @@ function selectDepth(el) {
   el.classList.add('selected');
 }
 
+/* ── Koordinat manual: terapkan ke peta ── */
+function applyManualCoord() {
+  const latVal = parseFloat(document.getElementById('inp-lat').value);
+  const lngVal = parseFloat(document.getElementById('inp-lng').value);
+  if (isNaN(latVal) || isNaN(lngVal)) {
+    showToast('Isi koordinat Latitude dan Longitude terlebih dahulu','ti-alert-circle','error');
+    return;
+  }
+  if (latVal < -90 || latVal > 90 || lngVal < -180 || lngVal > 180) {
+    showToast('Koordinat di luar rentang yang valid','ti-alert-circle','error');
+    return;
+  }
+  // Validasi kasar: Surabaya sekitar lat -7.1 s/d -7.4, lng 112.6 s/d 112.9
+  const isInSby = latVal > -7.5 && latVal < -7.0 && lngVal > 112.5 && lngVal < 113.0;
+
+  // Simpan sebagai koordinat GPS yang akan dipakai submit
+  gpsCoords = { lat: latVal, lng: lngVal };
+
+  // Update preview marker di peta
+  if (previewMarker) map.removeLayer(previewMarker);
+  previewMarker = L.marker([latVal, lngVal], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div class="preview-marker-pin"></div>`,
+      iconSize: [20,20], iconAnchor: [10,10]
+    })
+  }).addTo(map).bindPopup(`<div style="font-family:'Outfit',sans-serif;padding:8px 10px;font-size:12px;color:rgba(255,255,255,.85);">📍 Titik laporan Anda<br><span style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(93,173,226,.7);">${latVal.toFixed(5)}, ${lngVal.toFixed(5)}</span></div>`).openPopup();
+
+  // Update tombol GPS di modal jadi "confirmed"
+  const btn = document.getElementById('lokasiBtn');
+  btn.classList.add('picked');
+  btn.innerHTML = `<i class="ti ti-check"></i> ${latVal.toFixed(5)}, ${lngVal.toFixed(5)}`;
+
+  // Update tombol preview jadi confirmed
+  const previewBtn = document.getElementById('btnPreviewMap');
+  previewBtn.classList.add('confirmed');
+  previewBtn.innerHTML = `<i class="ti ti-check"></i> Koordinat diterapkan`;
+
+  showToast(isInSby ? 'Koordinat berhasil diterapkan ke peta' : 'Koordinat diterapkan (di luar Surabaya, periksa kembali)', isInSby ? 'ti-check' : 'ti-alert-triangle', isInSby ? 'success' : 'error');
+
+  // Fly ke koordinat (buka tab peta di background, atau langsung zoom jika sudah di tab peta)
+  switchTab('peta', document.querySelectorAll('.nav-tab')[1]);
+  setTimeout(() => { map.flyTo([latVal, lngVal], 15, { duration:1 }); }, 80);
+}
+
+/* ── GPS ── */
 let gpsCoords = null;
 function pickLokasi() {
   const btn = document.getElementById('lokasiBtn');
   btn.innerHTML = '<i class="ti ti-loader" style="animation:spin .8s linear infinite"></i> Mendeteksi lokasi...';
-  const ok = p => { gpsCoords={lat:p.coords.latitude,lng:p.coords.longitude}; btn.classList.add('picked'); btn.innerHTML=`<i class="ti ti-check"></i> ${gpsCoords.lat.toFixed(5)}, ${gpsCoords.lng.toFixed(5)}`; };
-  const fail = () => { gpsCoords={lat:-7.2575,lng:112.7521}; btn.classList.add('picked'); btn.innerHTML='<i class="ti ti-check"></i> -7.25750, 112.75210 (Pusat Surabaya)'; };
-  navigator.geolocation ? navigator.geolocation.getCurrentPosition(ok,fail,{timeout:6000}) : setTimeout(fail,800);
+  const ok = p => {
+    gpsCoords = { lat:p.coords.latitude, lng:p.coords.longitude };
+    btn.classList.add('picked');
+    btn.innerHTML = `<i class="ti ti-check"></i> ${gpsCoords.lat.toFixed(5)}, ${gpsCoords.lng.toFixed(5)}`;
+    // Isi input koordinat manual dengan hasil GPS
+    document.getElementById('inp-lat').value = gpsCoords.lat.toFixed(5);
+    document.getElementById('inp-lng').value = gpsCoords.lng.toFixed(5);
+    // Preview di peta
+    if (previewMarker) map.removeLayer(previewMarker);
+    previewMarker = L.marker([gpsCoords.lat, gpsCoords.lng], {
+      icon: L.divIcon({ className:'', html:`<div class="preview-marker-pin"></div>`, iconSize:[20,20], iconAnchor:[10,10] })
+    }).addTo(map);
+    showToast('Lokasi GPS berhasil dideteksi','ti-check','success');
+  };
+  const fail = () => {
+    gpsCoords = { lat:SBY[0], lng:SBY[1] };
+    btn.classList.add('picked');
+    btn.innerHTML = '<i class="ti ti-check"></i> -7.25750, 112.75210 (Pusat Surabaya)';
+    document.getElementById('inp-lat').value = SBY[0];
+    document.getElementById('inp-lng').value = SBY[1];
+    showToast('GPS tidak tersedia — gunakan koordinat manual','ti-alert-triangle','error');
+  };
+  navigator.geolocation ? navigator.geolocation.getCurrentPosition(ok, fail, {timeout:6000}) : setTimeout(fail, 800);
 }
 
 function readFilesAsDataURL(files) {
@@ -1674,26 +2048,50 @@ function readFilesAsDataURL(files) {
 }
 
 async function submitLaporan() {
-  const alamat=document.getElementById('inp-alamat').value.trim();
-  const kec=document.getElementById('inp-kec').value;
-  const depth=document.querySelector('.depth-opt.selected');
+  const alamat = document.getElementById('inp-alamat').value.trim();
+  const kec    = document.getElementById('inp-kec').value;
+  const depth  = document.querySelector('.depth-opt.selected');
   if (!alamat) { showToast('Isi alamat terlebih dahulu','ti-alert-circle','error'); return; }
   if (!kec)    { showToast('Pilih kecamatan terlebih dahulu','ti-alert-circle','error'); return; }
   if (!depth)  { showToast('Pilih estimasi kedalaman','ti-alert-circle','error'); return; }
+
+  // Gunakan koordinat dari GPS atau manual; fallback random Surabaya
+  const coords = gpsCoords || { lat: SBY[0]+(Math.random()-.5)*.08, lng: SBY[1]+(Math.random()-.5)*.08 };
+
   const fotoFiles = document.getElementById('inp-foto').files;
-  const fotoUrls = fotoFiles.length ? await readFilesAsDataURL(fotoFiles) : [];
-  const coords = gpsCoords || { lat:SBY[0]+(Math.random()-.5)*.08, lng:SBY[1]+(Math.random()-.5)*.08 };
+  const fotoUrls  = fotoFiles.length ? await readFilesAsDataURL(fotoFiles) : [];
   const dalamText = depth.childNodes[0].textContent.trim();
-  const newD = { id:Date.now(), loc:alamat, kec, dalam:dalamText, tgl:new Date().toISOString().split('T')[0], lat:coords.lat, lng:coords.lng, desc:document.getElementById('inp-desc').value.trim(), nama:document.getElementById('inp-nama').value.trim(), wa:document.getElementById('inp-wa').value.trim(), fotoUrls };
+
+  const newD = {
+    id: Date.now(),
+    loc: alamat, kec, dalam: dalamText,
+    tgl: new Date().toISOString().split('T')[0],
+    lat: coords.lat, lng: coords.lng,
+    desc: document.getElementById('inp-desc').value.trim(),
+    nama: document.getElementById('inp-nama').value.trim(),
+    wa:   document.getElementById('inp-wa').value.trim(),
+    fotoUrls
+  };
   laporanData.unshift(newD);
+  saveLaporan(); // simpan ke localStorage
+
   if (LG.warga) map.removeLayer(LG.warga);
   LG.warga = buildWargaLayer(laporanData).addTo(map);
+  if (previewMarker) { map.removeLayer(previewMarker); previewMarker = null; }
+
   updateCounters(); renderDaftar(); populatePeriodeDropdowns();
-  closeModal(); showToast('Laporan berhasil dikirim!','ti-check','success');
+  closeModal(); showToast('Laporan berhasil dikirim dan disimpan!','ti-check','success');
+
+  // Reset form
   ['inp-alamat','inp-desc','inp-nama','inp-wa'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('inp-kec').value=''; document.getElementById('inp-foto').value='';
+  document.getElementById('inp-kec').value='';
+  document.getElementById('inp-foto').value='';
+  document.getElementById('inp-lat').value='';
+  document.getElementById('inp-lng').value='';
   const lb=document.getElementById('lokasiBtn'); lb.classList.remove('picked'); lb.innerHTML='<i class="ti ti-current-location"></i> Deteksi lokasi otomatis (GPS)';
-  document.querySelectorAll('.depth-opt').forEach(d=>d.classList.remove('selected')); gpsCoords=null;
+  const pb=document.getElementById('btnPreviewMap'); pb.classList.remove('confirmed'); pb.innerHTML='<i class="ti ti-map-2"></i> Terapkan ke Peta';
+  document.querySelectorAll('.depth-opt').forEach(d=>d.classList.remove('selected'));
+  gpsCoords = null;
 }
 
 /* ══ LIGHTBOX ══ */
@@ -1736,7 +2134,12 @@ function populatePeriodeDropdowns() {
 
 /* ══ BOOT ══ */
 (function boot() {
-  initLayers(); populateKecDropdowns(); populatePeriodeDropdowns(); updateCounters(); renderDaftar(); renderDepthChart();
+  initLayers();
+  populateKecDropdowns();
+  populatePeriodeDropdowns();
+  updateCounters();
+  renderDaftar();
+  renderDepthChart();
 })();
 </script>
 </body>
