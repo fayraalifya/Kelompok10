@@ -1,889 +1,1433 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AERIS - WebGIS Surabaya</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AERIS — Aedes aegypti Environmental Risk System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
+:root {
+  --r0:#0a0000; --r1:#140000; --r2:#1e0000; --r3:#2d0000;
+  --red:#8b0000; --red2:#b91c1c; --red3:#dc2626; --red4:#ef4444; --red5:#fca5a5;
+  --gold:#c9a84c; --gold2:#f5c842; --gold3:#fde68a;
+  --tx1:rgba(255,255,255,.96); --tx2:rgba(255,255,255,.65); --tx3:rgba(255,255,255,.35);
+  --tx4:rgba(255,255,255,.18);
+  --card:rgba(255,255,255,.028); --card2:rgba(255,255,255,.055);
+  --brd:rgba(255,255,255,.07); --brd2:rgba(255,255,255,.13); --brd-r:rgba(139,0,0,.45);
+  --green:#16a34a; --blue:#1d4ed8;
+  --nav-h:68px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family:'DM Sans',sans-serif;
+  background: var(--r0);
+  color: var(--tx1);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ══ SCROLLBAR ══ */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* ══ NOISE TEXTURE ══ */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:0; opacity:.6;
+}
+
+/* ══ NAVBAR ══ */
+.navbar {
+  position: fixed; top:0; left:0; width:100%; height:var(--nav-h);
+  z-index: 9999;
+  background: rgba(10,0,0,.88);
+  backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid rgba(139,0,0,.2);
+  display: flex; align-items:center; padding: 0 40px; gap:0;
+  /* NEW: smooth entrance */
+  animation: navbarDrop .6s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes navbarDrop {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.nav-brand {
+  display:flex; align-items:center; gap:12px; margin-right:36px;
+}
+.nav-logo-svg { flex-shrink:0; }
+.nav-brand-text h2 {
+  font-family:'Syne',sans-serif;
+  font-size:20px; font-weight:800; letter-spacing:.04em;
+  background: linear-gradient(135deg,#ff6b6b,#c62828);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.nav-brand-text p { font-size:9px; color:var(--tx3); letter-spacing:.6px; margin-top:2px; }
+.nav-sep { width:1px; height:32px; background:var(--brd); margin-right:28px; }
+.nav-inst-logos {
+  display:flex; align-items:center; gap:10px;
+  margin-left:14px; padding-left:14px;
+  border-left:1px solid var(--brd);
+}
+.nav-inst-logos img {
+  height:30px; width:auto; object-fit:contain;
+  opacity:.75; filter:brightness(1.1);
+  transition:opacity .2s;
+}
+.nav-inst-logos img:hover { opacity:1; }
+.nav-links { display:flex; gap:2px; }
+.nav-link {
+  padding:8px 18px; border-radius:10px;
+  font-size:12.5px; font-weight:500; color:var(--tx3);
+  cursor:pointer; border:none; background:transparent;
+  transition:all .2s; font-family:'Inter',sans-serif;
+  text-decoration:none; display:flex; align-items:center; gap:7px;
+}
+.nav-link:hover { background:var(--card2); color:var(--tx2); }
+.nav-link.active {
+  background:rgba(139,0,0,.2);color:var(--tx1);
+  border:1px solid rgba(139,0,0,.35);
+}
+.nav-link i { font-size:15px; }
+.nav-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.btn-nav {
+  display:flex; align-items:center; gap:7px;
+  padding:8px 18px; border-radius:10px;
+  font-size:12px; font-weight:600;
+  font-family:'DM Sans',sans-serif; cursor:pointer; transition:all .2s;
+  text-decoration:none;
+}
+.btn-nav-ghost {
+  background:transparent; color:var(--tx2);
+  border:1px solid var(--brd2);
+}
+.btn-nav-ghost:hover { background:var(--card2); color:var(--tx1); }
+.btn-nav-red {
+  background:linear-gradient(135deg,var(--red2),var(--red));
+  color:white; border:1px solid var(--brd-r);
+}
+.btn-nav-red:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(139,0,0,.5); }
+
+/* ══ HERO SECTION ══ */
+.hero {
+  min-height: 100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding: 120px 80px 80px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; top:-20%; left:-10%;
+  width:70%; height:120%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(139,0,0,.18) 0%, transparent 65%);
+  pointer-events:none;
+}
+.hero::after {
+  content:'';
+  position:absolute; bottom:-30%; right:-10%;
+  width:60%; height:100%;
+  background: radial-gradient(ellipse at 70% 60%, rgba(201,168,76,.06) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* NEW: orb decoration */
+.hero-orb {
+  position:absolute; border-radius:50%; pointer-events:none; will-change:transform;
+}
+.hero-orb-1 {
+  width:500px; height:500px; top:-100px; right:-120px;
+  background: radial-gradient(circle, rgba(139,0,0,.07) 0%, transparent 70%);
+  animation: orbFloat1 12s ease-in-out infinite;
+}
+.hero-orb-2 {
+  width:300px; height:300px; bottom:10%; left:5%;
+  background: radial-gradient(circle, rgba(201,168,76,.05) 0%, transparent 70%);
+  animation: orbFloat2 9s ease-in-out infinite;
+}
+@keyframes orbFloat1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(-30px,20px) scale(1.05); }
+  66%     { transform: translate(20px,-15px) scale(.97); }
+}
+@keyframes orbFloat2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%     { transform: translate(15px,-25px) scale(1.08); }
+}
+
+.hero-grid {
+  position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  opacity:.04;
+}
+.hero-grid svg { width:100%; height:100%; }
+
+/* NEW: grid lines subtle animation */
+.hero-grid svg pattern path {
+  animation: gridFade 8s ease-in-out infinite alternate;
+}
+@keyframes gridFade {
+  from { opacity:.6; }
+  to   { opacity:1; }
+}
+
+.hero-eyebrow {
+  display:flex; align-items:center; gap:10px;
+  font-size:10px; font-weight:600; letter-spacing:2.5px;
+  color:var(--gold); text-transform:uppercase; margin-bottom:24px;
+  /* NEW */
+  opacity:0; animation: heroFadeUp .7s .2s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero-eyebrow::before { content:''; width:28px; height:1px; background:var(--gold); }
+.hero-eyebrow::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,var(--gold),transparent); max-width:200px; }
+
+.hero-title {
+  font-family:'Syne',sans-serif;
+  font-size: clamp(44px, 6vw, 88px);
+  font-weight:800; line-height:1.0; letter-spacing:-.03em;
+  margin-bottom:28px;
+  /* NEW */
+  opacity:0; animation: heroFadeUp .8s .35s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero-title em {
+  font-style:italic; font-weight:700;
+  background:linear-gradient(135deg,var(--red3) 0%,var(--gold2) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  /* NEW: shimmer sweep */
+  background-size:200% auto;
+  animation: textShimmer 4s linear infinite;
+}
+@keyframes textShimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.hero-title .line-muted { color: var(--tx2); font-weight:300; }
+
+.hero-sub {
+  font-size:16px; color:var(--tx2); line-height:1.8;
+  max-width:580px; margin-bottom:48px;
+  /* NEW */
+  opacity:0; animation: heroFadeUp .7s .48s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+.hero-cta {
+  display:flex; gap:14px; flex-wrap:wrap; margin-bottom:72px;
+  /* NEW */
+  opacity:0; animation: heroFadeUp .7s .6s cubic-bezier(.22,1,.36,1) forwards;
+}
+.cta-primary {
+  display:inline-flex; align-items:center; gap:9px;
+  padding:14px 30px;
+  background:linear-gradient(135deg,var(--red2),var(--red));
+  color:white; border:1px solid rgba(220,38,38,.4);
+  border-radius:12px; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all .25s;
+  font-family:'DM Sans',sans-serif; text-decoration:none;
+  position:relative; overflow:hidden;
+}
+/* NEW: ripple sweep on hover */
+.cta-primary::after {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  transform:translateX(-100%);
+  transition:transform .45s ease;
+}
+.cta-primary:hover::after { transform:translateX(100%); }
+.cta-primary:hover { transform:translateY(-3px); box-shadow:0 12px 36px rgba(139,0,0,.5); }
+.cta-secondary {
+  display:inline-flex; align-items:center; gap:9px;
+  padding:14px 28px;
+  background:rgba(255,255,255,.04);
+  color:var(--tx1); border:1px solid var(--brd2);
+  border-radius:12px; font-size:14px; font-weight:500;
+  cursor:pointer; transition:all .25s;
+  font-family:'DM Sans',sans-serif; text-decoration:none;
+}
+.cta-secondary:hover { background:rgba(255,255,255,.07); transform:translateY(-2px); }
+
+/* ══ HERO STATS ══ */
+.hero-stats {
+  display:flex; gap:0;
+  border: 1px solid var(--brd);
+  border-radius:16px; overflow:hidden;
+  backdrop-filter:blur(12px);
+  background:rgba(10,0,0,.4);
+  max-width:680px;
+  /* NEW */
+  opacity:0; animation: heroFadeUp .7s .75s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero-stat {
+  flex:1; padding:20px 24px; position:relative;
+  border-right:1px solid var(--brd);
+  /* NEW: subtle top accent that fills in */
+  overflow:hidden;
+}
+.hero-stat::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1.5px;
+  background:linear-gradient(90deg,var(--red3),var(--gold2));
+  transform:scaleX(0); transform-origin:left;
+  transition:transform .6s .9s cubic-bezier(.22,1,.36,1);
+}
+/* JS will add .stat-ready to trigger the line */
+.hero-stats.stat-ready .hero-stat::before { transform:scaleX(1); }
+.hero-stat:last-child { border-right:none; }
+.hero-stat-num {
+  font-family:'Syne',sans-serif;
+  font-size:32px; font-weight:800; line-height:1; color:var(--tx1);
+  margin-bottom:4px;
+  /* NEW: numbers start at 0 visually via JS counter */
+  tabular-nums;
+}
+.hero-stat-num.red { color:var(--red4); }
+.hero-stat-num.gold { color:var(--gold2); }
+.hero-stat-label { font-size:11px; color:var(--tx3); letter-spacing:.3px; }
+
+/* NEW: hero badge animate */
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 14px; border-radius:100px;
+  background:rgba(139,0,0,.12); border:1px solid rgba(139,0,0,.3);
+  font-size:11px; color:var(--red5); font-weight:500;
+  margin-bottom:16px;
+  opacity:0; animation: heroFadeUp .6s .05s cubic-bezier(.22,1,.36,1) forwards;
+}
+.badge-dot { width:6px;height:6px;border-radius:50%;background:var(--red4);animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+/* NEW: shared keyframe for hero stagger */
+@keyframes heroFadeUp {
+  from { opacity:0; transform:translateY(32px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══ SECTION SHARED ══ */
+section { padding:100px 80px; position:relative; }
+.section-label {
+  font-size:9px; font-weight:700; letter-spacing:2.5px; color:var(--gold);
+  text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-label::before { content:''; width:20px;height:1px;background:var(--gold); }
+.section-title {
+  font-family:'Syne',sans-serif;
+  font-size:clamp(32px,3.5vw,52px); font-weight:800;
+  line-height:1.1; letter-spacing:-.02em; margin-bottom:16px;
+}
+.section-title em { font-style:italic; color:var(--red4); }
+.section-desc {
+  font-size:15px; color:var(--tx2); line-height:1.8; max-width:600px;
+}
+
+/* ══ ABOUT SECTION ══ */
+#tentang { background:linear-gradient(180deg,var(--r0),var(--r1)); }
+.about-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start;
+  margin-top:64px;
+}
+.about-text-body {
+  font-size:14.5px; color:var(--tx2); line-height:1.9; margin-bottom:24px;
+}
+.about-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:28px; }
+.about-tag {
+  padding:6px 16px; border-radius:100px;
+  border:1px solid var(--brd2); background:var(--card);
+  font-size:11.5px; color:var(--tx2); font-weight:500;
+  /* NEW */
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.about-tag:hover {
+  border-color:rgba(139,0,0,.4); color:var(--tx1);
+  transform:translateY(-2px) scale(1.04);
+  background:rgba(139,0,0,.08);
+}
+.about-visual-col { display:flex; flex-direction:column; gap:14px; }
+.about-card {
+  padding:20px 22px; border-radius:14px;
+  border:1px solid var(--brd); background:var(--card);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  display:flex; gap:16px; align-items:flex-start;
+  /* NEW: left accent bar */
+  position:relative; overflow:hidden;
+}
+.about-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg,var(--red3),transparent);
+  transform:scaleY(0); transform-origin:top;
+  transition:transform .35s ease;
+}
+.about-card:hover { border-color:var(--brd2); transform:translateX(4px); }
+.about-card:hover::before { transform:scaleY(1); }
+.about-card-icon {
+  width:40px; height:40px; border-radius:10px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.about-card:hover .about-card-icon { transform:scale(1.12) rotate(-5deg); }
+.about-card-icon.red { background:rgba(139,0,0,.15); color:var(--red4); }
+.about-card-icon.gold { background:rgba(201,168,76,.12); color:var(--gold2); }
+.about-card-icon.blue { background:rgba(29,78,216,.12); color:#60a5fa; }
+.about-card-title { font-size:13px; font-weight:600; color:var(--tx1); margin-bottom:5px; }
+.about-card-body { font-size:12.5px; color:var(--tx2); line-height:1.7; }
+
+.sdg-row { display:flex; gap:10px; margin-top:32px; flex-wrap:wrap; }
+.sdg-badge {
+  padding:8px 16px; border-radius:10px;
+  font-size:11px; font-weight:700; letter-spacing:.3px;
+  display:flex; align-items:center; gap:7px;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.sdg-badge:hover { transform:translateY(-3px) scale(1.04); }
+.sdg-3 { background:rgba(77,182,172,.1); color:#4db6ac; border:1px solid rgba(77,182,172,.25); }
+.sdg-11 { background:rgba(255,165,0,.1); color:#ffa500; border:1px solid rgba(255,165,0,.25); }
+.sdg-13 { background:rgba(76,175,80,.1); color:#66bb6a; border:1px solid rgba(76,175,80,.25); }
+
+/* ══ METHODOLOGY ══ */
+#metode { background:var(--r1); overflow:hidden; }
+.method-intro { max-width:620px; margin-bottom:64px; }
+.workflow-container { position:relative; margin-bottom:64px; }
+.flow-steps {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative;
+}
+.flow-steps::before {
+  content:''; position:absolute; top:32px; left:10%; right:10%; height:1px;
+  background:linear-gradient(90deg,transparent,var(--red3),var(--gold),var(--red3),transparent);
+  z-index:0;
+  /* NEW: animated dash */
+  background-size:200% auto;
+  animation:lineFlow 3s linear infinite;
+}
+@keyframes lineFlow {
+  from { background-position:0% center; }
+  to   { background-position:200% center; }
+}
+.flow-step {
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  text-align:center; padding:0 12px; position:relative; z-index:1;
+}
+.flow-step-num {
+  width:64px; height:64px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-size:20px; font-weight:800;
+  position:relative; flex-shrink:0;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.flow-step:hover .flow-step-num { transform:scale(1.12); }
+.flow-step-num::before {
+  content:''; position:absolute; inset:-3px; border-radius:50%;
+  background:conic-gradient(var(--red3),var(--gold2),var(--red3)); z-index:-1;
+  /* NEW: slow spin */
+  animation:borderSpin 6s linear infinite;
+}
+.flow-step:hover .flow-step-num::before { animation-duration:1.5s; }
+@keyframes borderSpin { to { transform:rotate(360deg); } }
+.flow-step-num::after {
+  content:''; position:absolute; inset:2px; border-radius:50%;
+  background:var(--r1); z-index:-1;
+}
+.flow-step-label { font-size:12px; font-weight:600; color:var(--tx1); line-height:1.4; }
+.flow-step-sub { font-size:10.5px; color:var(--tx3); line-height:1.5; }
+
+/* ML CARDS */
+.ml-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:48px;
+}
+.ml-card {
+  border:1px solid var(--brd); border-radius:16px;
+  background:var(--card); padding:22px 18px;
+  position:relative; overflow:hidden;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1); cursor:default;
+}
+.ml-card::before {
+  content:''; position:absolute; top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--red2),var(--gold));
+  opacity:.5; transition:opacity .2s;
+}
+.ml-card:hover { border-color:var(--brd2); transform:translateY(-6px); box-shadow:0 20px 50px rgba(0,0,0,.4); }
+.ml-card:hover::before { opacity:1; }
+.ml-card.best {
+  border:1.5px solid rgba(220,38,38,.5);
+  background:rgba(139,0,0,.07);
+}
+.ml-card.best::before { opacity:1; }
+/* NEW: best card glow pulse */
+.ml-card.best::after {
+  content:''; position:absolute; inset:0;
+  border-radius:16px;
+  box-shadow:inset 0 0 30px rgba(139,0,0,.06);
+  animation:cardGlowPulse 3s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes cardGlowPulse {
+  0%,100% { box-shadow:inset 0 0 30px rgba(139,0,0,.06); }
+  50%      { box-shadow:inset 0 0 50px rgba(139,0,0,.14); }
+}
+.ml-card-badge {
+  position:absolute; top:0;right:0;
+  padding:4px 12px; border-bottom-left-radius:10px;
+  font-size:9px; font-weight:700; letter-spacing:1px;
+}
+.ml-card-badge.best { background:var(--red2); color:white; }
+.ml-abbr { font-size:9px; font-weight:700; letter-spacing:1.5px; color:var(--tx3); text-transform:uppercase; margin-bottom:4px; }
+.ml-name { font-size:13px; font-weight:600; color:var(--tx1); margin-bottom:16px; line-height:1.35; }
+.ml-r2 { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; margin-bottom:2px; }
+.ml-r2.pos { color:#4ade80; }
+.ml-r2.neg { color:var(--red4); }
+.ml-r2-label { font-size:10px; color:var(--tx3); margin-bottom:12px; }
+.ml-metrics { display:flex; gap:6px; flex-wrap:wrap; }
+.ml-metric { padding:3px 9px; border-radius:6px; font-size:10px; font-weight:600; }
+
+/* FEATURE BAR */
+.feature-bar-section { margin-top:48px; }
+.feat-title { font-size:13px; font-weight:700; color:var(--tx1); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.feat-bars { display:flex; flex-direction:column; gap:10px; max-width:520px; }
+.feat-bar-row { display:flex; align-items:center; gap:12px; }
+.feat-bar-label { font-size:11.5px; color:var(--tx2); width:130px; flex-shrink:0; }
+.feat-bar-track { flex:1; height:6px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
+.feat-bar-fill {
+  height:100%; border-radius:3px;
+  background:linear-gradient(90deg,var(--red2),var(--red4));
+  /* NEW: animated fill from 0 */
+  width:0; transition:width 1.2s cubic-bezier(.22,1,.36,1);
+}
+/* JS adds .bar-animated to trigger */
+.feat-bar-val { font-size:11px; color:var(--tx3); width:36px; text-align:right; flex-shrink:0; }
+
+/* ══ DATA & TOOLS ══ */
+#data { background:linear-gradient(180deg,var(--r1),var(--r2)); }
+.tools-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px;
+}
+.tool-card {
+  padding:22px 20px; border-radius:14px;
+  border:1px solid var(--brd); background:var(--card);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  position:relative; overflow:hidden;
+}
+/* NEW: corner accent */
+.tool-card::after {
+  content:''; position:absolute; bottom:-1px; right:-1px;
+  width:40px; height:40px;
+  background:linear-gradient(135deg,transparent 50%,rgba(139,0,0,.12) 50%);
+  transition:all .25s ease;
+}
+.tool-card:hover { border-color:var(--brd2); background:var(--card2); transform:translateY(-4px); }
+.tool-card:hover::after { width:60px; height:60px; }
+.tool-card-cat {
+  font-size:9px; font-weight:700; letter-spacing:1.5px; color:var(--gold);
+  text-transform:uppercase; margin-bottom:10px;
+}
+.tool-card h4 { font-size:13.5px; font-weight:700; color:var(--tx1); margin-bottom:8px; }
+.tool-card p { font-size:12px; color:var(--tx2); line-height:1.7; }
+.tool-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
+.tool-tag {
+  padding:2px 9px; border-radius:5px; font-size:10px; font-weight:600;
+  background:rgba(255,255,255,.05); color:var(--tx3); border:1px solid var(--brd);
+  transition:all .18s;
+}
+.tool-tag:hover { background:rgba(139,0,0,.1); color:var(--red5); border-color:rgba(139,0,0,.3); }
+
+/* ══ FEATURE CARDS ══ */
+#fitur { background:var(--r2); }
+.feature-cards {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:56px;
+}
+.feat-card {
+  border-radius:20px; overflow:hidden; position:relative;
+  border:1px solid var(--brd); background:var(--card);
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),
+             box-shadow .35s ease,
+             border-color .25s ease;
+  cursor:pointer; display:flex; flex-direction:column; text-decoration:none;
+}
+.feat-card:hover { transform:translateY(-10px); border-color:rgba(139,0,0,.4); box-shadow:0 28px 64px rgba(0,0,0,.55); }
+.feat-card-top {
+  padding:36px 28px 28px;
+  background:linear-gradient(135deg,rgba(139,0,0,.12),rgba(10,0,0,.4));
+  position:relative; overflow:hidden; min-height:200px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+.feat-card-top::before {
+  content:''; position:absolute; top:-40px;right:-40px;
+  width:140px;height:140px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.05);
+  /* NEW */
+  transition:transform .4s ease;
+}
+.feat-card:hover .feat-card-top::before { transform:scale(1.2); }
+.feat-card-top::after {
+  content:''; position:absolute; top:10px;right:10px;
+  width:80px;height:80px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.04);
+  transition:transform .5s ease;
+}
+.feat-card:hover .feat-card-top::after { transform:scale(1.35); }
+.feat-card-icon {
+  font-size:42px; margin-bottom:16px;
+  display:block; position:relative; z-index:1;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.feat-card:hover .feat-card-icon { transform:scale(1.15) rotate(-6deg); }
+.feat-card-title {
+  font-family:'Syne',sans-serif;
+  font-size:20px; font-weight:800; color:var(--tx1); margin-bottom:6px;
+  position:relative; z-index:1;
+}
+.feat-card-subtitle { font-size:11px; color:var(--tx3); position:relative; z-index:1; letter-spacing:.3px; }
+.feat-card-body { padding:24px 28px; flex:1; }
+.feat-card-desc { font-size:13px; color:var(--tx2); line-height:1.75; margin-bottom:20px; }
+.feat-card-link {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; color:var(--red4);
+  letter-spacing:.5px; text-transform:uppercase;
+  text-decoration:none; transition:gap .25s ease;
+}
+.feat-card:hover .feat-card-link { gap:16px; }
+
+.feat-mockup {
+  position: absolute; bottom: -8px; right: -10px;
+  width: 68%; max-width: 260px; height: auto;
+  object-fit: cover; object-position: top left;
+  border-radius: 8px 0 0 0;
+  opacity: 0.55;
+  mask-image: linear-gradient(to bottom left,rgba(0,0,0,0.85) 30%,rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom left,rgba(0,0,0,0.85) 30%,rgba(0,0,0,0) 100%);
+  transition: opacity .35s ease, transform .35s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;
+}
+.feat-card:hover .feat-mockup { opacity:0.82; transform:translateY(-6px) scale(1.04); }
+
+/* ══ TEAM ══ */
+#tim { background:linear-gradient(180deg,var(--r2),var(--r0)); }
+.team-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:60px; }
+.team-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:16px; align-items:stretch;
+}
+.team-card {
+  border-radius:16px; border:1px solid var(--brd);
+  background:var(--card); overflow:hidden;
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  position:relative; display:flex; flex-direction:column;
+}
+.team-card:hover {
+  border-color:rgba(139,0,0,.5); transform:translateY(-8px) scale(1.02);
+  box-shadow:0 24px 56px rgba(0,0,0,.55);
+}
+/* NEW: card shine sweep */
+.team-card::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,transparent 60%);
+  opacity:0; transition:opacity .3s;
+}
+.team-card:hover::after { opacity:1; }
+.team-photo {
+  width:100%; aspect-ratio:3/4; position:relative; overflow:hidden;
+  background: linear-gradient(135deg, var(--r3), rgba(139,0,0,.3));
+}
+.team-photo-inner {
+  width:100%; height:100%; display:flex; align-items:center;
+  justify-content:center; position:relative;
+}
+.team-photo-img {
+  width:100%; height:100%; object-fit:cover; object-position:center top;
+  display:block; position:absolute; inset:0;
+  transition:transform .5s cubic-bezier(.22,1,.36,1);
+}
+.team-card:hover .team-photo-img { transform:scale(1.06); }
+.team-photo-avatar {
+  position:relative; z-index:1;
+  width:80px; height:80px; border-radius:50%;
+  background:linear-gradient(135deg,var(--red2),var(--r3));
+  border:2px solid rgba(220,38,38,.3);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-size:26px; font-weight:800;
+  color:rgba(255,255,255,.8);
+}
+.team-info { padding:16px 16px 18px; }
+.team-name {
+  font-family:'Syne',sans-serif; font-size:13px; font-weight:700;
+  color:var(--tx1); margin-bottom:4px; line-height:1.3;
+}
+.team-nrp { font-size:10px; color:var(--tx3); letter-spacing:.5px; font-family:monospace; }
+
+/* DOSEN */
+.dosen-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:48px; }
+.dosen-card {
+  padding:20px 22px; border-radius:14px;
+  border:1px solid var(--brd); background:var(--card);
+  display:flex; gap:14px; align-items:center;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.dosen-card:hover { border-color:var(--brd2); background:var(--card2); transform:translateX(4px); }
+.dosen-avatar {
+  width:48px; height:48px; border-radius:12px; flex-shrink:0;
+  background:linear-gradient(135deg,rgba(201,168,76,.2),rgba(139,0,0,.2));
+  border:1px solid rgba(201,168,76,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.dosen-card:hover .dosen-avatar { transform:scale(1.1) rotate(-5deg); }
+.dosen-name { font-size:12.5px; font-weight:700; color:var(--tx1); margin-bottom:3px; line-height:1.35; }
+.dosen-role { font-size:10.5px; color:var(--tx3); }
+
+/* ══ GRADIENT LINE — animated shimmer ══ */
+.grad-line {
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--red3),var(--gold),var(--red3),transparent);
+  background-size:200% auto;
+  margin:0 80px; opacity:.4;
+  animation:gradShimmer 4s linear infinite;
+}
+@keyframes gradShimmer {
+  from { background-position:0% center; }
+  to   { background-position:200% center; }
+}
+
+/* ══ FOOTER ══ */
+footer {
+  padding:60px 80px 40px;
+  background:var(--r0);
+  border-top:1px solid var(--brd);
+}
+.footer-grid { display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+.footer-brand h3 {
+  font-family:'Syne',sans-serif; font-size:24px; font-weight:800;
+  background:linear-gradient(135deg,#ff6b6b,#c62828);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px;
+}
+.footer-brand p { font-size:12px; color:var(--tx3); line-height:1.7; max-width:280px; margin-top:10px; }
+.footer-col h4 { font-size:11px; font-weight:700; letter-spacing:1.2px; color:var(--tx3); text-transform:uppercase; margin-bottom:16px; }
+.footer-col a, .footer-col p {
+  display:block; font-size:13px; color:var(--tx2); text-decoration:none;
+  margin-bottom:8px; transition:color .15s;
+}
+.footer-col a:hover { color:var(--tx1); }
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:24px; border-top:1px solid var(--brd);
+  font-size:11.5px; color:var(--tx3);
+}
+.footer-contact-item {
+  display:flex; align-items:center; gap:9px;
+  padding:10px 14px; border-radius:10px;
+  background:var(--card); border:1px solid var(--brd);
+  font-size:12px; color:var(--tx2); margin-bottom:8px;
+  transition:all .2s;
+}
+.footer-contact-item i { font-size:15px; color:var(--red4); }
+a.footer-contact-item { text-decoration:none; }
+a.footer-contact-item:hover {
+  border-color:var(--brd2); background:var(--card2);
+  color:var(--tx1); transform:translateX(4px);
+}
+a.footer-contact-item:hover i { color:var(--red3); }
+
+/* ══ SCROLL REVEAL ══ */
+.reveal {
+  opacity:0; transform:translateY(36px);
+  transition:opacity .65s ease, transform .65s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay:.10s; }
+.reveal-delay-2 { transition-delay:.20s; }
+.reveal-delay-3 { transition-delay:.30s; }
+.reveal-delay-4 { transition-delay:.40s; }
+
+/* NEW: cursor glow follower */
+.cursor-glow {
+  position:fixed; width:300px; height:300px; border-radius:50%;
+  background:radial-gradient(circle,rgba(139,0,0,.06) 0%,transparent 70%);
+  pointer-events:none; z-index:1; transform:translate(-50%,-50%);
+  transition:left .12s ease, top .12s ease;
+  will-change:left,top;
+}
+
+/* NEW: scroll progress bar */
+.scroll-progress {
+  position:fixed; top:0; left:0; height:2px; z-index:10000;
+  background:linear-gradient(90deg,var(--red3),var(--gold2));
+  width:0%; transition:width .1s linear;
+}
+
+/* NEW: back-to-top button */
+.back-to-top {
+  position:fixed; bottom:28px; right:28px; z-index:999;
+  width:42px; height:42px; border-radius:50%;
+  background:rgba(10,0,0,.8); border:1px solid var(--brd2);
+  backdrop-filter:blur(12px); color:var(--tx2);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:18px;
+  opacity:0; pointer-events:none;
+  transform:translateY(12px);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.back-to-top.visible { opacity:1; pointer-events:all; transform:translateY(0); }
+.back-to-top:hover { background:var(--red); color:white; border-color:var(--red3); transform:translateY(-3px); box-shadow:0 8px 24px rgba(139,0,0,.4); }
+
+/* ══ ANIMATIONS (legacy fade-in kept) ══ */
+.fade-in {
+  opacity:0; transform:translateY(28px);
+  animation: heroFadeUp .7s ease forwards;
+}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px) {
+  section { padding:80px 48px; }
+  .hero { padding:120px 48px 80px; }
+  footer { padding:60px 48px 40px; }
+  .navbar { padding:0 28px; }
+  .team-grid { grid-template-columns:repeat(3,1fr); }
+  .flow-steps { grid-template-columns:repeat(3,1fr); }
+  .flow-steps::before { display:none; }
+}
+@media(max-width:768px) {
+  section { padding:60px 24px; }
+  .hero { padding:100px 24px 60px; }
+  .about-grid { grid-template-columns:1fr; }
+  .ml-grid { grid-template-columns:1fr 1fr; }
+  .feature-cards { grid-template-columns:1fr; }
+  .team-grid { grid-template-columns:repeat(2,1fr); }
+  .footer-grid { grid-template-columns:1fr; }
+  .tools-grid { grid-template-columns:1fr; }
+  .dosen-grid { grid-template-columns:1fr; }
+  .grad-line { margin:0 24px; }
+  .cursor-glow { display:none; }
+  .scroll-progress { display:none; }
+}
+</style>
+</head>
 <body>
 
-<!-- SCROLL PROGRESS BAR -->
-<div class="scroll-progress"></div>
+<!-- Cursor glow follower -->
+<div class="cursor-glow" id="cursorGlow"></div>
 
-<!-- ============================================ -->
-<!-- 1. LOADING SCREEN                           -->
-<!-- ============================================ -->
-<div class="loader-wrapper">
-    <div class="loader-content">
-        <div class="loader-main">
-            <div class="logo-box">
-                <img src="assets/logo/GEODBD.png" alt="Logo GEODBD" class="loader-logo">
-            </div>
-            <div class="mascot-box">
-                <img src="assets/logo/Maskot2.png" alt="Maskot AERIS" class="loader-maskot">
-            </div>
-            <div class="text-box">
-                <h2 class="loader-title">AERIS</h2>
-                <p class="loader-subtitle">Aedes aegypti Environmental Risk System</p>
-                <p class="loader-desc">
-                    Dashboard spasial interaktif untuk analisis risiko <br>
-                    Demam Berdarah Dengue berbasis faktor lingkungan di Kota Surabaya
-                </p>
-            </div>
-        </div>
-        <div class="loader-bar-container">
-            <div class="loader-bar">
-                <div class="loader-progress"></div>
-            </div>
-            <p class="loader-status">Getting things ready...</p>
-        </div>
+<!-- Scroll progress bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Back to top -->
+<button class="back-to-top" id="backToTop" aria-label="Kembali ke atas">
+  <i class="ti ti-arrow-up"></i>
+</button>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    <img src="logo/ITS.png" alt="ITS" style="height:36px;width:auto;object-fit:contain;flex-shrink:0;">
+    <img src="logo/GEOMATIKA.png" alt="Geomatika" style="height:36px;width:auto;object-fit:contain;flex-shrink:0;">
+    <img src="logo/KEMKER.png" alt="Kemker" style="height:36px;width:auto;object-fit:contain;flex-shrink:0;">
+    <img src="logo/labgeodin.png" alt="Lab Geodin" style="height:36px;width:auto;object-fit:contain;flex-shrink:0;">
+    <img src="logo/GEODBD.png" alt="GeoBD" style="height:36px;width:auto;object-fit:contain;flex-shrink:0;">
+    <div class="nav-brand-text">
+      <h2>AERIS</h2>
+      <p>Aedes aegypti Environmental Risk System</p>
     </div>
-    <div class="loader-bg-shape shape-1"></div>
-    <div class="loader-bg-shape shape-2"></div>
-    <div class="loader-bg-shape shape-3"></div>
-</div>
+  </div>
+  <div class="nav-sep"></div>
+  <nav class="nav-links">
+    <a class="nav-link active" href="#hero"><i class="ti ti-home"></i> Home</a>
+    <a class="nav-link" href="#tentang"><i class="ti ti-info-circle"></i> Tentang</a>
+    <a class="nav-link" href="#metode"><i class="ti ti-brain"></i> Metodologi</a>
+    <a class="nav-link" href="#fitur"><i class="ti ti-layout-grid"></i> Fitur</a>
+    <a class="nav-link" href="#tim"><i class="ti ti-users"></i> Tim</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="btn-nav btn-nav-ghost" href="booklet.html"><i class="ti ti-book-2"></i> Panduan DBD</a>
+    <a class="btn-nav btn-nav-red" href="webgis.html"><i class="ti ti-map-2"></i> Buka WebGIS</a>
+  </div>
+</nav>
 
+<!-- ══ HERO ══ -->
+<section id="hero" class="hero">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
 
-<!-- ============================================ -->
-<!-- 2. GEO-BEE ASSISTANT                        -->
-<!-- ============================================ -->
-<div class="geo-assistant">
-    <div class="assistant-toggle">
-        <img src="assets/logo/Maskot2.png" alt="GEO-Bee">
-    </div>
-    <div class="assistant-box">
-        <h3>GEO-Bee Assistant 🐝</h3>
-        <div class="assistant-content">
-            <div class="assistant-intro">
-                <div class="assistant-badge">🦟 GEO ASSISTANT</div>
-                <h3>Kenali Risiko DBD Lebih Dekat</h3>
-                <p>
-                    Pelajari penyebab, gejala, pola penyebaran,
-                    hingga langkah pencegahan Demam Berdarah Dengue (DBD)
-                    secara interaktif dan mudah dipahami.
-                </p>
-            </div>
-        </div>
-        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1);">
-            <a href="pages/geo-assistant.html" target="_blank" style="
-                display: block; padding: 13px 18px;
-                background: linear-gradient(135deg, #ff4d4d, #c62828);
-                color: white; text-decoration: none; border-radius: 12px;
-                font-weight: 700; font-size: 13px; text-align: center;
-                transition: 0.3s ease; box-shadow: 0 4px 14px rgba(255,77,77,0.3);
-            ">📖 Pelajari Lebih Lengkap</a>
-        </div>
-    </div>
-</div>
-
-
-<!-- ============================================ -->
-<!-- 3. NAVBAR                                   -->
-<!-- ============================================ -->
-<header class="navbar">
-    <div class="logo-container">
-        <img src="assets/logo/GEODBD.png" alt="Logo GEODBD" class="logo-main">
-        <div class="title-group">
-            <h2>AERIS</h2>
-            <p>Aedes aegypti Environmental Risk System</p>
-        </div>
-    </div>
-
-    <!-- Hamburger (mobile) -->
-    <div class="nav-hamburger" id="navHamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-    </div>
-
-    <ul class="nav-links" id="navLinks">
-        <li><a href="#home"             class="nav-item active">Home</a></li>
-        <li><a href="#insights"         class="nav-item">Background</a></li>
-        <li><a href="#chain"            class="nav-item">Risk Chain</a></li>
-        <li><a href="#study"            class="nav-item">Study Area</a></li>
-        <li><a href="#research-overview" class="nav-item">Research</a></li>
-        <li><a href="#data-variables"   class="nav-item">Data</a></li>
-        <li><a href="#methodology"      class="nav-item">Methodology</a></li>
-        <li><a href="#webgis"           class="nav-item">WebGIS</a></li>
-        <li><a href="#team"             class="nav-item">Team</a></li>
-        <li><a href="#contact"          class="nav-item">Contact</a></li>
-    </ul>
-</header>
-
-
-<!-- ============================================ -->
-<!-- 4. HERO                                     -->
-<!-- ============================================ -->
-<section class="hero" id="home">
-    <div class="hero-left">
-        <div class="hero-content">
-            <h1>
-                Analisis Spasial Risiko DBD
-                <span class="highlight">Berbasis Geodesi Lingkungan</span>
-                di Kota Surabaya
-            </h1>
-            <p>
-                Mengintegrasikan variabilitas curah hujan dan potensi genangan
-                untuk memetakan distribusi risiko Demam Berdarah Dengue menggunakan
-                teknologi WebGIS interaktif.
-            </p>
-        </div>
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 5. WHY IT MATTERS                           -->
-<!-- ============================================ -->
-<section class="why-section" id="insights">
-    <div class="why-glow"></div>
-    <div class="why-container">
-
-        <div class="why-content">
-            <span class="why-tag">
-                <svg viewBox="0 0 24 24" fill="none" style="width:13px;height:13px;">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="currentColor"/>
-                </svg>
-                MENGAPA PENTING
-            </span>
-            <h2>DBD Bukan Sekadar Penyakit Musiman</h2>
-            <p>
-                Kota Surabaya merupakan salah satu wilayah perkotaan
-                yang sering mengalami hujan berintensitas tinggi, terutama pada musim penghujan.
-                Kondisi tersebut dapat memicu munculnya genangan air di berbagai wilayah kota.
-                Lingkungan yang lembap serta adanya akumulasi air berpotensi menjadi habitat
-                ideal bagi nyamuk <em>Aedes aegypti</em>. Pada saat yang sama, kasus DBD
-                di Kota Surabaya masih menunjukkan peningkatan — menunjukkan bahwa risiko
-                penyakit tidak hanya dipengaruhi faktor kesehatan, tetapi juga memiliki
-                hubungan erat dengan kondisi lingkungan dan spasial.
-            </p>
-            <div class="why-insight">
-                <div class="insight-icon">💡</div>
-                <p>
-                    Genangan air yang terbentuk setelah hujan berpotensi menjadi habitat
-                    berkembangnya nyamuk <em>Aedes aegypti</em>. Dengan pendekatan analisis spasial
-                    dan machine learning, AERIS dikembangkan untuk memahami pola risiko DBD
-                    secara lebih cepat, visual, dan interaktif.
-                </p>
-            </div>
-        </div>
-
-        <div class="why-stats-wrapper">
-            <div class="why-stat-card card-1" data-modal="cases">
-                <div class="stat-icon">🦟</div>
-                <h3>231+</h3>
-                <span>Kasus DBD Tercatat</span>
-                <div class="card-accent"></div>
-                <div class="click-hint">
-                    <svg viewBox="0 0 24 24" fill="none" style="width:13px;height:13px;">
-                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
-                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Klik untuk detail
-                </div>
-            </div>
-            <div class="why-stat-card card-2" data-modal="highest">
-                <div class="stat-icon">📈</div>
-                <h3>10 Kasus</h3>
-                <span>Kasus Tertinggi Kecamatan</span>
-                <div class="card-accent"></div>
-                <div class="click-hint">
-                    <svg viewBox="0 0 24 24" fill="none" style="width:13px;height:13px;">
-                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
-                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Klik untuk detail
-                </div>
-            </div>
-            <div class="why-stat-card card-4" data-modal="timeline">
-                <div class="stat-icon">📊</div>
-                <h3>2020-2024</h3>
-                <span>Data Time-Series</span>
-                <div class="card-accent"></div>
-                <div class="click-hint">
-                    <svg viewBox="0 0 24 24" fill="none" style="width:13px;height:13px;">
-                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" fill="currentColor"/>
-                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    Klik untuk detail
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 6. RISK CHAIN                               -->
-<!-- ============================================ -->
-<section class="risk-factors-section" id="chain">
-    <div class="risk-glow"></div>
-    <div class="risk-glow-2"></div>
-
-    <div class="risk-header">
-        <span class="risk-tag">✦ RANTAI RISIKO DBD</span>
-        <h2>Bagaimana Lingkungan <span class="risk-accent">Mempengaruhi Risiko DBD?</span></h2>
-        <p>
-            Setiap faktor lingkungan saling terhubung — dari curah hujan ekstrem hingga kasus DBD yang meningkat.
-            Analisis spasial AERIS memetakan rantai risiko ini di seluruh 31 wilayah Kota Surabaya.
-        </p>
-    </div>
-
-    <div class="risk-chain">
-        <div class="risk-step" data-step="01">
-            <div class="risk-icon">🌧</div>
-            <div class="risk-line"></div>
-            <div class="risk-body">
-                <span class="risk-num">STEP 1</span>
-                <h3>Curah Hujan</h3>
-                <p>Perubahan intensitas curah hujan memengaruhi kelembapan lingkungan dan meningkatkan peluang terbentuknya genangan.</p>
-            </div>
-        </div>
-        <div class="risk-arrow">→</div>
-        <div class="risk-step" data-step="02">
-            <div class="risk-icon">🌊</div>
-            <div class="risk-line"></div>
-            <div class="risk-body">
-                <span class="risk-num">STEP 2</span>
-                <h3>Genangan</h3>
-                <p>Genangan air yang terbentuk setelah hujan dapat menjadi tempat penampungan air yang mendukung perkembangbiakan nyamuk.</p>
-            </div>
-        </div>
-        <div class="risk-arrow">→</div>
-        <div class="risk-step" data-step="03">
-            <div class="risk-icon">🦟</div>
-            <div class="risk-line"></div>
-            <div class="risk-body">
-                <span class="risk-num">STEP 3</span>
-                <h3>Habitat Nyamuk</h3>
-                <p><em>Aedes aegypti</em> berkembang pada lingkungan dengan kondisi lembap, air tergenang, dan kepadatan permukiman tinggi.</p>
-            </div>
-        </div>
-        <div class="risk-arrow">→</div>
-        <div class="risk-step" data-step="04">
-            <div class="risk-icon">📈</div>
-            <div class="risk-line"></div>
-            <div class="risk-body">
-                <span class="risk-num">STEP 4</span>
-                <h3>Risiko DBD</h3>
-                <p>Kondisi lingkungan tertentu dapat meningkatkan potensi penyebaran Demam Berdarah Dengue di wilayah perkotaan.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 7. STUDY AREA                               -->
-<!-- ============================================ -->
-<section class="study-section" id="study">
-    <div class="study-header">
-        <div class="section-badge">
-            <span class="badge-icon">🗺️</span>
-            <span class="badge-text">AREA STUDI</span>
-        </div>
-        <h2 class="section-title">
-            Surabaya sebagai <span class="text-glow">Wilayah Penelitian</span>
-        </h2>
-        <p class="section-subtitle">
-            Penelitian dilakukan di Kota Surabaya dengan fokus analisis spasial
-            risiko DBD berbasis variabilitas curah hujan dan potensi genangan
-        </p>
-    </div>
-
-    <div class="study-grid">
-        <div class="sg-card sg-map">
-            <div id="mapSurabaya"></div>
-            <div class="sg-map-fade"></div>
-            <div class="sg-map-label">
-                <span class="sg-map-city">Kota Surabaya</span>
-                <span class="sg-map-sub">Area Penelitian DBD • 31 Wilayah • 350+ km²</span>
-            </div>
-        </div>
-
-        <div class="sg-right-col">
-            <div class="sg-card sg-mini stat-interactive" data-modal="districts">
-                <div class="sg-mini-inner">
-                    <div class="sg-mini-icon">📍</div>
-                    <div class="sg-mini-number">31</div>
-                    <div class="sg-mini-label">Wilayah Dipantau</div>
-                    <div class="sg-mini-hint">Klik untuk melihat daftar</div>
-                </div>
-            </div>
-            <div class="sg-card sg-mini stat-interactive" data-modal="luas">
-                <div class="sg-mini-inner">
-                    <div class="sg-mini-icon">🗺️</div>
-                    <div class="sg-mini-number">350+</div>
-                    <div class="sg-mini-label">Total km² Wilayah</div>
-                    <div class="sg-mini-hint">Klik untuk melihat luas per wilayah</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 8. RESEARCH OVERVIEW                        -->
-<!-- ============================================ -->
-<section class="research-overview-section" id="research-overview">
-    <div class="rvo-glow"></div>
-    <div class="rvo-glow-2"></div>
-
-    <div class="rvo-header">
-        <span class="rvo-tag">✦ TENTANG PENELITIAN</span>
-        <h2>Gambaran Umum <span class="rvo-accent">Penelitian</span></h2>
-    </div>
-
-    <div class="rvo-narrative">
-        <p>
-            Penelitian ini bertujuan untuk menganalisis hubungan antara variabilitas curah hujan,
-            potensi daerah rawan genangan, dan faktor lingkungan lainnya terhadap risiko kejadian
-            DBD di Kota Surabaya.
-        </p>
-        <p>
-            Selain itu, penelitian juga membangun model prediksi untuk memperkirakan jumlah kasus
-            DBD pada periode 2025–2026.
-        </p>
-    </div>
-
-    <div class="rvo-mini-stats">
-        <div class="rvo-mini-card">
-            <div class="rvo-mini-icon">📍</div>
-            <div class="rvo-mini-num">31</div>
-            <div class="rvo-mini-label">Kecamatan</div>
-        </div>
-        <div class="rvo-mini-card">
-            <div class="rvo-mini-icon">📊</div>
-            <div class="rvo-mini-num">2019–2024</div>
-            <div class="rvo-mini-label">Data</div>
-        </div>
-        <div class="rvo-mini-card">
-            <div class="rvo-mini-icon">🔮</div>
-            <div class="rvo-mini-num">2025–2026</div>
-            <div class="rvo-mini-label">Prediksi</div>
-        </div>
-        <div class="rvo-mini-card">
-            <div class="rvo-mini-icon">🌍</div>
-            <div class="rvo-mini-num">10+</div>
-            <div class="rvo-mini-label">Variabel Lingkungan</div>
-        </div>
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 9. DATA & VARIABEL — REVAMPED BENTO         -->
-<!-- ============================================ -->
-<section class="data-vars-section" id="data-variables">
-    <div class="dv-glow"></div>
-    <div class="dv-glow-2"></div>
-
-    <div class="dv-header">
-        <span class="dv-tag">✦ DATA PENELITIAN</span>
-        <h2>Data dan Variabel yang <span class="dv-accent">Digunakan</span></h2>
-        <p>Variabel-variabel yang digunakan dalam penelitian untuk memodelkan risiko DBD di Kota Surabaya.</p>
-    </div>
-
-    <!-- Bento Grid Baru -->
-    <div class="dv-bento">
-
-        <!-- Card Hero: Variabel Respon -->
-        <div class="dv-hero-card">
-            <div>
-                <div class="dv-bento-icon">🛰️</div>
-                <h3>Variabel Respon</h3>
-                <p>Data kasus DBD per kecamatan tahun 2019 - 2024 sebagai variabel target dalam pemodelan prediksi risiko spasial.</p>
-            </div>
-        </div>
-
-        <!-- Card Dinamis -->
-        <div class="dv-dyn-card">
-            <div class="dv-bento-icon" style="font-size:30px;margin-bottom:12px;">🌍</div>
-            <h3>Variabel Dinamis</h3>
-            <div class="dv-pills">
-                <span class="dv-pill">Curah Hujan</span>
-                <span class="dv-pill">NDVI (Normalized Difference Vegetation Index)</span>
-                <span class="dv-pill">NDWI (Normalized Difference Water Index)</span>
-                <span class="dv-pill">Suhu</span>
-                <span class="dv-pill">Kelembapan</span>
-                <span class="dv-pill">Kepadatan Penduduk</span>
-            </div>
-        </div>
-
-        <!-- Card Statis -->
-        <div class="dv-stat-card">
-            <div class="dv-bento-icon" style="font-size:30px;margin-bottom:12px;">🏙️</div>
-            <h3>Variabel Statis</h3>
-            <div class="dv-pills">
-                <span class="dv-pill">TWI (Topographic Wetness Index)</span>
-                <span class="dv-pill">Elevasi</span>
-                <span class="dv-pill">Buffer Sungai</span>
-                <span class="dv-pill">Titik Genangan</span>
-            </div>
-        </div>
-
-        <!-- Card Count -->
-        <div class="dv-count-card">
-            <div style="font-size:32px;margin-bottom:6px;">📐</div>
-            <div class="dv-count-num">10</div>
-            <div class="dv-count-label">Total Variabel</div>
-            <div class="dv-count-sub">Lingkungan &amp; Spasial</div>
-        </div>
-
-    </div>
-</section>
-
-<div class="section-divider"><div class="divider-glow"></div></div>
-
-
-<!-- ============================================ -->
-<!-- 10. METHODOLOGY — HORIZONTAL FLOW          -->
-<!-- ============================================ -->
-<section class="research-section" id="methodology">
-  <div class="research-glow"></div>
-  <div class="research-glow-2"></div>
-  
-  <div class="ro-header">
-    <span class="ro-tag">✦ ALUR ANALISIS</span>
-    <h2>Metodologi <span class="ro-accent">Penelitian</span></h2>
-    <p>Tahapan analisis dari pengumpulan data hingga prediksi dan visualisasi risiko DBD.</p>
+  <div class="hero-grid" aria-hidden="true">
+    <svg viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,1)" stroke-width="0.5"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)"/>
+    </svg>
   </div>
 
-  <!-- Main Methodology Flow -->
-  <div class="methodology-flow">
-    
-    <!-- Step 1: Data Collection -->
-    <div class="method-step" data-num="1">
-      <div class="method-node method-node-data">📥</div>
-      <div class="method-label">Pengumpulan Data</div>
-      <div class="method-sub">Kasus DBD · Data Iklim · Variabel Spasial</div>
-    </div>
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    Kemah Kerja Sem. 6 · Kelompok 10 · Teknik Geomatika ITS
+  </div>
 
-    <!-- Step 2: Variable Analysis -->
-    <div class="method-step" data-num="2">
-      <div class="method-node method-node-spatial">🔍</div>
-      <div class="method-label">Variabel Penelitian</div>
-      <div class="method-sub">Kontrol · Diskrit · Semi-Statis</div>
-    </div>
+  <h1 class="hero-title">
+    Analisis Spasial<br>
+    Risiko DBD <em>Berbasis</em><br>
+    <span class="line-muted">Geodesi Lingkungan</span>
+  </h1>
 
-    <!-- Step 3: Spatial & Statistical Analysis -->
-    <div class="method-step" data-num="3">
-      <div class="method-node method-node-extract">📊</div>
-      <div class="method-label">Agregasi & Analisis</div>
-      <div class="method-sub">Statistik Spasial · Regresi · Random Forest</div>
-    </div>
+  <p class="hero-sub">
+    Mengintegrasikan variabilitas curah hujan dan potensi genangan untuk memetakan distribusi risiko Demam Berdarah Dengue menggunakan teknologi WebGIS interaktif di Kota Surabaya.
+  </p>
 
-    <!-- Step 4: Model Evaluation -->
-    <div class="method-step" data-num="4">
-      <div class="method-node method-node-ml">✅</div>
-      <div class="method-label">Evaluasi Model</div>
-      <div class="method-sub">Best Model · AHP · Pembobotan</div>
-    </div>
+  <div class="hero-cta">
+    <a class="cta-primary" href="webgis.html">
+      <i class="ti ti-map-2"></i> Jelajahi WebGIS
+    </a>
+    <a class="cta-secondary" href="hidra-portal.html">
+      <i class="ti ti-droplet-half-2"></i> Laporan Genangan
+    </a>
+    <a class="cta-secondary" href="booklet.html">
+      <i class="ti ti-book-2"></i> Panduan DBD
+    </a>
+  </div>
 
-    <!-- Step 5: DHF Case Prediction -->
-    <div class="method-step" data-num="5">
-      <div class="method-node method-node-predict">📈</div>
-      <div class="method-label">Prediksi Kasus DBD</div>
-      <div class="method-sub">Hotmap · Choroplet</div>
+  <div class="hero-stats" id="heroStats">
+    <div class="hero-stat">
+      <div class="hero-stat-num red" data-target="231" data-type="int" id="stat-0">0</div>
+      <div class="hero-stat-label">Kasus DBD Surabaya 2024</div>
     </div>
-
-    <!-- Step 6: WebGIS Visualization -->
-    <div class="method-step" data-num="6">
-      <div class="method-node method-node-viz">🗺️</div>
-      <div class="method-label">Dashboard WebGIS</div>
-      <div class="method-sub">Visualisasi Interaktif</div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" data-target="31" data-type="int" id="stat-1">0</div>
+      <div class="hero-stat-label">Kecamatan Dipantau</div>
     </div>
-
+    <div class="hero-stat">
+      <div class="hero-stat-num gold" data-target="0.641" data-type="float" id="stat-2">0.000</div>
+      <div class="hero-stat-label">Akurasi Spearman ρ</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num" data-target="5" data-type="suffix" data-suffix=" Th" id="stat-3">0 Th</div>
+      <div class="hero-stat-label">Data 2019–2023</div>
+    </div>
   </div>
 </section>
 
-<div class="section-divider"><div class="divider-glow"></div></div>
+<div class="grad-line"></div>
 
-<!-- ============================================ -->
-<!-- 11. WEBGIS PREVIEW CTA                      -->
-<!-- ============================================ -->
-<section class="preview-section" id="webgis">
-    <div class="preview-glow"></div>
-    <div class="preview-glow-2"></div>
+<!-- ══ TENTANG ══ -->
+<section id="tentang">
+  <div class="section-label reveal">Tentang Penelitian</div>
+  <h2 class="section-title reveal">Apa itu <em>AERIS</em>?</h2>
 
-    <div class="pv-header">
-        <span class="pv-tag">✦ WEBGIS INTERAKTIF</span>
-        <h2>Jelajahi <span class="pv-accent">Dashboard Spasial</span></h2>
+  <div class="about-grid">
+    <div class="about-text-col">
+      <p class="about-text-body reveal">
+        <strong style="color:var(--tx1)">AERIS (Aedes aegypti Environmental Risk System)</strong> adalah sistem pemodelan spasial yang dikembangkan untuk memetakan dan memprediksi risiko Demam Berdarah Dengue (DBD) di Kota Surabaya berbasis pendekatan geodesi lingkungan.
+      </p>
+      <p class="about-text-body reveal">
+        Penelitian ini mengintegrasikan dua variabel utama lingkungan — <em style="color:var(--gold2)">variabilitas curah hujan</em> dan <em style="color:var(--gold2)">potensi daerah rawan genangan</em> — dengan data historis kejadian DBD dari 31 kecamatan selama periode 2019–2023. Dengan pendekatan multidisiplin ini, AERIS menghasilkan peta prediksi risiko yang dapat digunakan sebagai dasar pengambilan kebijakan kesehatan publik.
+      </p>
+      <p class="about-text-body reveal">
+        Sistem ini juga dilengkapi dengan platform WebGIS interaktif, sistem pelaporan genangan real-time (HIDRA), dan panduan kesehatan masyarakat digital yang terintegrasi dalam satu ekosistem informasi kesehatan berbasis spasial.
+      </p>
+
+      <div class="sdg-row reveal">
+        <span class="sdg-badge sdg-3"><i class="ti ti-heart-rate-monitor"></i> SDG 3 — Kesehatan Baik</span>
+        <span class="sdg-badge sdg-11"><i class="ti ti-building-community"></i> SDG 11 — Kota Berkelanjutan</span>
+        <span class="sdg-badge sdg-13"><i class="ti ti-leaf"></i> SDG 13 — Aksi Iklim</span>
+      </div>
+
+      <div class="about-tags reveal" style="margin-top:20px">
+        <span class="about-tag">Geodesi Lingkungan</span>
+        <span class="about-tag">Machine Learning</span>
+        <span class="about-tag">WebGIS</span>
+        <span class="about-tag">Epidemiologi Spasial</span>
+        <span class="about-tag">Curah Hujan</span>
+        <span class="about-tag">TWI / UFSI</span>
+        <span class="about-tag">Random Forest</span>
+      </div>
     </div>
 
-    <div class="pv-main">
-        <div class="pv-mockup">
-            <a href="pages/webgis.html" class="pv-mockup-link">
-                <div class="pv-screen">
-                    <div class="pv-screen-bar">
-                        <span></span><span></span><span></span>
-                        <div class="pv-screen-url">aeris-webgis.vercel.app/webgis</div>
-                    </div>
-                    <img src="assets/logo/mockup-webgis.png" alt="Preview WebGIS" class="pv-img">
-                    <div class="pv-screen-overlay">
-                        <div class="pv-open-btn">
-                            <svg viewBox="0 0 24 24" fill="none" style="width:26px;height:26px;">
-                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                            <span>Buka WebGIS</span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+    <div class="about-visual-col">
+      <div class="about-card reveal">
+        <div class="about-card-icon red"><i class="ti ti-map-pin"></i></div>
+        <div>
+          <div class="about-card-title">Wilayah Studi — Kota Surabaya</div>
+          <div class="about-card-body">31 kecamatan Kota Surabaya sebagai unit analisis spasial. Data mencakup periode 2019–2023 untuk training model dan 2024 sebagai validasi.</div>
         </div>
-
-        <div class="pv-features">
-            <div class="pv-feat-card">
-                <div class="pv-feat-icon">🗺️</div>
-                <div class="pv-feat-body">
-                    <h4>Peta Prediksi Kasus DBD</h4>
-                    <p>Visualisasi distribusi kasus DBD per kecamatan tahun 2025 dan 2026 berbasis prediksi model Binomial Negatif, XGBoost, Random Forest, dan SVR</p>
-                </div>
-            </div>
-            <div class="pv-feat-card">
-                <div class="pv-feat-icon">🌧</div>
-                <div class="pv-feat-body">
-                    <h4>Peta Curah Hujan</h4>
-                    <p>Eksplorasi data CHIRPS 2019–2025 secara interaktif per wilayah</p>
-                </div>
-            </div>
-            <a href="pages/genangan.html" target="_blank" class="pv-feat-card pv-feat-highlight" style="text-decoration:none;display:flex;cursor:pointer;position:relative;border:1.5px solid rgba(255,180,50,0.55);background:linear-gradient(120deg,rgba(255,180,50,0.08),rgba(255,100,30,0.07));transition:box-shadow 0.2s,transform 0.2s;">
-                <div class="pv-feat-icon">🌊</div>
-                <div class="pv-feat-body">
-                    <h4 style="color:#ffd700;">Potensi Genangan</h4>
-                    <p>Pemetaan daerah rawan genangan sebagai variabel risiko DBD</p>
-                    <span style="display:inline-block;margin-top:6px;font-size:11px;font-weight:700;color:#ffb432;letter-spacing:0.5px;background:rgba(255,180,50,0.15);padding:3px 10px;border-radius:20px;border:1px solid rgba(255,180,50,0.35);">🔗 Buka Peta Genangan →</span>
-                </div>
-                <div style="position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;background:#ffb432;color:#1a1200;padding:2px 8px;border-radius:20px;letter-spacing:0.5px;">LIVE</div>
-            </a>
+      </div>
+      <div class="about-card reveal reveal-delay-1">
+        <div class="about-card-icon gold"><i class="ti ti-cloud-rain"></i></div>
+        <div>
+          <div class="about-card-title">Variabilitas Curah Hujan</div>
+          <div class="about-card-body">Analisis Mean Rainfall dan Coefficient of Variation (CV) dari data stasiun BMKG untuk mengukur pola hujan sebagai prediktor utama risiko DBD.</div>
         </div>
+      </div>
+      <div class="about-card reveal reveal-delay-2">
+        <div class="about-card-icon blue"><i class="ti ti-waves"></i></div>
+        <div>
+          <div class="about-card-title">Urban Flood Susceptibility Index</div>
+          <div class="about-card-body">UFSI dikonstruksi dari TWI, elevasi, kemiringan lereng, dan buffer sungai menggunakan data DEM untuk memetakan potensi genangan di wilayah urban.</div>
+        </div>
+      </div>
+      <div class="about-card reveal reveal-delay-3">
+        <div class="about-card-icon red"><i class="ti ti-database"></i></div>
+        <div>
+          <div class="about-card-title">Sumber Data</div>
+          <div class="about-card-body">Dinkes Surabaya, BPBD, DSDABM, BPS Surabaya, BMKG, dan Sentinel-2 imagery. Data kasus DBD 2019–2024 diintegrasikan dengan data spasial lingkungan.</div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<div class="section-divider"><div class="divider-glow"></div></div>
+<div class="grad-line"></div>
 
+<!-- ══ METODOLOGI ══ -->
+<section id="metode">
+  <div class="section-label reveal">Metodologi</div>
+  <h2 class="section-title reveal">Alur Penelitian &amp; <em>Model ML</em></h2>
 
-<!-- ============================================ -->
-<!-- 12. TEAM                                    -->
-<!-- ============================================ -->
-<section class="team-section" id="team">
-    <div class="team-header">
-        <div class="section-badge">
-            <span class="badge-icon">👥</span>
-            <span class="badge-label">Behind the Project</span>
-        </div>
-        <h2 class="section-title">Development<span class="gradient-text">Team</span></h2>
-        <p class="section-desc">Tim Geodesi yang mengembangkan WebGIS untuk analisis risiko DBD di Kota Surabaya</p>
+  <div class="method-intro">
+    <p class="section-desc reveal">
+      Empat model machine learning dilatih pada data panel 31 kecamatan × 5 tahun (2019–2023) dan divalidasi menggunakan data 2024 serta validasi parsial Maret 2025.
+    </p>
+  </div>
+
+  <div class="workflow-container">
+    <div class="flow-steps">
+      <div class="flow-step reveal">
+        <div class="flow-step-num" style="color:var(--gold2)">01</div>
+        <div class="flow-step-label">Pengumpulan Data</div>
+        <div class="flow-step-sub">DBD, Curah Hujan, DEM, Citra Satelit</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-1">
+        <div class="flow-step-num" style="color:var(--red4)">02</div>
+        <div class="flow-step-label">Pra-pemrosesan</div>
+        <div class="flow-step-sub">TWI, UFSI, CV, Feature Engineering</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-2">
+        <div class="flow-step-num" style="color:var(--gold2)">03</div>
+        <div class="flow-step-label">Pemodelan ML</div>
+        <div class="flow-step-sub">RBN, RF, XGBoost, SVR + Ensemble</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-3">
+        <div class="flow-step-num" style="color:var(--red4)">04</div>
+        <div class="flow-step-label">Validasi</div>
+        <div class="flow-step-sub">CV LOYO + Validasi Parsial 2025</div>
+      </div>
+      <div class="flow-step reveal reveal-delay-4">
+        <div class="flow-step-num" style="color:var(--gold2)">05</div>
+        <div class="flow-step-label">Visualisasi WebGIS</div>
+        <div class="flow-step-sub">Peta Prediksi + HIDRA Portal</div>
+      </div>
     </div>
+  </div>
 
-    <div class="hexagon-grid">
-        <div class="hex-item">
-            <div class="hexagon">
-                <div class="hex-inner"><div class="hex-content">
-                    <div class="member-photo">
-                        <img src="assets/team/Fayra1.png" alt="Fayra Alifya Annisa">
-                        <img src="assets/team/Fayra2.png" alt="Fayra Alifya Annisa">
-                        <img src="assets/team/Fayra3.png" alt="Fayra Alifya Annisa">
-                    </div>
-                    <div class="hex-overlay">
-                        <h3 class="hex-name">Fayra Alifya Annisa</h3>
-                        <p class="hex-nrp">5016231028</p>
-                    </div>
-                </div></div>
-            </div>
-        </div>
-        <div class="hex-item">
-            <div class="hexagon">
-                <div class="hex-inner"><div class="hex-content">
-                    <div class="member-photo">
-                        <img src="assets/team/Yudha1.png" alt="Faby Yudha Santoso">
-                        <img src="assets/team/Yudha2.png" alt="Faby Yudha Santoso">
-                        <img src="assets/team/Yudha3.png" alt="Faby Yudha Santoso">
-                    </div>
-                    <div class="hex-overlay">
-                        <h3 class="hex-name">Faby Yudha Santoso</h3>
-                        <p class="hex-nrp">5016231058</p>
-                    </div>
-                </div></div>
-            </div>
-        </div>
-        <div class="hex-item">
-            <div class="hexagon">
-                <div class="hex-inner"><div class="hex-content">
-                    <div class="member-photo">
-                        <img src="assets/team/Oken1.png" alt="Oken Liza Tri Cahya">
-                        <img src="assets/team/Oken2.png" alt="Oken Liza Tri Cahya">
-                        <img src="assets/team/Oken3.png" alt="Oken Liza Tri Cahya">
-                    </div>
-                    <div class="hex-overlay">
-                        <h3 class="hex-name">Oken Liza Tri Cahya</h3>
-                        <p class="hex-nrp">5016231085</p>
-                    </div>
-                </div></div>
-            </div>
-        </div>
-        <div class="hex-item">
-            <div class="hexagon">
-                <div class="hex-inner"><div class="hex-content">
-                    <div class="member-photo">
-                        <img src="assets/team/Rifqi1.png" alt="Rifqi Pangestu Wiguna">
-                        <img src="assets/team/Rifqi2.png" alt="Rifqi Pangestu Wiguna">
-                        <img src="assets/team/Rifqi3.png" alt="Rifqi Pangestu Wiguna">
-                    </div>
-                    <div class="hex-overlay">
-                        <h3 class="hex-name">Rifqi Pangestu Wiguna</h3>
-                        <p class="hex-nrp">5016231105</p>
-                    </div>
-                </div></div>
-            </div>
-        </div>
-        <div class="hex-item">
-            <div class="hexagon">
-                <div class="hex-inner"><div class="hex-content">
-                    <div class="member-photo">
-                        <img src="assets/team/Intan1.png" alt="Intan Nur Fadhila Sari">
-                        <img src="assets/team/Intan2.png" alt="Intan Nur Fadhila Sari">
-                        <img src="assets/team/Intan3.png" alt="Intan Nur Fadhila Sari">
-                    </div>
-                    <div class="hex-overlay">
-                        <h3 class="hex-name">Intan Nur Fadhila Sari</h3>
-                        <p class="hex-nrp">5016231116</p>
-                    </div>
-                </div></div>
-            </div>
-        </div>
+  <!-- ML Cards -->
+  <div class="ml-grid">
+    <div class="ml-card reveal">
+      <div class="ml-abbr">RBN</div>
+      <div class="ml-name">Regresi Negatif Binomial</div>
+      <div class="ml-r2 neg">−0.95</div>
+      <div class="ml-r2-label">R² Validasi 2024</div>
+      <div class="ml-metrics">
+        <span class="ml-metric" style="background:rgba(255,165,0,.1);color:#ffa500;border:1px solid rgba(255,165,0,.2)">MAE 5.557</span>
+        <span class="ml-metric" style="background:rgba(255,165,0,.1);color:#ffa500;border:1px solid rgba(255,165,0,.2)">RMSE 7.268</span>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--tx3);line-height:1.6">Model statistik klasik, interpretable. IRR Titik Genangan = 1.73×</div>
     </div>
+    <div class="ml-card best reveal reveal-delay-1">
+      <div class="ml-card-badge best">★ BEST MODEL</div>
+      <div class="ml-abbr">RF</div>
+      <div class="ml-name">Random Forest</div>
+      <div class="ml-r2 pos">+0.057</div>
+      <div class="ml-r2-label" style="color:#4ade80">Satu-satunya R² positif</div>
+      <div class="ml-metrics">
+        <span class="ml-metric" style="background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)">MAE 3.935</span>
+        <span class="ml-metric" style="background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)">RMSE 5.053</span>
+        <span class="ml-metric" style="background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)">ρ 0.641</span>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--tx3);line-height:1.6">Ensemble pohon keputusan dengan bootstrap aggregating. Terpilih sebagai model terbaik.</div>
+    </div>
+    <div class="ml-card reveal reveal-delay-2">
+      <div class="ml-abbr">XGB</div>
+      <div class="ml-name">XGBoost</div>
+      <div class="ml-r2 neg">−0.094</div>
+      <div class="ml-r2-label">R² Validasi 2024</div>
+      <div class="ml-metrics">
+        <span class="ml-metric" style="background:rgba(142,68,173,.1);color:#c39bd3;border:1px solid rgba(142,68,173,.25)">MAE 4.12</span>
+        <span class="ml-metric" style="background:rgba(142,68,173,.1);color:#c39bd3;border:1px solid rgba(142,68,173,.25)">RMSE 5.31</span>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--tx3);line-height:1.6">Gradient boosting sekuensial dengan regularisasi L1/L2.</div>
+    </div>
+    <div class="ml-card reveal reveal-delay-3">
+      <div class="ml-abbr">SVR</div>
+      <div class="ml-name">Support Vector Regression</div>
+      <div class="ml-r2 neg">−0.12</div>
+      <div class="ml-r2-label">R² Validasi 2024</div>
+      <div class="ml-metrics">
+        <span class="ml-metric" style="background:rgba(29,78,216,.1);color:#60a5fa;border:1px solid rgba(29,78,216,.2)">MAE 4.38</span>
+        <span class="ml-metric" style="background:rgba(29,78,216,.1);color:#60a5fa;border:1px solid rgba(29,78,216,.2)">RMSE 5.64</span>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--tx3);line-height:1.6">RBF kernel dengan kernel trick. Kontributor ensemble.</div>
+    </div>
+  </div>
+
+  <!-- Feature Importance -->
+  <div class="feature-bar-section">
+    <div class="feat-title reveal">
+      <span style="padding:3px 10px;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);border-radius:6px;font-size:10px;color:#4ade80">RF ★</span>
+      Feature Importance — % IncMSE
+    </div>
+    <div class="feat-bars" id="featBars">
+      <div class="feat-bar-row reveal">
+        <span class="feat-bar-label">Titik Genangan</span>
+        <div class="feat-bar-track"><div class="feat-bar-fill" data-width="88"></div></div>
+        <span class="feat-bar-val">88%</span>
+      </div>
+      <div class="feat-bar-row reveal reveal-delay-1">
+        <span class="feat-bar-label">Kelembapan Udara</span>
+        <div class="feat-bar-track"><div class="feat-bar-fill" data-width="72"></div></div>
+        <span class="feat-bar-val">72%</span>
+      </div>
+      <div class="feat-bar-row reveal reveal-delay-2">
+        <span class="feat-bar-label">TWI</span>
+        <div class="feat-bar-track"><div class="feat-bar-fill" data-width="58"></div></div>
+        <span class="feat-bar-val">58%</span>
+      </div>
+      <div class="feat-bar-row reveal reveal-delay-3">
+        <span class="feat-bar-label">CH Mean</span>
+        <div class="feat-bar-track"><div class="feat-bar-fill" data-width="45"></div></div>
+        <span class="feat-bar-val">45%</span>
+      </div>
+      <div class="feat-bar-row reveal reveal-delay-4">
+        <span class="feat-bar-label">Kasus Lag-1</span>
+        <div class="feat-bar-track"><div class="feat-bar-fill" data-width="40"></div></div>
+        <span class="feat-bar-val">40%</span>
+      </div>
+    </div>
+  </div>
 </section>
 
-<div class="section-divider"><div class="divider-glow"></div></div>
+<div class="grad-line"></div>
 
+<!-- ══ DATA & TOOLS ══ -->
+<section id="data">
+  <div class="section-label reveal">Data &amp; Tools</div>
+  <h2 class="section-title reveal">Alat &amp; <em>Sumber Data</em></h2>
+  <p class="section-desc reveal">Penelitian ini menggunakan data dari berbagai instansi resmi dan perangkat lunak analisis spasial dan machine learning profesional.</p>
 
-<!-- ============================================ -->
-<!-- 13. FOOTER                                  -->
-<!-- ============================================ -->
-<footer class="footer" id="contact">
-    <div class="footer-content">
-        <div class="footer-container">
-            <div class="footer-brand">
-                <h2 class="brand-title">AERIS</h2>
-                <p class="brand-tagline">Kelompok 10 Field Camp Thematic</p>
-                <p class="brand-lab">Laboratorium Geodesi dan Geodinamika</p>
-                <div class="footer-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">2026</span>
-                        <span class="stat-label">Tahun Proyek</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">5</span>
-                        <span class="stat-label">Anggota Tim</span>
-                    </div>
-                    <div class="stat-divider"></div>
-                    <div class="stat-item">
-                        <span class="stat-number">ITS</span>
-                        <span class="stat-label">Surabaya</span>
-                    </div>
-                </div>
-                <div class="footer-ornament">
-                    <div class="ornament-line"></div>
-                    <div class="ornament-dot"></div>
-                </div>
-            </div>
-
-            <div class="footer-contact">
-                <h3 class="contact-title">Hubungi Kami</h3>
-                <div class="social-links-simple">
-                    <a href="mailto:geodyncamp10@gmail.com" class="social-icon-link" title="Email">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="5" width="18" height="14" rx="2"/>
-                            <path d="M3 7l9 6 9-6"/>
-                        </svg>
-                        <span class="icon-label">geodyncamp10@gmail.com</span>
-                    </a>
-                    <a href="https://www.instagram.com/ae.risk10?igsh=MWE4Z21pZXY5bnNoYQ==" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Instagram">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                        <span class="icon-label">@ae.risk10</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-bottom">
-            <div class="footer-divider"></div>
-            <div class="footer-credits">
-                <p class="footer-copyright">
-                    <span class="copyright-year">© 2026</span>
-                    <span class="copyright-sep">·</span>
-                    <span class="copyright-text">AERIS — Dibangun dengan data, peta, dan banyak kopi ☕</span>
-                </p>
-            </div>
-        </div>
+  <div class="tools-grid">
+    <div class="tool-card reveal">
+      <div class="tool-card-cat">Software Utama</div>
+      <h4>Analisis Spasial &amp; GIS</h4>
+      <p>Perangkat lunak utama untuk pengolahan data spasial, pembuatan peta tematik, dan analisis terrain.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">ArcGIS Pro</span>
+        <span class="tool-tag">QGIS</span>
+        <span class="tool-tag">Google Earth Engine</span>
+      </div>
     </div>
-    <div class="footer-bg-pattern">
-        <div class="pattern-circle circle-1"></div>
-        <div class="pattern-circle circle-2"></div>
-        <div class="pattern-circle circle-3"></div>
-        <div class="pattern-grid"></div>
+    <div class="tool-card reveal reveal-delay-1">
+      <div class="tool-card-cat">Machine Learning</div>
+      <h4>Pemodelan Prediksi</h4>
+      <p>Bahasa pemrograman dan library untuk implementasi model Random Forest, XGBoost, SVR, dan NB Regression.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Python 3.11</span>
+        <span class="tool-tag">scikit-learn</span>
+        <span class="tool-tag">XGBoost</span>
+        <span class="tool-tag">R Studio</span>
+      </div>
     </div>
+    <div class="tool-card reveal reveal-delay-2">
+      <div class="tool-card-cat">WebGIS &amp; Dev</div>
+      <h4>Pengembangan Platform</h4>
+      <p>Stack teknologi untuk membangun WebGIS interaktif dan sistem pelaporan genangan real-time berbasis web.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Leaflet.js</span>
+        <span class="tool-tag">HTML/CSS/JS</span>
+        <span class="tool-tag">OpenStreetMap</span>
+      </div>
+    </div>
+    <div class="tool-card reveal">
+      <div class="tool-card-cat">Data Kesehatan</div>
+      <h4>Kasus DBD 2019–2024</h4>
+      <p>Data rekam medis jumlah kasus DBD per kecamatan dari Dinas Kesehatan dan BPBD Kota Surabaya.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Dinkes Surabaya</span>
+        <span class="tool-tag">BPBD</span>
+        <span class="tool-tag">BPS Surabaya</span>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-delay-1">
+      <div class="tool-card-cat">Data Spasial</div>
+      <h4>Citra &amp; Terrain</h4>
+      <p>Data penginderaan jauh dan model elevasi digital untuk analisis topografi dan kerentanan banjir urban.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">Sentinel-2</span>
+        <span class="tool-tag">DEM SRTM 30m</span>
+        <span class="tool-tag">BMKG</span>
+      </div>
+    </div>
+    <div class="tool-card reveal reveal-delay-2">
+      <div class="tool-card-cat">Data Hidrometeorologi</div>
+      <h4>Curah Hujan &amp; Iklim</h4>
+      <p>Data hujan harian dari stasiun BMKG untuk analisis variabilitas curah hujan (mean &amp; CV) 2020–2024.</p>
+      <div class="tool-tags">
+        <span class="tool-tag">BMKG Juanda</span>
+        <span class="tool-tag">CHIRPS</span>
+        <span class="tool-tag">DSDABM</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grad-line"></div>
+
+<!-- ══ FITUR PLATFORM ══ -->
+<section id="fitur">
+  <div class="section-label reveal">Platform AERIS</div>
+  <h2 class="section-title reveal">Jelajahi <em>Fitur</em> Kami</h2>
+  <p class="section-desc reveal">Tiga portal terintegrasi yang dapat diakses publik sebagai produk nyata penelitian ini.</p>
+
+  <div class="feature-cards">
+    <a class="feat-card reveal" href="webgis.html">
+      <div class="feat-card-top" style="background:linear-gradient(135deg,rgba(139,0,0,.18),rgba(10,0,0,.6))">
+        <i class="feat-card-icon ti ti-map-2" style="color:var(--red4)"></i>
+        <div class="feat-card-title">AERIS WebGIS</div>
+        <div class="feat-card-subtitle">PETA PREDIKSI INTERAKTIF</div>
+        <img src="logo/mockup-webgis.png" alt="Mockup WebGIS" class="feat-mockup">
+      </div>
+      <div class="feat-card-body">
+        <p class="feat-card-desc">Peta risiko DBD per kecamatan dengan prediksi 2025–2026 menggunakan Random Forest. Dilengkapi layer curah hujan, titik genangan, dan lokasi puskesmas. Toggle basemap, filter tahun, dan info detail setiap kecamatan.</p>
+        <span class="feat-card-link">Buka Peta <i class="ti ti-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="feat-card reveal reveal-delay-1" href="hidra-portal.html">
+      <div class="feat-card-top" style="background:linear-gradient(135deg,rgba(29,78,216,.18),rgba(10,0,0,.6))">
+        <i class="feat-card-icon ti ti-droplet-half-2" style="color:#60a5fa"></i>
+        <div class="feat-card-title">HIDRA Portal</div>
+        <div class="feat-card-subtitle">SISTEM LAPORAN GENANGAN</div>
+        <img src="logo/mockup-hidra.png" alt="Mockup HIDRA Portal" class="feat-mockup">
+      </div>
+      <div class="feat-card-body">
+        <p class="feat-card-desc">Laporkan titik genangan secara real-time langsung dari browser atau perangkat mobile. Data terpetakan otomatis dan tersinkronisasi dengan layer WebGIS utama sebagai input prediksi risiko.</p>
+        <span class="feat-card-link" style="color:#60a5fa">Laporkan Sekarang <i class="ti ti-arrow-right"></i></span>
+      </div>
+    </a>
+
+    <a class="feat-card reveal reveal-delay-2" href="booklet.html">
+      <div class="feat-card-top" style="background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(10,0,0,.6))">
+        <i class="feat-card-icon ti ti-book-2" style="color:var(--gold2)"></i>
+        <div class="feat-card-title">Panduan DBD</div>
+        <div class="feat-card-subtitle">BOOKLET DIGITAL KESEHATAN</div>
+        <img src="logo/mockup-panduan.png" alt="Mockup Panduan DBD" class="feat-mockup">
+      </div>
+      <div class="feat-card-body">
+        <p class="feat-card-desc">Panduan komprehensif tentang DBD dalam format digital interaktif. Meliputi pengenalan nyamuk Aedes, gejala tiga fase, pencegahan 3M PLUS, penanganan pertama, dan informasi vaksin terbaru.</p>
+        <span class="feat-card-link" style="color:var(--gold2)">Baca Panduan <i class="ti ti-arrow-right"></i></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<div class="grad-line"></div>
+
+<!-- ══ TIM ══ -->
+<section id="tim">
+  <div class="section-label reveal">Tim Peneliti</div>
+  <div class="team-header">
+    <div>
+      <h2 class="section-title reveal" style="margin-bottom:8px">Kelompok <em>10</em></h2>
+      <p class="section-desc reveal" style="font-size:13.5px">Teknik Geomatika · FTSPK · Institut Teknologi Sepuluh Nopember · 2025</p>
+    </div>
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-photo"><div class="team-photo-inner">
+        <img src="logo/Fayra.png" alt="Fayra Alifya Annisa" class="team-photo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="team-photo-avatar" style="display:none">FA</div>
+      </div></div>
+      <div class="team-info">
+        <div class="team-name">Fayra Alifya Annisa</div>
+        <div class="team-nrp">5016231028</div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-delay-1">
+      <div class="team-photo"><div class="team-photo-inner">
+        <img src="logo/Faby.png" alt="Faby Yudha Santoso" class="team-photo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="team-photo-avatar" style="display:none;background:linear-gradient(135deg,rgba(29,78,216,.6),rgba(10,0,0,.5))">FY</div>
+      </div></div>
+      <div class="team-info">
+        <div class="team-name">Faby Yudha Santoso</div>
+        <div class="team-nrp">5016231058</div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-delay-2">
+      <div class="team-photo"><div class="team-photo-inner">
+        <img src="logo/Oken.png" alt="Oken Liza Tri Cahya" class="team-photo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="team-photo-avatar" style="display:none;background:linear-gradient(135deg,rgba(22,163,74,.5),rgba(10,0,0,.5))">OL</div>
+      </div></div>
+      <div class="team-info">
+        <div class="team-name">Oken Liza Tri Cahya</div>
+        <div class="team-nrp">5016231085</div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-delay-3">
+      <div class="team-photo"><div class="team-photo-inner">
+        <img src="logo/Rifqi.png" alt="Rifqi Pangestu Wiguna" class="team-photo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="team-photo-avatar" style="display:none;background:linear-gradient(135deg,rgba(201,168,76,.5),rgba(10,0,0,.5))">RP</div>
+      </div></div>
+      <div class="team-info">
+        <div class="team-name">Rifqi Pangestu Wiguna</div>
+        <div class="team-nrp">5016231105</div>
+      </div>
+    </div>
+    <div class="team-card reveal reveal-delay-4">
+      <div class="team-photo"><div class="team-photo-inner">
+        <img src="logo/Intan.png" alt="Intan Nur Fadhila Sari" class="team-photo-img"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="team-photo-avatar" style="display:none;background:linear-gradient(135deg,var(--red2),rgba(10,0,0,.5))">IN</div>
+      </div></div>
+      <div class="team-info">
+        <div class="team-name">Intan Nur Fadhila Sari</div>
+        <div class="team-nrp">5016231116</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="grad-line"></div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>AERIS</h3>
+      <p style="font-size:11px;color:var(--tx3)">Aedes aegypti Environmental Risk System</p>
+      <p>Sistem Pemodelan Spasial Risiko DBD berbasis Geodesi Lingkungan di Kota Surabaya. Dikembangkan oleh Kelompok 10, Kemah Kerja Semester 6, Teknik Geomatika ITS.</p>
+      <div style="margin-top:20px">
+        <a class="footer-contact-item" href="mailto:geodyncamp10@gmail.com" style="text-decoration:none;cursor:pointer;">
+          <i class="ti ti-mail"></i> geodyncamp10@gmail.com
+        </a>
+        <a class="footer-contact-item" href="https://instagram.com/ae.risk10" target="_blank" rel="noopener noreferrer" style="text-decoration:none;cursor:pointer;">
+          <i class="ti ti-brand-instagram"></i> @ae.risk10
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="webgis.html"><i class="ti ti-map-2" style="font-size:12px;margin-right:5px"></i>WebGIS AERIS</a>
+      <a href="hidra-portal.html"><i class="ti ti-droplet-half-2" style="font-size:12px;margin-right:5px"></i>HIDRA — Laporan Genangan</a>
+      <a href="booklet.html"><i class="ti ti-book-2" style="font-size:12px;margin-right:5px"></i>Panduan DBD</a>
+    </div>
+    <div class="footer-col">
+      <h4>Institusi</h4>
+      <p>Laboratorium Geodesi &amp; Geodinamika</p>
+      <p>Teknik Geomatika — FTSPK</p>
+      <p>Institut Teknologi Sepuluh Nopember</p>
+      <p style="margin-top:12px;color:var(--tx3)">Surabaya, 2025</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 AERIS — Kelompok 10 Kemah Kerja ITS</span>
+    <span>Teknik Geomatika · FTSPK · ITS Surabaya</span>
+  </div>
 </footer>
 
-
-<!-- ============================================ -->
-<!-- 14. MODAL                                   -->
-<!-- ============================================ -->
-<div class="stat-modal" id="statModal">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Tutup modal">&times;</button>
-        <div class="modal-body" id="modalBody"></div>
-    </div>
-</div>
-
-
-<!-- ============================================ -->
-<!-- 15. JAVASCRIPT                              -->
-<!-- ============================================ -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="js/script.js"></script>
-
 <script>
-/* ── HAMBURGER MENU ── */
-document.addEventListener('DOMContentLoaded', function() {
-    var hamburger = document.getElementById('navHamburger');
-    var navLinks  = document.getElementById('navLinks');
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', function() {
-            hamburger.classList.toggle('open');
-            navLinks.classList.toggle('open');
-        });
-        // Tutup saat klik link
-        navLinks.querySelectorAll('.nav-item').forEach(function(link) {
-            link.addEventListener('click', function() {
-                hamburger.classList.remove('open');
-                navLinks.classList.remove('open');
-            });
-        });
-    }
+/* ══ CURSOR GLOW ══ */
+const glow = document.getElementById('cursorGlow');
+let mouseX = 0, mouseY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  glow.style.left = mouseX + 'px';
+  glow.style.top  = mouseY + 'px';
 });
 
-/* ── SMOOTH SCROLL — langsung tampil penuh (snap ke section) ── */
-document.addEventListener('DOMContentLoaded', function() {
-    var NAVBAR_H = 62; // tinggi navbar
+/* ══ SCROLL PROGRESS BAR ══ */
+const prog = document.getElementById('scrollProgress');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.width = (scrolled / total * 100) + '%';
+}, { passive: true });
 
-    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-        anchor.addEventListener('click', function(e) {
-            var href = this.getAttribute('href');
-            if (href === '#') {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                return;
-            }
-            var target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                var top = target.getBoundingClientRect().top + window.pageYOffset - NAVBAR_H;
-                window.scrollTo({ top: top, behavior: 'smooth' });
-            }
-        });
+/* ══ BACK TO TOP ══ */
+const btt = document.getElementById('backToTop');
+window.addEventListener('scroll', () => {
+  btt.classList.toggle('visible', window.scrollY > 500);
+}, { passive: true });
+btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+/* ══ HERO COUNTER ANIMATION ══ */
+function animateCounter(el, target, duration, type, suffix) {
+  const start = performance.now();
+  const isFloat = type === 'float';
+  const isSuffix = type === 'suffix';
+  const step = ts => {
+    const p = Math.min((ts - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 4); // easeOutQuart
+    const val = ease * target;
+    if (isFloat)       el.textContent = val.toFixed(3);
+    else if (isSuffix) el.textContent = Math.round(val) + (suffix || '');
+    else               el.textContent = Math.round(val);
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* Fire counters once hero stats visible */
+const heroStats = document.getElementById('heroStats');
+let countersFired = false;
+const heroIO = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !countersFired) {
+    countersFired = true;
+    heroStats.classList.add('stat-ready');
+    heroStats.querySelectorAll('[data-target]').forEach((el, i) => {
+      const target = parseFloat(el.dataset.target);
+      const type   = el.dataset.type;
+      const suffix = el.dataset.suffix || '';
+      const dur    = 1200 + i * 150;
+      setTimeout(() => animateCounter(el, target, dur, type, suffix), i * 120);
     });
-});
+  }
+}, { threshold: 0.5 });
+heroIO.observe(heroStats);
 
-/* ── LEAFLET MAP ── */
-document.addEventListener('DOMContentLoaded', function() {
-    var mapEl = document.getElementById('mapSurabaya');
-    if (!mapEl) return;
+/* ══ SCROLL REVEAL ══ */
+const reveals = document.querySelectorAll('.reveal');
+const revealIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(el => revealIO.observe(el));
 
-    var map = L.map('mapSurabaya', {
-        center: [-7.2575, 112.7521],   // ← digeser ke tengah Surabaya
-        zoom: 12,                       // ← zoom pas kota Surabaya
-        zoomControl: true,
-        scrollWheelZoom: false,
-        minZoom: 11,
-        maxZoom: 16
+/* ══ FEATURE BAR ANIMATION ══ */
+const barSection = document.getElementById('featBars');
+let barsFired = false;
+const barIO = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !barsFired) {
+    barsFired = true;
+    barSection.querySelectorAll('.feat-bar-fill').forEach((fill, i) => {
+      const w = fill.dataset.width;
+      setTimeout(() => { fill.style.width = w + '%'; }, 200 + i * 120);
     });
+  }
+}, { threshold: 0.3 });
+barIO.observe(barSection);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 18
-    }).addTo(map);
-
-    /* Optional: fit bounds Surabaya */
-    var surabayaBounds = L.latLngBounds(
-        [-7.3950, 112.6000],  // SW
-        [-7.1500, 112.8800]   // NE
-    );
-    map.fitBounds(surabayaBounds);
-
-    var kecamatanData = [
-        { name: 'Asemrowo',         lat: -7.2377, lng: 112.6897 },
-        { name: 'Benowo',           lat: -7.2274, lng: 112.6473 },
-        { name: 'Bubutan',          lat: -7.2484, lng: 112.7280 },
-        { name: 'Bulak',            lat: -7.2395, lng: 112.7905 },
-        { name: 'Dukuh Pakis',      lat: -7.2921, lng: 112.6992 },
-        { name: 'Gayungan',         lat: -7.3299, lng: 112.7274 },
-        { name: 'Genteng',          lat: -7.2585, lng: 112.7441 },
-        { name: 'Gubeng',           lat: -7.2799, lng: 112.7596 },
-        { name: 'Gunung Anyar',     lat: -7.3373, lng: 112.7950 },
-        { name: 'Jambangan',        lat: -7.3227, lng: 112.7161 },
-        { name: 'Karang Pilang',    lat: -7.3346, lng: 112.6882 },
-        { name: 'Kenjeran',         lat: -7.2174, lng: 112.7691 },
-        { name: 'Krembangan',       lat: -7.2285, lng: 112.7218 },
-        { name: 'Lakarsantri',      lat: -7.3141, lng: 112.6558 },
-        { name: 'Mulyorejo',        lat: -7.2674, lng: 112.7973 },
-        { name: 'Pabean Cantian',   lat: -7.2189, lng: 112.7337 },
-        { name: 'Pakal',            lat: -7.2292, lng: 112.6162 },
-        { name: 'Rungkut',          lat: -7.3186, lng: 112.8021 },
-        { name: 'Sambikerep',       lat: -7.2763, lng: 112.6533 },
-        { name: 'Sawahan',          lat: -7.2725, lng: 112.7221 },
-        { name: 'Semampir',         lat: -7.2133, lng: 112.7488 },
-        { name: 'Simokerto',        lat: -7.2398, lng: 112.7527 },
-        { name: 'Sukolilo',         lat: -7.2924, lng: 112.8057 },
-        { name: 'Sukomanunggal',    lat: -7.2691, lng: 112.7004 },
-        { name: 'Tambaksari',       lat: -7.2502, lng: 112.7676 },
-        { name: 'Tandes',           lat: -7.2556, lng: 112.6719 },
-        { name: 'Tegalsari',        lat: -7.2757, lng: 112.7370 },
-        { name: 'Tenggilis Mejoyo', lat: -7.3248, lng: 112.7539 },
-        { name: 'Wiyung',           lat: -7.3120, lng: 112.6891 },
-        { name: 'Wonocolo',         lat: -7.3224, lng: 112.7420 },
-        { name: 'Wonokromo',        lat: -7.2978, lng: 112.7384 }
-    ];
-
-    var redIcon = L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [20, 33], iconAnchor: [10, 33],
-        popupAnchor: [1, -28], shadowSize: [33, 33]
-    });
-
-    kecamatanData.forEach(function(kec) {
-        L.marker([kec.lat, kec.lng], { icon: redIcon })
-            .addTo(map)
-            .bindPopup(
-                '<div style="text-align:center;font-family:Poppins,sans-serif;">' +
-                '<strong style="font-size:13px;color:#ffd700;">' + kec.name + '</strong><br>' +
-                '<span style="font-size:11px;color:#aaa;">Kecamatan Surabaya</span>' +
-                '</div>'
-            );
-    });
-});
+/* ══ NAVBAR ACTIVE LINK ON SCROLL ══ */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + cur) l.classList.add('active');
+  });
+}, { passive: true });
 </script>
-
 </body>
 </html>
