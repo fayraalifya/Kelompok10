@@ -23,8 +23,6 @@
         }
         *{margin:0;padding:0;box-sizing:border-box;}
         html,body{width:100%;height:100%;font-family:'Plus Jakarta Sans',sans-serif;overflow:hidden;background:var(--bg);}
-
-        /* ── TOPBAR ── */
         .topbar{position:fixed;top:0;left:0;width:100%;height:var(--topbar-h);background:var(--red);display:flex;align-items:center;gap:12px;padding:0 16px;z-index:9999;box-shadow:0 1px 0 rgba(255,255,255,0.08),0 4px 20px rgba(0,0,0,0.2);}
         .logo-wrap{display:flex;align-items:center;gap:8px;flex-shrink:0;}
         .topbar-logo{width:34px;height:34px;object-fit:contain;}
@@ -47,21 +45,14 @@
         .sri-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:auto;}
         .sri-badge.puskesmas{background:#dcfce7;color:#15803d;} .sri-badge.kecamatan{background:#fef3c7;color:#b45309;}
         .search-no-results{padding:16px;text-align:center;color:var(--text-3);font-size:12px;}
-        
-        /* TOPBAR ACTIONS */
         .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:6px;}
         .tb-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.16);color:white;border-radius:7px;padding:0 11px;height:32px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;text-decoration:none;letter-spacing:0.1px;}
         .tb-btn:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.3);}
-        /* FIX: tombol reset layer */
         .tb-reset-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);color:rgba(255,255,255,0.75);border-radius:7px;padding:0 11px;height:32px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
         .tb-reset-btn:hover{background:rgba(255,255,255,0.18);color:white;border-color:rgba(255,255,255,0.3);}
         .tb-nearby-btn{display:flex;align-items:center;gap:5px;background:rgba(22,163,74,0.8);border:1px solid rgba(22,163,74,0.4);color:white;border-radius:7px;padding:0 11px;height:32px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
         .tb-nearby-btn:hover{background:rgba(22,163,74,1);}
-
-        /* ── LAYOUT ── */
         .main-layout{display:flex;width:100%;height:calc(100vh - var(--topbar-h));margin-top:var(--topbar-h);}
-
-        /* ── SIDEBAR ── */
         .sidebar-panel{position:fixed;top:var(--topbar-h);left:-380px;width:348px;height:calc(100vh - var(--topbar-h));background:var(--surface);box-shadow:2px 0 20px rgba(0,0,0,0.08);z-index:9998;transition:left 0.3s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;border-right:1px solid var(--border);}
         .sidebar-panel.active{left:0;}
         .sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:2;}
@@ -94,35 +85,15 @@
         .sidebar-fab{position:fixed;top:calc(var(--topbar-h) + 12px);left:14px;width:38px;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:15px;font-size:15px;color:var(--red);cursor:pointer;z-index:9997;transition:all 0.2s;align-items:center;justify-content:center;}
         .sidebar-fab:hover{background:var(--red);color:white;box-shadow:0 4px 16px rgba(151,0,0,0.25);}
         .sidebar-fab.active{left:364px;}
-
-        /* ── MAP ── */
         #map{flex:1;height:100%;position:relative;}
         .leaflet-bottom.leaflet-right{bottom:20px !important;right:16px !important;}
         .leaflet-control-scale-line{border:1.5px solid rgba(0,0,0,0.4) !important;border-top:none !important;background:rgba(255,255,255,0.92) !important;font-family:'Plus Jakarta Sans',sans-serif !important;font-size:10px !important;font-weight:600 !important;border-radius:0 0 4px 4px !important;padding:2px 5px !important;}
         .year-notice{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:1000;background:#970000;color:white;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;padding:6px 16px;border-radius:8px;box-shadow:var(--shadow-md);display:none;pointer-events:none;letter-spacing:0.3px;}
         .year-notice.visible{display:block;}
         .year-notice.flood-notice{background:var(--flood);}
-
-        /* ── RIGHT STACK — FIX: scroll jika overflow ── */
-        .map-right-stack{
-            position:absolute;
-            top:14px;
-            bottom:90px;
-            right:16px;
-            z-index:998;
-            display:flex;
-            flex-direction:column;
-            gap:8px;
-            align-items:flex-end;
-            pointer-events:none;
-            overflow-y:auto;
-            overflow-x:visible;
-            padding-bottom:4px;
-        }
+        .map-right-stack{position:absolute;top:14px;bottom:90px;right:16px;z-index:998;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;overflow-y:auto;overflow-x:visible;padding-bottom:4px;}
         .map-right-stack::-webkit-scrollbar{width:0;background:transparent;}
         .map-right-stack > *{pointer-events:all;flex-shrink:0;}
-
-        /* LEGEND */
         .map-legend{background:rgba(255,255,255,0.97);border-radius:var(--radius-sm);padding:11px 13px;box-shadow:var(--shadow-md);min-width:200px;display:none;border:1px solid var(--border);backdrop-filter:blur(10px);}
         .map-legend.visible{display:block;}
         .legend-title{font-size:10px;font-weight:700;color:var(--text);margin-bottom:9px;display:flex;align-items:center;gap:5px;}
@@ -130,8 +101,6 @@
         .legend-item:last-child{margin-bottom:0;}
         .legend-swatch{width:20px;height:11px;border-radius:3px;flex-shrink:0;border:1px solid rgba(0,0,0,0.07);}
         .legend-label{font-size:10px;color:var(--text-2);}
-
-        /* DBD STAT CARD */
         .map-info-card{background:#fff;border-radius:var(--radius);padding:0;box-shadow:var(--shadow-lg);border:1px solid var(--border);width:272px;display:none;overflow:hidden;}
         .map-info-card.visible{display:block;}
         .mic-head{background:var(--red);color:white;padding:10px 13px;display:flex;align-items:center;gap:7px;}
@@ -152,8 +121,6 @@
         .mic-chart-section{padding:10px 13px 12px;border-top:1px solid var(--border);}
         .mic-chart-title{font-size:9px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;}
         .mic-chart-wrap{height:90px;position:relative;}
-
-        /* CURAH HUJAN STAT CARD */
         .ch-stat-card{background:#fff;border-radius:var(--radius);padding:0;box-shadow:var(--shadow-lg);border:1px solid var(--border);width:240px;display:none;overflow:hidden;}
         .ch-stat-card.visible{display:block;}
         .csc-head{background:#1d4ed8;color:white;padding:10px 13px;display:flex;align-items:center;gap:6px;}
@@ -170,8 +137,6 @@
         .csc-bar-track{flex:1;height:7px;background:#f0f0f0;border-radius:3px;overflow:hidden;}
         .csc-bar-fill{height:100%;background:#1d4ed8;border-radius:3px;}
         .csc-bar-val{font-size:9px;font-weight:700;color:#1d4ed8;width:42px;text-align:right;flex-shrink:0;}
-
-        /* PUSKESMAS STAT CARD */
         .pus-stat-card{background:#fff;border-radius:var(--radius);padding:0;box-shadow:var(--shadow-lg);border:1px solid var(--border);width:252px;display:none;overflow:hidden;}
         .pus-stat-card.visible{display:block;}
         .psc-head{background:var(--green);color:white;padding:10px 13px;display:flex;align-items:center;gap:6px;}
@@ -182,8 +147,6 @@
         .psc-val{font-size:17px;font-weight:800;color:var(--green);line-height:1;}
         .psc-sub{font-size:9px;color:var(--text-3);margin-top:2px;}
         .psc-tip{padding:9px 13px;font-size:10px;color:var(--text-2);border-top:1px solid var(--border);line-height:1.5;}
-
-        /* RF PRED CARD */
         .rf-stat-card{background:#fff;border-radius:var(--radius);padding:0;box-shadow:var(--shadow-lg);border:1px solid var(--border);width:262px;display:none;overflow:hidden;}
         .rf-stat-card.visible{display:block;}
         .rsc-head{background:var(--red);color:white;padding:10px 13px;display:flex;align-items:center;gap:6px;}
@@ -211,8 +174,6 @@
         .mm-best td{color:#c2410c !important;}
         .mm-best td.mname{color:var(--red) !important;}
         .best-badge{display:inline-block;background:var(--red);color:white;font-size:8px;font-weight:700;padding:1px 3px;border-radius:3px;margin-left:2px;}
-
-        /* FLOOD STAT CARD */
         .flood-stat-card{background:#fff;border-radius:var(--radius);padding:0;box-shadow:var(--shadow-lg);border:1px solid var(--border);width:272px;display:none;overflow:hidden;}
         .flood-stat-card.visible{display:block;}
         .fsc-head{background:var(--flood);color:white;padding:10px 13px;display:flex;align-items:center;gap:6px;}
@@ -227,11 +188,8 @@
         .fsc-zona-item{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:10px;}
         .fsc-zona-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
         .fsc-tip{padding:8px 13px 10px;font-size:10px;color:var(--text-2);border-top:1px solid var(--border);line-height:1.5;}
-
-        /* ── TIMELINE ── */
         .map-timeline{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(255,255,255,0.97);border-radius:14px;padding:12px 20px;display:none;align-items:center;gap:14px;box-shadow:var(--shadow-lg);min-width:480px;border:1px solid var(--border);backdrop-filter:blur(12px);}
         .map-timeline.visible{display:flex;}
-        /* FIX: timeline responsif saat sidebar terbuka */
         .sidebar-panel.active ~ .main-layout .map-timeline{left:calc(50% + 174px);}
         .tl-play{width:34px;height:34px;background:var(--red);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;cursor:pointer;transition:all 0.15s;flex-shrink:0;}
         .tl-play:hover{background:var(--red-dark);}
@@ -249,8 +207,6 @@
         .tl-pt.active .tl-year{color:var(--red);font-weight:700;}
         .tl-year-sel{border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:700;color:var(--text);background:white;cursor:pointer;outline:none;transition:border-color 0.15s;flex-shrink:0;}
         .tl-year-sel:focus{border-color:var(--red);}
-
-        /* ── NEARBY MODAL ── */
         .nearby-modal{position:fixed;inset:0;z-index:19000;display:none;align-items:flex-start;justify-content:flex-end;padding:calc(var(--topbar-h) + 10px) 10px 0 0;}
         .nearby-modal.open{display:flex;}
         .nearby-modal-inner{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-lg);border:1px solid var(--border);width:310px;max-height:460px;display:flex;flex-direction:column;overflow:hidden;}
@@ -280,34 +236,20 @@
         .nm-item.top .nm-go{background:#f97316;color:white;}
         .nm-route-btn{width:24px;height:24px;border-radius:6px;background:#dbeafe;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1d4ed8;font-size:11px;transition:all 0.15s;flex-shrink:0;margin-right:2px;}
         .nm-route-btn:hover{background:#1d4ed8;color:white;}
-
-        /* ── KECAMATAN LABELS ── */
         .kec-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:8px;font-weight:800;color:#111827;text-shadow:-1px -1px 0 rgba(255,255,255,0.85),1px 1px 0 rgba(255,255,255,0.85),1px -1px 0 rgba(255,255,255,0.85),-1px 1px 0 rgba(255,255,255,0.85);white-space:nowrap;pointer-events:none;letter-spacing:0.4px;text-transform:uppercase;}
-
-        /* ── PUSKESMAS MARKERS ── */
         .puskes-pin{background:var(--green);width:28px;height:28px;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;}
         .puskes-pin.nearest{background:#f97316;border:2.5px solid white;box-shadow:0 0 0 3px rgba(249,115,22,0.25),0 3px 10px rgba(0,0,0,0.2);width:34px;height:34px;font-size:15px;}
-
-        /* ── USER LOCATION ── */
         .user-dot{width:14px;height:14px;background:var(--blue);border-radius:50%;border:2px solid white;box-shadow:0 0 0 4px rgba(29,78,216,0.18),0 2px 8px rgba(0,0,0,0.2);}
-
-        /* ── TOAST ── */
         .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);background:#1f2937;color:white;padding:8px 16px;border-radius:9px;font-size:12px;font-weight:500;z-index:99999;opacity:0;transition:all 0.2s;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-md);}
         .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-        /* ── POPUP ── */
         .leaflet-popup-content-wrapper{border-radius:12px !important;box-shadow:var(--shadow-lg) !important;border:1px solid var(--border) !important;padding:0 !important;overflow:hidden !important;min-width:240px;}
         .leaflet-popup-content{margin:0 !important;width:auto !important;min-width:240px;}
         .leaflet-popup-tip-container{margin-top:-1px;}
-
-        /* ── MAP LOADING ── */
         .map-loading{position:absolute;inset:0;z-index:500;background:rgba(240,241,243,0.88);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;backdrop-filter:blur(4px);transition:opacity 0.3s;}
         .map-loading.hidden{opacity:0;pointer-events:none;}
         .map-loading-spinner{width:36px;height:36px;border:2.5px solid #e5e7eb;border-top-color:var(--red);border-radius:50%;animation:spin 0.75s linear infinite;}
         @keyframes spin{to{transform:rotate(360deg);}}
         .map-loading-text{font-size:12px;color:var(--text-2);font-weight:600;}
-
-        /* FIX: flood card uncheck hint */
         .flood-card .toggle-checkbox:checked + .uncheck-hint,
         .flood-uncheck-tip{display:none;font-size:9px;color:var(--flood);margin-left:4px;}
     </style>
@@ -343,7 +285,6 @@
     </div>
 
     <div class="topbar-actions">
-        <!-- FIX: Tombol Reset Semua Layer -->
         <button class="tb-reset-btn" id="resetAllLayersBtn" title="Matikan semua layer aktif"><i class="fa-solid fa-layer-group"></i> Reset Layer</button>
         <button class="tb-nearby-btn" id="nearbyToggleBtn"><i class="fa-solid fa-location-crosshairs"></i> Puskesmas Terdekat</button>
         <a href="hidra-portal.html" class="tb-btn" style="background:rgba(14,116,144,0.65);border-color:rgba(14,116,144,0.4);"><i class="fa-solid fa-droplet"></i> Portal HIDRA</a>
@@ -361,7 +302,6 @@
     <div class="sidebar-content">
 
         <div class="sec-label">Peta</div>
-        <!-- FIX: layer-card kini bisa diklik langsung untuk toggle -->
         <div class="layer-card" data-layer="kasus-dbd">
             <div class="layer-info"><div class="layer-icon li-red"><i class="fa-solid fa-virus"></i></div><div class="layer-text"><h4>Persebaran Kasus DBD</h4><p>Kasus DBD per kecamatan (2019–2024)</p></div></div>
             <input type="checkbox" class="toggle-checkbox" data-layer-type="thematic">
@@ -612,7 +552,6 @@ const puskesmasData=[
     {nama:"Puskesmas Lidah Kulon",alamat:"Jl. Raya Menganti Lidah Kulon No. 1111A",kepala:"dr. Winartuti Santoso M.Kes",telp:"(031) 753-3544",lat:-7.306278,lng:112.661371,kecamatan:"Lakarsantri"},
 ];
 
-/* ════ MAP INIT ════ */
 const map=L.map('map',{zoomControl:false}).setView([-7.290293,112.727040],12);
 L.control.zoom({position:'bottomright'}).addTo(map);
 L.control.scale({position:'bottomleft',imperial:false,metric:true}).addTo(map);
@@ -620,7 +559,6 @@ const osmLayer=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 const satelitLayer=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'&copy; Esri'});
 const hybridLayer=L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{attribution:'&copy; Google'});
 
-/* ════ STATE ════ */
 let currentYear=2024,currentActiveLayer=null;
 let kasusDbdLayer=null,curahHujanLayer=null,puskesmasLayer=null,labelLayerGroup=null;
 let rfChoroplethLayer=null,rfHeatmapLayer=null;
@@ -632,7 +570,6 @@ let dbdLineChart=null;
 let floodLayers={zona:null,pu21:null,pu25:null,warga:null};
 let activeFloodKey=null;
 
-/* ════ UTILS ════ */
 function showToast(msg,dur=2000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 function showLoading(msg='Memuat data peta...'){const el=document.getElementById('mapLoading');document.getElementById('mapLoadingText').textContent=msg;el.classList.remove('hidden');}
 function hideLoading(){document.getElementById('mapLoading').classList.add('hidden');}
@@ -640,7 +577,6 @@ function getPolygonCentroid(coords){let tA=0,cx=0,cy=0;for(let ring of coords){l
 function getCentroid(feature){try{const g=feature.geometry;if(g.type==='Polygon')return getPolygonCentroid(g.coordinates);if(g.type==='MultiPolygon'){let best=null,bestA=0;for(let p of g.coordinates){let a=0;for(let i=0;i<p[0].length-1;i++){const[x1,y1]=p[0][i],[x2,y2]=p[0][i+1];a+=x1*y2-x2*y1;}a=Math.abs(a/2);if(a>bestA){bestA=a;best=p;}}return best?getPolygonCentroid(best):null;}}catch(e){}return null;}
 function haversineKm(lat1,lng1,lat2,lng2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 
-/* ════ COLORS ════ */
 function getKelasKasus(k){if(k>15)return{label:'Tinggi',emoji:'🔴'};if(k>=5)return{label:'Sedang',emoji:'🟠'};if(k>0)return{label:'Rendah',emoji:'🟡'};return{label:'Tidak Ada Kasus',emoji:'⚪'};}
 function getColorKasus(k){if(k===null||k===undefined)return'#f5f5f5';if(k>15)return'#cc0000';if(k>=5)return'#e05a2b';if(k>0)return'#f2c5a0';return'#f5f5f5';}
 function getColorCH(gc){return{1:'#c6dbef',2:'#9ecae1',3:'#6baed6',4:'#2171b5',5:'#08306b'}[gc]??'#eee';}
@@ -650,16 +586,24 @@ function depthLabel(d){if(d==='< 20 cm')return'Ringan';if(d==='20–40 cm')retur
 function zonaColor(k){const kl=(k||'').trim().toLowerCase();if(kl==='rendah')return'#27ae60';if(kl==='sedang')return'#f39c12';if(kl==='tinggi')return'#c0392b';return'#888';}
 function zonaFillOpacity(k){const kl=(k||'').trim().toLowerCase();if(kl==='tinggi')return 0.55;if(kl==='sedang')return 0.40;if(kl==='rendah')return 0.28;return 0.20;}
 
-/* ════ DATA LOAD ════ */
 function loadDbdFiks(cb){if(dbdFiksCache){cb(dbdFiksCache);return;}showLoading();fetch('data/dbdfiks.geojson').then(r=>{if(!r.ok)throw new Error();return r.json();}).then(d=>{dbdFiksCache=d;populateKecamatanList(d);hideLoading();cb(d);}).catch(()=>{hideLoading();showToast('❌ Gagal memuat dbdfiks.geojson');});}
 function loadSurabayaData(cb){if(surabayaDataCache){if(cb)cb(surabayaDataCache);return;}fetch('data/SurabayaData.geojson').then(r=>{if(!r.ok)throw new Error();return r.json();}).then(d=>{surabayaDataCache=d;if(cb)cb(d);}).catch(()=>{surabayaDataCache=null;if(cb)cb(null);});}
 function getPenduduk(kecNama,year){if(year==2019&&PENDUDUK_2019[kecNama]!==undefined)return PENDUDUK_2019[kecNama];if(!surabayaDataCache)return null;const yr=String(year).slice(2);const f=surabayaDataCache.features.find(f=>(f.properties.Kecamatan??'').toLowerCase()===kecNama.toLowerCase());if(!f)return null;const p=f.properties;return p['JPddk_'+yr]??p['Pddk_'+yr]??p['Penduduk_'+yr]??null;}
 function populateKecamatanList(data){kecamatanList=data.features.map(f=>({nama:f.properties.Kecamatan??'',feature:f})).filter(x=>x.nama);}
 
-/* ════ LEGEND ════ */
+/* ════ LEGEND — 'curah-hujan' entry dihapus ════ */
 function showLegend(type){
     const title=document.getElementById('legendTitle'),items=document.getElementById('legendItems');
-    const tpl={'kasus-dbd':{icon:'fa-virus',color:'#970000',label:'Klasifikasi Kasus DBD',items:[['#cc0000','Tinggi (> 15)'],['#e05a2b','Sedang (5–15)'],['#f2c5a0','Rendah (1–4)'],['#f5f5f5','Tidak Ada Kasus (0)']]},'curah-hujan':{icon:'fa-cloud-rain',color:'#1d4ed8',label:'Curah Hujan (mm/thn)',items:[['#08306b','Sangat Basah (> 3000)'],['#2171b5','Basah (2501–3000)'],['#6baed6','Sedang (2001–2500)'],['#9ecae1','Kering (1501–2000)'],['#c6dbef','Sangat Kering (< 1500)']]},'puskesmas':{icon:'fa-hospital',color:'#16a34a',label:'Puskesmas Surabaya',items:[['#16a34a','Puskesmas (63 lokasi)'],['#f97316','Terdekat dari lokasi Anda']]},'rf-choropleth':{icon:'fa-chart-area',color:'#7c3aed',label:'Prediksi DBD (RF)',items:[['#4c1d95','Tinggi (> 15 kasus)'],['#7c3aed','Sedang (5–15 kasus)'],['#c4b5fd','Rendah (1–4 kasus)'],['#f5f5f5','Tidak Ada (0 kasus)']]},'rf-heatmap':{icon:'fa-fire',color:'#7c3aed',label:'Heatmap Intensitas RF',items:[['linear-gradient(to right,#0000ff,#00ffff,#00ff00,#ffff00,#ff8800,#ff0000)','Rendah → Tinggi']]},'zona-rawan':{icon:'fa-water',color:'#0e7490',label:'Zona Rawan Genangan',items:[['#27ae60','Rendah'],['#f39c12','Sedang'],['#c0392b','Tinggi']]},'pu2021':{icon:'fa-map-pin',color:'#1d4ed8',label:'Data PU 2021',items:[['#2471a3','Titik Genangan PU 2021']]},'pu2025':{icon:'fa-map-pin',color:'#4338ca',label:'Data PU 2025',items:[['#8e44ad','Titik Genangan PU 2025']]},'laporan-warga':{icon:'fa-circle-exclamation',color:'#7e22ce',label:'Laporan Warga',items:[['#27ae60','Ringan (< 20 cm)'],['#f39c12','Sedang (20–40 cm)'],['#e74c3c','Dalam (40–70 cm)'],['#7c0000','Sangat Dalam (> 70 cm)']]}};
+    const tpl={
+        'kasus-dbd':{icon:'fa-virus',color:'#970000',label:'Klasifikasi Kasus DBD',items:[['#cc0000','Tinggi (> 15)'],['#e05a2b','Sedang (5–15)'],['#f2c5a0','Rendah (1–4)'],['#f5f5f5','Tidak Ada Kasus (0)']]},
+        'puskesmas':{icon:'fa-hospital',color:'#16a34a',label:'Puskesmas Surabaya',items:[['#16a34a','Puskesmas (63 lokasi)'],['#f97316','Terdekat dari lokasi Anda']]},
+        'rf-choropleth':{icon:'fa-chart-area',color:'#7c3aed',label:'Prediksi DBD (RF)',items:[['#4c1d95','Tinggi (> 15 kasus)'],['#7c3aed','Sedang (5–15 kasus)'],['#c4b5fd','Rendah (1–4 kasus)'],['#f5f5f5','Tidak Ada (0 kasus)']]},
+        'rf-heatmap':{icon:'fa-fire',color:'#7c3aed',label:'Heatmap Intensitas RF',items:[['linear-gradient(to right,#0000ff,#00ffff,#00ff00,#ffff00,#ff8800,#ff0000)','Rendah → Tinggi']]},
+        'zona-rawan':{icon:'fa-water',color:'#0e7490',label:'Zona Rawan Genangan',items:[['#27ae60','Rendah'],['#f39c12','Sedang'],['#c0392b','Tinggi']]},
+        'pu2021':{icon:'fa-map-pin',color:'#1d4ed8',label:'Data PU 2021',items:[['#2471a3','Titik Genangan PU 2021']]},
+        'pu2025':{icon:'fa-map-pin',color:'#4338ca',label:'Data PU 2025',items:[['#8e44ad','Titik Genangan PU 2025']]},
+        'laporan-warga':{icon:'fa-circle-exclamation',color:'#7e22ce',label:'Laporan Warga',items:[['#27ae60','Ringan (< 20 cm)'],['#f39c12','Sedang (20–40 cm)'],['#e74c3c','Dalam (40–70 cm)'],['#7c0000','Sangat Dalam (> 70 cm)']]}
+    };
     const t=tpl[type];if(!t){document.getElementById('mapLegend').classList.remove('visible');return;}
     title.innerHTML=`<i class="fa-solid ${t.icon}" style="color:${t.color}"></i> ${t.label}`;
     items.innerHTML=t.items.map(([bg,lbl])=>`<div class="legend-item"><div class="legend-swatch" style="background:${bg};${bg.includes('gradient')?'width:72px;':''}${bg==='#f5f5f5'?'border:1px solid #ccc':''}"></div><span class="legend-label">${lbl}</span></div>`).join('');
@@ -667,7 +611,6 @@ function showLegend(type){
 }
 function hideLegend(){document.getElementById('mapLegend').classList.remove('visible');}
 
-/* ════ DBD LINE CHART ════ */
 function buildDbdLineChart(data){
     const years=[2019,2020,2021,2022,2023,2024];
     const totals=years.map(y=>{let t=0;data.features.forEach(f=>{t+=parseInt(f.properties['DBD_'+String(y).slice(2)])||0;});return t;});
@@ -702,7 +645,6 @@ function buildDbdLineChart(data){
     });
 }
 
-/* ════ DBD STAT CARD ════ */
 function buildMapInfoCard(data,year){
     const yr=String(year).slice(2);const byKec=data.features.map(f=>({nama:f.properties.Kecamatan??'',kasus:parseInt(f.properties['DBD_'+yr])||0}));byKec.sort((a,b)=>b.kasus-a.kasus);const total=byKec.reduce((s,d)=>s+d.kasus,0);
     document.getElementById('micTitle').textContent=`Kasus DBD ${year}`;
@@ -714,7 +656,6 @@ function buildMapInfoCard(data,year){
     document.getElementById('mapInfoCard').classList.add('visible');
 }
 
-/* ════ CH STAT CARD ════ */
 function buildChStatCard(data,year){
     const dom=CH_DOMINANT[year]||'—';
     document.getElementById('chStatGrid').innerHTML=`<div class="csc-cell"><div class="csc-label">Dominan</div><div class="csc-val" style="font-size:11px;line-height:1.3;">${dom}</div></div><div class="csc-cell"><div class="csc-label">Rata-rata</div><div class="csc-val">${CH_AVG_FIXED[year]||'—'}</div><div class="csc-sub">mm/thn</div></div>`;
@@ -725,7 +666,6 @@ function buildChStatCard(data,year){
     document.getElementById('chStatCard').classList.add('visible');
 }
 
-/* ════ RF STAT CARD ════ */
 function getPredRF(f,year){const p=f.properties;const fieldMap={2025:'Prediksi_2',2026:'Prediksi_3'};const field=fieldMap[year];return field?parseInt(p[field])||0:0;}
 function buildRfStatCard(data,year,isHeatmap){
     const preds=data.features.map(f=>({nama:f.properties.Kecamatan??'',pred:getPredRF(f,year)})).sort((a,b)=>b.pred-a.pred);const totalPred=preds.reduce((s,d)=>s+d.pred,0);
@@ -735,11 +675,9 @@ function buildRfStatCard(data,year,isHeatmap){
     document.getElementById('rfStatCard').classList.add('visible');
 }
 
-/* ════ FLOOD STAT CARD ════ */
 function updateFloodStatCard(){const laporanData=loadLaporanLS();document.getElementById('fc-warga').textContent=laporanData.length;document.getElementById('floodStatCard').classList.add('visible');}
 function updateFloodPUCount(type,count){document.getElementById(type==='pu21'?'fc-pu21':'fc-pu25').textContent=count;}
 
-/* ════ DBD LAYER ════ */
 function styleKasusDbd(f){const yr=String(currentYear).slice(2);const k=parseInt(f.properties['DBD_'+yr]);const kVal=(k===undefined||k===null||isNaN(k))?null:k;return{fillColor:getColorKasus(kVal),weight:1.2,opacity:1,color:'#ffffff',dashArray:'',fillOpacity:0.8};}
 function onEachKasusDbd(f,layer){layer.on({mouseover(e){e.target.setStyle({weight:2.5,color:'#222',fillOpacity:0.92});e.target.bringToFront();},mouseout(e){if(kasusDbdLayer)kasusDbdLayer.resetStyle(e.target);}});layer.on('click',function(){const p=f.properties,yr=String(currentYear).slice(2),nama=p.Kecamatan??'';layer.bindPopup(buildKasusPopup(nama,yr,p),{maxWidth:300,minWidth:260}).openPopup();});}
 function buildKasusPopup(nama,yr,p){const yr4=2000+parseInt(yr);const kasus=parseInt(p['DBD_'+yr])||0;const kelas=getKelasKasus(kasus);const jpdd=getPenduduk(nama,yr4);const ir=(jpdd&&jpdd>0)?((kasus/Number(jpdd))*100000).toFixed(1):null;const barPct=Math.min(100,kasus/15*100);const fillColor=getColorKasus(kasus);const headerBg=kasus===0?'#6b7280':fillColor;return`<div style="font-family:'Plus Jakarta Sans',sans-serif;width:260px;"><div style="background:${headerBg};padding:14px 16px 12px;display:flex;align-items:center;gap:10px;"><div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏙️</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nama}</div><div style="font-size:10px;color:rgba(255,255,255,0.72);">Kecamatan · Surabaya · ${yr4}</div></div></div><div style="padding:13px 15px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;"><div><div style="font-size:26px;font-weight:800;color:${kasus===0?'#6b7280':fillColor};line-height:1;">${kasus}</div><div style="font-size:10px;color:#9ca3af;margin-top:1px;">kasus DBD</div></div><div style="display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${headerBg}20;color:${headerBg};border:1px solid ${headerBg}40;">${kelas.emoji} ${kelas.label}</div></div><div style="height:5px;background:#f0f0f0;border-radius:4px;margin-bottom:12px;overflow:hidden;"><div style="height:100%;width:${barPct}%;background:${kasus===0?'#e5e7eb':fillColor};border-radius:4px;"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">Penduduk</div><div style="font-size:11px;font-weight:700;color:#111827;">${jpdd?Number(jpdd).toLocaleString('id-ID'):' — '}</div></div><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">IR /100rb</div><div style="font-size:11px;font-weight:700;color:${kasus===0?'#6b7280':fillColor};">${ir??'—'}</div></div></div></div></div>`;}
@@ -747,9 +685,7 @@ function renderKasusDbd(data,year){if(kasusDbdLayer){map.removeLayer(kasusDbdLay
 function refreshKasusDbd(year){if(!kasusDbdLayer||!dbdFiksCache)return;const yr=String(year).slice(2);kasusDbdLayer.eachLayer(layer=>{const k=parseInt(layer.feature.properties['DBD_'+yr]);const kVal=(k===undefined||k===null||isNaN(k))?null:k;layer.setStyle({fillColor:getColorKasus(kVal),weight:1.2,opacity:1,color:'#ffffff',dashArray:'',fillOpacity:0.8});});buildMapInfoCard(dbdFiksCache,year);}
 function loadKasusDbd(year){loadDbdFiks(d=>{loadSurabayaData(()=>renderKasusDbd(d,year));});}
 
-/* ════ LABELS ════ */
 function addKecamatanLabels(data){
-    // FIX: hapus label lama dulu sebelum tambah baru
     removeKecamatanLabels();
     labelLayerGroup=L.layerGroup();
     data.features.forEach(f=>{const nama=f.properties.Kecamatan??'';if(!nama)return;const c=getCentroid(f);if(!c)return;L.marker(c,{icon:L.divIcon({className:'',html:`<div class="kec-label">${nama}</div>`,iconSize:[0,0],iconAnchor:[0,0]}),interactive:false,zIndexOffset:500}).addTo(labelLayerGroup);});
@@ -759,7 +695,6 @@ function removeKecamatanLabels(){
     if(labelLayerGroup){map.removeLayer(labelLayerGroup);labelLayerGroup=null;}
 }
 
-/* ════ CURAH HUJAN ════ */
 function styleCH(f){return{fillColor:getColorCH(f.properties.gridcode),weight:1,opacity:1,color:'rgba(255,255,255,0.4)',dashArray:'',fillOpacity:0.75};}
 function onEachCH(f,layer){layer.on({mouseover(e){e.target.setStyle({weight:2,color:'#333',fillOpacity:0.88});e.target.bringToFront();},mouseout(e){if(curahHujanLayer)curahHujanLayer.resetStyle(e.target);}});const gc=f.properties.gridcode??0;layer.on('click',function(){layer.bindPopup(buildChPopup(gc,currentYear),{maxWidth:240,minWidth:210}).openPopup();});}
 function buildChPopup(gc,year){const info=gridcodeMap[gc]||{label:'—',mid:0};const colorCH=getColorCH(gc);const icons={1:'🏜️',2:'🌵',3:'🌤️',4:'🌧️',5:'🌊'};return`<div style="font-family:'Plus Jakarta Sans',sans-serif;width:210px;"><div style="background:${colorCH};padding:13px 15px;display:flex;align-items:center;gap:9px;"><div style="font-size:26px;">${icons[gc]||'🌧️'}</div><div><div style="font-size:13px;font-weight:800;color:white;">Curah Hujan ${year}</div><div style="font-size:10px;color:rgba(255,255,255,0.78);">${info.label}</div></div></div><div style="padding:13px 15px;"><div style="font-size:24px;font-weight:800;color:${colorCH};margin-bottom:7px;">±${info.mid} <span style="font-size:12px;font-weight:500;color:#6b7280;">mm/thn</span></div><div style="height:5px;background:#f0f0f0;border-radius:4px;overflow:hidden;"><div style="height:100%;width:${Math.min(100,info.mid/3500*100)}%;background:${colorCH};border-radius:4px;"></div></div></div></div>`;}
@@ -767,7 +702,6 @@ function loadGeoJSONCH(year,cb){if(geoJsonCache['ch_'+year]){cb(geoJsonCache['ch
 function renderCH(data,year){if(curahHujanLayer){map.removeLayer(curahHujanLayer);curahHujanLayer=null;}curahHujanLayer=L.geoJSON(data,{style:styleCH,onEachFeature:onEachCH}).addTo(map);map.fitBounds(curahHujanLayer.getBounds(),{padding:[20,20]});buildChStatCard(data,year);}
 function loadCurahHujan(year){loadGeoJSONCH(year,d=>renderCH(d,year));}
 
-/* ════ PUSKESMAS ════ */
 function createPusIcon(nearest=false){return L.divIcon({className:'',html:`<div class="puskes-pin${nearest?' nearest':''}"><i class="fa-solid fa-hospital"></i></div>`,iconSize:nearest?[34,34]:[28,28],iconAnchor:nearest?[17,17]:[14,14],popupAnchor:[0,-16]});}
 
 function openGoogleMapsRoute(p){
@@ -786,13 +720,11 @@ function pusPopup(p,dist=null,idx=null){
     const routeBtn=dist===null?`<button onclick="openGoogleMapsRoute(puskesmasData[${safeIdx}])" style="width:100%;display:flex;align-items:center;justify-content:center;gap:5px;background:#1d4ed8;color:white;border:none;border-radius:7px;padding:7px 0;font-size:11px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:8px;"><i class="fa-solid fa-route"></i> Buka Rute di Google Maps</button>`:'';
     return`<div style="font-family:'Plus Jakarta Sans',sans-serif;width:258px;"><div style="background:linear-gradient(135deg,#16a34a,#15803d);padding:13px 15px;display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏥</div><div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:800;color:white;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.nama}</div><div style="font-size:9px;color:rgba(255,255,255,0.72);">${p.kecamatan||'Surabaya'}</div></div></div><div style="padding:11px 14px 13px;"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;"><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">Kepala</div><div style="font-size:10px;font-weight:600;color:#111827;line-height:1.3;">${p.kepala}</div></div><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">Telepon</div><div style="font-size:10px;font-weight:700;color:#16a34a;">${p.telp}</div></div></div><div style="font-size:10px;color:#6b7280;display:flex;align-items:flex-start;gap:5px;"><i class="fa-solid fa-location-dot" style="color:#16a34a;margin-top:1px;flex-shrink:0;font-size:10px;"></i><span>${p.alamat}</span></div>${distRow}${routeBtn}</div></div>`;}
 
-// FIX: validasi koordinat puskesmas sebelum menambahkan marker
 function loadPuskesmas(){
     if(puskesmasLayer){map.removeLayer(puskesmasLayer);puskesmasLayer=null;}
     puskesmasMarkerMap.clear();
     puskesmasLayer=L.layerGroup();
     puskesmasData.forEach((p,idx)=>{
-        // FIX: skip marker jika koordinat tidak valid
         if(!p.lat||!p.lng||isNaN(p.lat)||isNaN(p.lng)||p.lat===0||p.lng===0){
             console.warn(`[Puskesmas] Koordinat tidak valid: ${p.nama}`);
             return;
@@ -807,7 +739,6 @@ function loadPuskesmas(){
 }
 function refreshPuskesmasIcons(nearestIdxs){puskesmasMarkerMap.forEach((m,idx)=>{m.setIcon(createPusIcon(nearestIdxs.includes(idx)));if(userLatLng){const p=puskesmasData[idx];if(!p.lat||!p.lng||isNaN(p.lat)||isNaN(p.lng))return;const d=haversineKm(userLatLng.lat,userLatLng.lng,p.lat,p.lng);m.bindPopup(pusPopup(p,d,idx),{maxWidth:280,minWidth:258});}});}
 
-/* ════ RF CHOROPLETH & HEATMAP ════ */
 function styleRFChoropleth(f,year){const v=getPredRF(f,year);return{fillColor:getColorRF(v),weight:1.2,opacity:1,color:'#ffffff',dashArray:'',fillOpacity:0.8};}
 function onEachRFChoropleth(f,layer,year){layer.on({mouseover(e){e.target.setStyle({weight:2.5,color:'#222',fillOpacity:0.92});e.target.bringToFront();},mouseout(e){if(rfChoroplethLayer)rfChoroplethLayer.resetStyle(e.target);}});layer.on('click',function(){layer.bindPopup(buildRFPopup(f,year),{maxWidth:300,minWidth:260}).openPopup();});}
 function buildRFPopup(f,year){const p=f.properties,nama=p.Kecamatan??'';const predKasus=getPredRF(f,year);const kelas=getKelasKasus(predKasus);const fillColor=getColorRF(predKasus);const headerBg=predKasus===0?'#6b7280':fillColor;const aktual24=parseInt(p['DBD_24'])||0;const err=predKasus-aktual24;const errSign=err>0?'+':'';const errColor=err>0?'#d97706':err<0?'#dc2626':'#16a34a';const barPct=Math.min(100,predKasus/15*100);return`<div style="font-family:'Plus Jakarta Sans',sans-serif;width:270px;"><div style="background:${headerBg};padding:13px 15px;display:flex;align-items:center;gap:9px;"><div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🤖</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:800;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nama}</div><div style="font-size:10px;color:rgba(255,255,255,0.72);">Prediksi Random Forest · ${year}</div></div></div><div style="padding:13px 15px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;"><div><div style="font-size:26px;font-weight:800;color:${predKasus===0?'#6b7280':fillColor};line-height:1;">${predKasus}</div><div style="font-size:10px;color:#9ca3af;margin-top:1px;">prediksi kasus</div></div><div style="display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${headerBg}20;color:${headerBg};border:1px solid ${headerBg}40;">${kelas.emoji} ${kelas.label}</div></div><div style="height:5px;background:#f0f0f0;border-radius:4px;margin-bottom:12px;overflow:hidden;"><div style="height:100%;width:${barPct}%;background:${predKasus===0?'#e5e7eb':fillColor};border-radius:4px;"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">Aktual 2024</div><div style="font-size:11px;font-weight:700;color:#111827;">${aktual24} kasus</div></div><div style="background:#f9fafb;border-radius:7px;padding:7px 9px;border:1px solid #f0f0f0;"><div style="font-size:9px;color:#9ca3af;margin-bottom:2px;">Selisih</div><div style="font-size:11px;font-weight:700;color:${errColor};">${errSign}${Math.round(err)}</div></div></div></div></div>`;}
@@ -816,7 +747,6 @@ function loadRFChoropleth(year){showLoading();loadDbdFiks(d=>{hideLoading();rend
 function loadLeafletHeat(cb){if(typeof L.heatLayer==='function'){cb();return;}const s=document.createElement('script');s.src='https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js';s.onload=cb;s.onerror=()=>{showToast('⚠️ Plugin heatmap gagal dimuat');hideLoading();};document.head.appendChild(s);}
 function renderRFHeatmap(data,year){
     if(rfHeatmapLayer){map.removeLayer(rfHeatmapLayer);rfHeatmapLayer=null;}
-    // FIX: hapus label yang tersisa dari layer sebelumnya
     removeKecamatanLabels();
     if(typeof L.heatLayer!=='function'){showToast('⚠️ Plugin heatmap belum siap');hideLoading();return;}
     const points=[];data.features.forEach(f=>{const c=getCentroid(f);if(!c)return;const pred=getPredRF(f,year);if(pred>0)points.push([c[0],c[1],pred]);});
@@ -830,14 +760,11 @@ function renderRFHeatmap(data,year){
 }
 function loadRFHeatmap(year){showLoading();loadDbdFiks(d=>{loadLeafletHeat(()=>renderRFHeatmap(d,year));});}
 
-/* ════ FLOOD LAYERS ════ */
 function removeAllFloodLayers(){
     Object.values(floodLayers).forEach(l=>{if(l&&map.hasLayer(l))map.removeLayer(l);});
     activeFloodKey=null;
     document.getElementById('floodStatCard').classList.remove('visible');
-    // FIX: bersihkan legend hanya kalau tidak ada layer thematic aktif
     if(!currentActiveLayer)hideLegend();
-    // FIX: uncheck semua flood checkbox (bukan radio)
     document.querySelectorAll('[data-layer-type="flood"]').forEach(c=>{c.checked=false;c.closest('.layer-card').classList.remove('active');});
 }
 
@@ -864,7 +791,6 @@ function loadZonaRawan(){
 
 function makePUMarker(color){return L.divIcon({className:'',html:`<div style="width:14px;height:14px;background:${color};border:2px solid white;border-radius:3px;box-shadow:0 2px 6px ${color}50;"></div>`,iconSize:[14,14],iconAnchor:[7,7]});}
 
-// FIX: hanya 1 definisi prettifyField dan getUnit
 function prettifyField(key){
     const map2={
         OBJECTID:'Object ID',Nama_Jalan:'Nama Jalan',Luas__ha_:'Luas Area',Tinggi__cm:'Tinggi Genangan',
@@ -877,7 +803,6 @@ function prettifyField(key){
     return map2[key]||key.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
 }
 
-// FIX: hanya 1 definisi getUnit
 function getUnit(key){
     return{LUAS_GENAN:'m²',TINGGI_GEN:'cm',LAMA_GENAN:'mnt',Luas__ha_:'ha',Tinggi__cm:'cm',Lama__meni:'mnt'}[key]||'';
 }
@@ -926,7 +851,6 @@ function loadLaporanWarga(){
     updateFloodStatCard();
 }
 
-/* ════ TIMELINE ════ */
 const yearNotice=document.getElementById('yearNotice'),mapTimeline=document.getElementById('mapTimeline'),tlPlay=document.getElementById('tlPlay'),tlProgress=document.getElementById('tlProgress'),tlPoints=document.getElementById('tlPoints'),tlYearSel=document.getElementById('tlYearSel');
 let tlYears=[2019,2020,2021,2022,2023,2024],tlIdx=5,isPlaying=false,playInterval=null;
 function genTlPoints(years=tlYears){tlYears=years;tlPoints.innerHTML='';years.forEach((y,i)=>{const pt=document.createElement('div');pt.className='tl-pt';pt.innerHTML=`<div class="tl-dot"></div><div class="tl-year">${y}</div>`;pt.addEventListener('click',()=>{stopTl();setTlIdx(i);});tlPoints.appendChild(pt);});}
@@ -947,7 +871,6 @@ tlPlay.addEventListener('click',()=>isPlaying?stopTl():playTl());
 tlYearSel.addEventListener('change',e=>{stopTl();setTlIdx(tlYears.indexOf(parseInt(e.target.value)));});
 document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;if(!mapTimeline.classList.contains('visible'))return;if(e.key==='ArrowLeft'&&tlIdx>0){stopTl();setTlIdx(tlIdx-1);}if(e.key==='ArrowRight'&&tlIdx<tlYears.length-1){stopTl();setTlIdx(tlIdx+1);}if(e.key===' '){e.preventDefault();isPlaying?stopTl():playTl();}});
 
-/* ════ SEARCH ════ */
 const searchInput=document.getElementById('searchInput'),searchResults=document.getElementById('searchResults');
 function buildSearchItems(){const items=puskesmasData.map(p=>({type:'puskesmas',title:p.nama,subtitle:p.alamat,lat:p.lat,lng:p.lng}));if(dbdFiksCache){dbdFiksCache.features.forEach(f=>{const nama=f.properties.Kecamatan??'';if(!nama)return;const c=getCentroid(f);if(!c)return;items.push({type:'kecamatan',title:'Kec. '+nama,subtitle:'Kecamatan, Kota Surabaya',lat:c[0],lng:c[1],nama});});}return items;}
 function hl(text,term){return text.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'),'<b>$1</b>');}
@@ -956,56 +879,43 @@ searchInput.addEventListener('input',e=>doSearch(e.target.value));
 searchInput.addEventListener('keypress',e=>{if(e.key==='Enter')doSearch(searchInput.value);});
 document.addEventListener('click',e=>{const item=e.target.closest('.search-result-item');if(item){const lat=parseFloat(item.dataset.lat),lng=parseFloat(item.dataset.lng),type=item.dataset.type;map.setView([lat,lng],15);if(type==='puskesmas'&&!isPuskesmasActive){const cb=document.querySelector('[data-layer="puskesmas"] .toggle-checkbox');if(cb){cb.checked=true;cb.dispatchEvent(new Event('change'));}}searchResults.classList.remove('active');searchInput.value='';}if(!e.target.closest('.search-wrap'))searchResults.classList.remove('active');});
 
-/* ════ RESET SEMUA LAYER ════ */
 function resetAllLayers(){
-    // Matikan semua thematic
     clearAllThematicLayers();
     currentActiveLayer=null;
-    // Matikan semua flood
     removeAllFloodLayers();
-    // Reset checkbox/radio UI
     document.querySelectorAll('[data-layer-type="thematic"]').forEach(c=>{c.checked=false;c.closest('.layer-card').classList.remove('active');});
-    // Reset timeline
     stopTl();
     mapTimeline.classList.remove('visible');
     yearNotice.classList.remove('visible');
-    // Sembunyikan semua stat card
     document.getElementById('mapInfoCard').classList.remove('visible');
     document.getElementById('chStatCard').classList.remove('visible');
     document.getElementById('pusStatCard').classList.remove('visible');
     document.getElementById('rfStatCard').classList.remove('visible');
     document.getElementById('floodStatCard').classList.remove('visible');
     hideLegend();
-    // FIX: reset currentYear ke default
     currentYear=2024;
     showToast('✅ Semua layer dinonaktifkan');
 }
 document.getElementById('resetAllLayersBtn').addEventListener('click',resetAllLayers);
 
-/* ════ LAYER TOGGLE ════ */
 function clearAllThematicLayers(){
     if(kasusDbdLayer){map.removeLayer(kasusDbdLayer);kasusDbdLayer=null;}
     if(curahHujanLayer){map.removeLayer(curahHujanLayer);curahHujanLayer=null;}
     if(puskesmasLayer){map.removeLayer(puskesmasLayer);puskesmasLayer=null;}
     if(rfChoroplethLayer){map.removeLayer(rfChoroplethLayer);rfChoroplethLayer=null;}
     if(rfHeatmapLayer){map.removeLayer(rfHeatmapLayer);rfHeatmapLayer=null;}
-    // FIX: selalu hapus label saat clear thematic
     removeKecamatanLabels();
     isKasusDbdActive=false;isCurahHujanActive=false;isPuskesmasActive=false;
 }
 
-// FIX: layer-card klik langsung toggle checkbox (tidak perlu klik tepat di checkbox)
 document.querySelectorAll('.layer-card').forEach(card=>{
     card.addEventListener('click',function(e){
-        // Jangan intercept klik yang sudah di checkbox/radio itu sendiri
         const cb=card.querySelector('.toggle-checkbox');
         if(!cb)return;
-        if(e.target===cb)return; // sudah ditangani event change
-        // Toggle programatik
+        if(e.target===cb)return;
         if(cb.type==='radio'){
             if(!cb.checked){cb.checked=true;cb.dispatchEvent(new Event('change'));}
             else{
-                // FIX: flood radio bisa di-uncheck dengan klik ulang
                 if(cb.getAttribute('data-layer-type')==='flood'){
                     cb.checked=false;
                     removeAllFloodLayers();
@@ -1018,7 +928,6 @@ document.querySelectorAll('.layer-card').forEach(card=>{
     });
 });
 
-// BASE MAP toggle
 document.querySelectorAll('[data-layer-type="base"]').forEach(cb=>{
     cb.addEventListener('change',()=>{
         document.querySelectorAll('[data-layer-type="base"]').forEach(c=>c.closest('.layer-card').classList.remove('active'));
@@ -1031,22 +940,18 @@ document.querySelectorAll('[data-layer-type="base"]').forEach(cb=>{
     });
 });
 
-// FIX: FLOOD LAYER toggle — checkbox, bisa dimatikan lagi
 document.querySelectorAll('[data-layer-type="flood"]').forEach(cb=>{
     cb.addEventListener('change',()=>{
         const layerName=cb.closest('.layer-card').dataset.layer;
         if(!cb.checked){
-            // Matikan layer ini saja
             const floodKey={'zona-rawan':'zona','pu2021':'pu21','pu2025':'pu25','laporan-warga':'warga'}[layerName];
             if(floodLayers[floodKey]&&map.hasLayer(floodLayers[floodKey])){map.removeLayer(floodLayers[floodKey]);}
             cb.closest('.layer-card').classList.remove('active');
-            // Cek apakah masih ada flood layer lain aktif
             const anyFloodActive=document.querySelectorAll('[data-layer-type="flood"]:checked').length>0;
             if(!anyFloodActive){document.getElementById('floodStatCard').classList.remove('visible');if(!currentActiveLayer)hideLegend();}
             activeFloodKey=null;
             return;
         }
-        // Matikan flood layer lain (satu aktif saja)
         document.querySelectorAll('[data-layer-type="flood"]').forEach(c=>{
             if(c!==cb&&c.checked){
                 c.checked=false;
@@ -1068,7 +973,6 @@ document.querySelectorAll('[data-layer-type="flood"]').forEach(cb=>{
     });
 });
 
-// THEMATIC LAYER toggle — checkbox
 document.querySelectorAll('[data-layer-type="thematic"]').forEach(cb=>{
     cb.addEventListener('change',()=>{
         const card=cb.closest('.layer-card');
@@ -1083,7 +987,7 @@ document.querySelectorAll('[data-layer-type="thematic"]').forEach(cb=>{
             document.getElementById('rfStatCard').classList.remove('visible');
             currentActiveLayer=layerName;
             if(layerName==='kasus-dbd'){isKasusDbdActive=true;currentYear=2024;setupTlForLayer('kasus-dbd');loadKasusDbd(currentYear);yearNotice.classList.remove('visible');mapTimeline.classList.add('visible');showLegend('kasus-dbd');}
-            else if(layerName==='curah-hujan'){isCurahHujanActive=true;currentYear=2024;setupTlForLayer('curah-hujan');loadCurahHujan(currentYear);yearNotice.classList.remove('visible');mapTimeline.classList.add('visible');showLegend('curah-hujan');}
+            else if(layerName==='curah-hujan'){isCurahHujanActive=true;currentYear=2024;setupTlForLayer('curah-hujan');loadCurahHujan(currentYear);yearNotice.classList.remove('visible');mapTimeline.classList.add('visible');/* Legenda curah hujan tidak ditampilkan */hideLegend();}
             else if(layerName==='puskesmas'){isPuskesmasActive=true;currentActiveLayer=null;loadPuskesmas();yearNotice.classList.remove('visible');mapTimeline.classList.remove('visible');showLegend('puskesmas');document.getElementById('pusStatCard').classList.add('visible');}
             else if(layerName==='rf-choropleth-2025'){loadRFChoropleth(2025);yearNotice.textContent='Prediksi Random Forest 2025';yearNotice.classList.add('visible');mapTimeline.classList.remove('visible');showLegend('rf-choropleth');}
             else if(layerName==='rf-choropleth-2026'){loadRFChoropleth(2026);yearNotice.textContent='Prediksi Random Forest 2026';yearNotice.classList.add('visible');mapTimeline.classList.remove('visible');showLegend('rf-choropleth');}
@@ -1093,11 +997,9 @@ document.querySelectorAll('[data-layer-type="thematic"]').forEach(cb=>{
             card.classList.remove('active');
             clearAllThematicLayers();
             currentActiveLayer=null;
-            // FIX: reset currentYear saat layer dimatikan
             currentYear=2024;
             mapTimeline.classList.remove('visible');
             yearNotice.classList.remove('visible');
-            // FIX: legend hanya disembunyikan kalau tidak ada flood aktif
             if(!activeFloodKey)hideLegend();
             document.getElementById('mapInfoCard').classList.remove('visible');
             document.getElementById('chStatCard').classList.remove('visible');
@@ -1107,13 +1009,11 @@ document.querySelectorAll('[data-layer-type="thematic"]').forEach(cb=>{
     });
 });
 
-/* ════ NEARBY MODAL ════ */
 const nearbyModal=document.getElementById('nearbyModal'),nearbyToggleBtn=document.getElementById('nearbyToggleBtn');
 nearbyToggleBtn.addEventListener('click',()=>nearbyModal.classList.toggle('open'));
 document.getElementById('nearbyClose').addEventListener('click',()=>nearbyModal.classList.remove('open'));
 document.addEventListener('click',e=>{if(!nearbyModal.contains(e.target)&&e.target!==nearbyToggleBtn&&!nearbyToggleBtn.contains(e.target))nearbyModal.classList.remove('open');});
 
-// FIX: buildNearbyList menggunakan variabel yang konsisten (tidak bentrok)
 function buildNearbyList(sortedList){
     const listEl=document.getElementById('nmNearbyList');
     if(!sortedList.length){listEl.innerHTML='<div class="nm-empty">Data tidak tersedia.</div>';return;}
@@ -1162,7 +1062,6 @@ function locateUser(){
         userLocationCircle=L.circle([lat,lng],{radius:acc,color:'#1d4ed8',fillColor:'#1d4ed8',fillOpacity:0.06,weight:1,dashArray:'5'}).addTo(map);
         userLocationMarker=L.marker([lat,lng],{icon:L.divIcon({className:'',html:'<div class="user-dot"></div>',iconSize:[14,14],iconAnchor:[7,7]}),zIndexOffset:1000}).addTo(map);
         map.setView([lat,lng],14);
-        // FIX: hanya hitung jarak untuk puskesmas dengan koordinat valid
         const sorted=puskesmasData
             .map((p,idx)=>({p,idx,dist:(!p.lat||!p.lng||isNaN(p.lat)||isNaN(p.lng))?Infinity:haversineKm(lat,lng,p.lat,p.lng)}))
             .filter(x=>x.dist!==Infinity)
@@ -1177,13 +1076,10 @@ function locateUser(){
 }
 document.getElementById('nmLocateBtn').addEventListener('click',locateUser);
 
-/* ════ SIDEBAR ════ */
 const sidebarPanel=document.getElementById('sidebarPanel'),sidebarFab=document.getElementById('sidebarFab');
 document.getElementById('sidebarClose').addEventListener('click',()=>{sidebarPanel.classList.remove('active');sidebarFab.classList.remove('active');setTimeout(()=>map.invalidateSize(),320);});
 sidebarFab.addEventListener('click',()=>{sidebarPanel.classList.toggle('active');sidebarFab.classList.toggle('active');setTimeout(()=>map.invalidateSize(),320);});
 
-/* ════ INIT ════ */
 setTimeout(()=>{loadDbdFiks(()=>{loadSurabayaData(()=>{});});},300);
 </script>
 </body>
-</html>
